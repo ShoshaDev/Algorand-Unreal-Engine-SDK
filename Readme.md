@@ -30,10 +30,7 @@ RPC types you can select are like following:
   + mainnet: https://mainnet-api.algonode.cloud
   + testnet: https://testnet-api.algonode.cloud
   + betanet: https://betanet-api.algonode.cloud
-* Purestake
-  + mainnet: https://mainnet-algorand.api.purestake.io/ps2
-  + testnet: https://testnet-algorand.api.purestake.io/ps2
-  + betanet: https://betanet-algorand.api.purestake.io/ps2
+
 * Sandbox Algorand Node
   + algod: http://localhost:4001 
   + kmd: http://localhost:4002
