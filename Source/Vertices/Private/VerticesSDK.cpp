@@ -851,53 +851,60 @@ namespace algorand {
                             err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*clawback), &C_Account.vtc_account);
                             checkVTCSuccess((char *)"vertices_account_new_from_b32 error occured.", err_code);
                             UE_LOG(LogTemp, Warning, TEXT("clawback account on Asset Config TX %d"), C_Account.vtc_account->amount);   
+
+                            err_code = VTC_ERROR_INVALID_STATE;
+                            throw SDKException(const_cast<char*>("tx_acfg are not registered"), err_code);
                             
-                            err_code =
-                                vertices_transaction_asset_cfg(sender_account.vtc_account,
-                                    (char *)M_Account.vtc_account->public_key /* or ACCOUNT_MANAGER */,
-                                    (char *)R_Account.vtc_account->public_key /* or ACCOUNT_RESERVE */,
-                                    (char *)F_Account.vtc_account->public_key /* or ACCOUNT_FREEZE */,
-                                    (char *)C_Account.vtc_account->public_key /* or ACCOUNT_CLAWBACK */,
-                                    (uint64_t)Request.AssetId.GetValue(),
-                                    (uint64_t)Request.Total.GetValue(),
-                                    (uint64_t)Request.Decimals.GetValue(),
-                                    (uint8_t)Request.IsFrozen.GetValue(),
-                                    unit_name,
-                                    asset_name,
-                                    url,
-                                    notes);
-                            checkVTCSuccess((char *)"vertices_transaction_asset_config error occured", err_code);
-                            
-                            unsigned char* txID = nullptr;
-                            txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
+                            // err_code =
+                            //     vertices_transaction_asset_cfg(sender_account.vtc_account,
+                            //         (char *)M_Account.vtc_account->public_key /* or ACCOUNT_MANAGER */,
+                            //         (char *)R_Account.vtc_account->public_key /* or ACCOUNT_RESERVE */,
+                            //         (char *)F_Account.vtc_account->public_key /* or ACCOUNT_FREEZE */,
+                            //         (char *)C_Account.vtc_account->public_key /* or ACCOUNT_CLAWBACK */,
+                            //         (uint64_t)Request.AssetId.GetValue(),
+                            //         (uint64_t)Request.Total.GetValue(),
+                            //         (uint64_t)Request.Decimals.GetValue(),
+                            //         (uint8_t)Request.IsFrozen.GetValue(),
+                            //         unit_name,
+                            //         asset_name,
+                            //         url,
+                            //         notes);
+                            // checkVTCSuccess((char *)"vertices_transaction_asset_config error occured", err_code);
+                            //
+                            // unsigned char* txID = nullptr;
+                            // txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
+                            //
+                            // size_t queue_size = 1;
+                            // while (queue_size && err_code == VTC_SUCCESS) {
+                            //     err_code = vertices_event_process(&queue_size, txID);
+                            // }
+                            //
+                            // checkVTCSuccess((char *)"vertices_event_process error occured", err_code);
+                            // UE_LOG(LogTemp, Warning, TEXT("err_code Asset Config TX ID Success, %hs"), (const char*)txID);
+                            //
+                            // err_code = vertices_account_free(sender_account.vtc_account);
+                            // checkVTCSuccess((char *)"vertices_account_free error occured", err_code);
+                            // UE_LOG(LogTemp, Warning, TEXT("VerticesAssetConfigTransactionGetRequest Success"));
+                            //
+                            // InitVertices(err_code);
+                            // checkVTCSuccess((char *)"When reiniting vertices network, an error occured", err_code);
+                            //
+                            // UE_LOG(LogTemp, Warning, TEXT("Asset Config TX ASSET TX Success, %hs"), (const char*)UTF8_TO_TCHAR(txID));
+                            // // uint64 asset_id;
+                            //
+                            // err_code = VTC_ERROR_INVALID_STATE;
+                            // throw SDKException(const_cast<char*>("vertices_asset_id_get are not registered"), err_code);
 
-                            size_t queue_size = 1;
-                            while (queue_size && err_code == VTC_SUCCESS) {
-                                err_code = vertices_event_process(&queue_size, txID);
-                            }
-
-                            checkVTCSuccess((char *)"vertices_event_process error occured", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("err_code Asset Config TX ID Success, %hs"), (const char*)txID);
-
-                            err_code = vertices_account_free(sender_account.vtc_account);
-                            checkVTCSuccess((char *)"vertices_account_free error occured", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("VerticesAssetConfigTransactionGetRequest Success"));
-
-                            InitVertices(err_code);
-                            checkVTCSuccess((char *)"When reiniting vertices network, an error occured", err_code);
-
-                            UE_LOG(LogTemp, Warning, TEXT("Asset Config TX ASSET TX Success, %hs"), (const char*)UTF8_TO_TCHAR(txID));
-                            uint64 asset_id;
-                            
-                            do{
-                                err_code = vertices_asset_id_get(txID, &asset_id);
-                                UE_LOG(LogTemp, Warning, TEXT("Asset Config TX ASSET ID Success, %llu"), asset_id);
-                            }
-                            while (err_code != VTC_SUCCESS);
-
-                            UE_LOG(LogTemp, Warning, TEXT("Asset Config TX ASSET ID Success, %llu"), asset_id);
-                            response = response_builders::buildAssetConfigTransactionResponse(FString(UTF8_TO_TCHAR(txID)), asset_id);
-                            response.SetSuccessful(true);
+                            // TODO asset_id_get
+                            // do{
+                            //     err_code = vertices_asset_id_get(txID, &asset_id);
+                            //     UE_LOG(LogTemp, Warning, TEXT("Asset Config TX ASSET ID Success, %llu"), asset_id);
+                            // }
+                            // while (err_code != VTC_SUCCESS);
+                            //
+                            // UE_LOG(LogTemp, Warning, TEXT("Asset Config TX ASSET ID Success, %llu"), asset_id);
+                            // response = response_builders::buildAssetConfigTransactionResponse(FString(UTF8_TO_TCHAR(txID)), asset_id);
+                            // response.SetSuccessful(true);
 
                             //free(txID);
                         }
@@ -1003,35 +1010,38 @@ namespace algorand {
                             checkVTCSuccess((char *)"vertices_account_new_from_b32 error occured.", err_code);
                             UE_LOG(LogTemp, Warning, TEXT("Amount of receiver_account on Asset Transfer TX %d"), arcv_account.vtc_account->amount);
 
-                            err_code =
-                                vertices_transaction_asset_xfer(sender_account.vtc_account,
-                                    (char *)asnd_account.vtc_account->public_key /* or ACCOUNT_SENDER */,
-                                    (char *)arcv_account.vtc_account->public_key /* or ACCOUNT_RECEIVER */,
-                                    NULL,
-                                    NULL,
-                                    (uint64_t)Request.asset_id.GetValue(),
-                                    (double)Request.amount.GetValue(),
-                                    notes);
+                            err_code = VTC_ERROR_INVALID_STATE;
+                            throw SDKException(const_cast<char*>("tx_axfer are not registered"), err_code);
                             
-                            checkVTCSuccess((char *)"vertices_transaction_asset_transfer error occured", err_code);
-
-                            unsigned char* txID = nullptr;
-                            txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
-
-                            size_t queue_size = 1;
-                            while (queue_size && err_code == VTC_SUCCESS) {
-                                err_code = vertices_event_process(&queue_size, txID);
-                            }
-
-                            checkVTCSuccess((char *)"vertices_event_process error occured", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("err_code Asset Transfer TX ID Success, %hs"), (const char*)txID);
-
-                            err_code = vertices_account_free(sender_account.vtc_account);
-                            checkVTCSuccess((char *)"vertices_account_free error occured", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("VerticesAssetTransferTransactionGetRequest Success"));
-
-                            response = response_builders::buildAssetTransferTransactionResponse(FString(UTF8_TO_TCHAR(txID)));
-                            response.SetSuccessful(true);
+                            // err_code =
+                            //     vertices_transaction_asset_xfer(sender_account.vtc_account,
+                            //         (char *)asnd_account.vtc_account->public_key /* or ACCOUNT_SENDER */,
+                            //         (char *)arcv_account.vtc_account->public_key /* or ACCOUNT_RECEIVER */,
+                            //         NULL,
+                            //         NULL,
+                            //         (uint64_t)Request.asset_id.GetValue(),
+                            //         (double)Request.amount.GetValue(),
+                            //         notes);
+                            
+                            // checkVTCSuccess((char *)"vertices_transaction_asset_transfer error occured", err_code);
+                            //
+                            // unsigned char* txID = nullptr;
+                            // txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
+                            //
+                            // size_t queue_size = 1;
+                            // while (queue_size && err_code == VTC_SUCCESS) {
+                            //     err_code = vertices_event_process(&queue_size, txID);
+                            // }
+                            //
+                            // checkVTCSuccess((char *)"vertices_event_process error occured", err_code);
+                            // UE_LOG(LogTemp, Warning, TEXT("err_code Asset Transfer TX ID Success, %hs"), (const char*)txID);
+                            //
+                            // err_code = vertices_account_free(sender_account.vtc_account);
+                            // checkVTCSuccess((char *)"vertices_account_free error occured", err_code);
+                            // UE_LOG(LogTemp, Warning, TEXT("VerticesAssetTransferTransactionGetRequest Success"));
+                            //
+                            // response = response_builders::buildAssetTransferTransactionResponse(FString(UTF8_TO_TCHAR(txID)));
+                            // response.SetSuccessful(true);
 
                             //free(txID);
                         }
@@ -1118,63 +1128,68 @@ namespace algorand {
                             err_code = vertices_application_get(Request.app_ID.GetValue(), &app_kv);
                             checkVTCSuccess(const_cast<char*>("vertices_application_get error occured"), err_code);
 
+                            err_code = VTC_ERROR_INVALID_STATE;
+                            throw SDKException(const_cast<char*>("noop_logs_get are not registered"), err_code);
+                            
                             /// send application call
                             // set app args as byte_slice type
-                            app_values_t kv = {0};
-                            kv.count = Request.app_args.Num();
-                            if(kv.count > 0)
-                            {
-                                uint8_t arg_index = 0;
-                                for(; arg_index < kv.count; arg_index++)
-                                {
-                                    kv.values[arg_index].type = VALUE_TYPE_BYTESLICE;
-                                    if(arg_index == 0)
-                                        memcpy(kv.values[arg_index].value_slice, Request.app_args[arg_index].GetData(), APPS_NOOP_TX_SLICE_MAX_SIZE);
-                                    else
-                                        memcpy(kv.values[arg_index].value_slice, Request.app_args[arg_index].GetData(), APPS_KV_SLICE_MAX_SIZE);
-                                }
-                            }
-                            
-                            err_code = vertices_transaction_app_call(sender_account.vtc_account, 301624623, &kv);
-                            // err_code = vertices_transaction_app_call(sender_account.vtc_account, Request.app_ID.GetValue(), &kv);
-                            checkVTCSuccess((char *)"vertices_transaction_app_call error occured", err_code);
-
-                            unsigned char* txID = nullptr;
-                            txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
-
-                            size_t queue_size = 1;
-                            while (queue_size && err_code == VTC_SUCCESS) {
-                                err_code = vertices_event_process(&queue_size, txID);
-                            }
-
-                            checkVTCSuccess((char *)"vertices_event_process error occured", err_code);
-
-                            //free(txID);
-
-                            InitVertices(err_code);
-                            checkVTCSuccess((char *)"When reiniting vertices network, an error occured", err_code);
-                            
-                            unsigned char logs[MSG_LOGS_MAX_SIZE];
-                            err_code = vertices_noop_logs_get((unsigned char *) txID, logs);
-
-                            checkVTCSuccess((char *)"When getting logs after NoOp Tx, an error occured", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("👉 Haha This is NoOp Tx Logs Status: %llu"), (long long unsigned) err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("👉 Haha This is logs: %hs"), (const char *) logs);
-                            /*unsigned char * u8_logs = new unsigned char[strlen((const char*)logs)];
-                            memset(u8_logs, 0, strlen((const char*)logs));
-                            len = strlen((const char*)logs);
-                            b64_decode((const char *)logs, strlen((const char*)logs), (char *)u8_logs, &len);
-
-                            uint64_t app_result = 0;
-                            for(int i = 0; i < 8; i++) {
-                                app_result += u8_logs[i + 4] * pow(256, 8 - i - 1);
-                            }
-                            UE_LOG(LogTemp, Warning, TEXT("👉 Haha This is logs: %llu"), (unsigned long long int)app_result);*/
-
-                            err_code = vertices_account_free(sender_account.vtc_account);
-                            checkVTCSuccess((char *)"vertices_account_free error occured", err_code);
-                            response = response_builders::buildApplicationCallTransactionResponse(FString(UTF8_TO_TCHAR(txID)), FString(UTF8_TO_TCHAR(logs)));
-                            response.SetSuccessful(true);
+//                             app_values_t kv = {0};
+//                             kv.count = Request.app_args.Num();
+//                             if(kv.count > 0)
+//                             {
+//                                 uint8_t arg_index = 0;
+//                                 for(; arg_index < kv.count; arg_index++)
+//                                 {
+//                                     kv.values[arg_index].type = VALUE_TYPE_BYTESLICE;
+//                                     // TODO transaction_app_call
+//                                     if(arg_index == 0)
+//                                         memcpy(kv.values[arg_index].value_slice, Request.app_args[arg_index].GetData(), APPS_NOOP_TX_SLICE_MAX_SIZE);
+//                                     else
+//                                         memcpy(kv.values[arg_index].value_slice, Request.app_args[arg_index].GetData(), APPS_KV_SLICE_MAX_SIZE);
+//                                 }
+//                             }
+//                             
+//                             err_code = vertices_transaction_app_call(sender_account.vtc_account, 301624623, &kv);
+//                             // err_code = vertices_transaction_app_call(sender_account.vtc_account, Request.app_ID.GetValue(), &kv);
+//                             checkVTCSuccess((char *)"vertices_transaction_app_call error occured", err_code);
+//
+//                             unsigned char* txID = nullptr;
+//                             txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
+//
+//                             size_t queue_size = 1;
+//                             while (queue_size && err_code == VTC_SUCCESS) {
+//                                 err_code = vertices_event_process(&queue_size, txID);
+//                             }
+//
+//                             checkVTCSuccess((char *)"vertices_event_process error occured", err_code);
+//
+//                             //free(txID);
+//
+//                             InitVertices(err_code);
+//                             checkVTCSuccess((char *)"When reiniting vertices network, an error occured", err_code);
+//                             
+//                             unsigned char logs[MSG_LOGS_MAX_SIZE];
+//                             err_code = vertices_noop_logs_get((unsigned char *) txID, logs);
+//
+//                             // checkVTCSuccess((char *)"When getting logs after NoOp Tx, an error occured", err_code);
+//                             // UE_LOG(LogTemp, Warning, TEXT("👉 Haha This is NoOp Tx Logs Status: %llu"), (long long unsigned) err_code);
+//                             // UE_LOG(LogTemp, Warning, TEXT("👉 Haha This is logs: %hs"), (const char *) logs);
+//                             /*unsigned char * u8_logs = new unsigned char[strlen((const char*)logs)];
+//                             memset(u8_logs, 0, strlen((const char*)logs));
+//                             len = strlen((const char*)logs);
+//                             b64_decode((const char *)logs, strlen((const char*)logs), (char *)u8_logs, &len);
+//
+//                             uint64_t app_result = 0;
+//                             for(int i = 0; i < 8; i++) {
+//                                 app_result += u8_logs[i + 4] * pow(256, 8 - i - 1);
+//                             }
+//                             UE_LOG(LogTemp, Warning, TEXT("👉 Haha This is logs: %llu"), (unsigned long long int)app_result);*/
+//
+//                             err_code = vertices_account_free(sender_account.vtc_account);
+//                             checkVTCSuccess((char *)"vertices_account_free error occured", err_code);
+//                             
+//                             response = response_builders::buildApplicationCallTransactionResponse(FString(UTF8_TO_TCHAR(txID)), FString(UTF8_TO_TCHAR(logs)));
+//                             response.SetSuccessful(true);
                         }
                         catch(SDKException& e)
                         {

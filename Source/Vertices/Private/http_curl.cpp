@@ -1,11 +1,14 @@
-// Copyright 2022, Wisdom Labs. All Rights Reserved
+/*
+ * Copyright (c) 2021 Vertices Network <cyril@vertices.network>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 #include "include/vertices/vertices_errors.h"
 #include "include/vertices/vertices_types.h"
 #include "include/vertices/vertices_http.h"
 #include "include/vertices_log.h"
 #include <curl/curl.h>
-#include <string.h>
 
 static CURL *m_curl;
 static size_t
@@ -22,31 +25,31 @@ response_callback(void *chunk,
 }
 
 ret_code_t
-http_init(const provider_info_t* provider,
-    size_t(*response_payload_cb)(char* chunk,
-        size_t chunk_size))
+http_init(const provider_info_t *provider,
+          size_t (*response_payload_cb)(char *chunk,
+                                        size_t chunk_size))
 {
     curl_global_init(CURL_GLOBAL_DEFAULT);
-        m_curl = curl_easy_init();
-    
-        if (m_curl == NULL)
-        {
-            return VTC_ERROR_INTERNAL;
-        }
-    
-        m_response_payload_cb = response_payload_cb;
-    
-        if (provider->port != 0)
-        {
-            curl_easy_setopt(m_curl, CURLOPT_PORT, provider->port);
-        }
-        curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, (void *) response_callback);
+    m_curl = curl_easy_init();
+
+    if (m_curl == NULL)
+    {
+        return VTC_ERROR_INTERNAL;
+    }
+
+    m_response_payload_cb = response_payload_cb;
+
+    if (provider->port != 0)
+    {
+        curl_easy_setopt(m_curl, CURLOPT_PORT, provider->port);
+    }
+    curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, (void *) response_callback);
 
     return VTC_SUCCESS;
 }
 
 ret_code_t
-http_get(const char *url,
+http_get(const provider_info_t *provider,
          const char *relative_path,
          const char *headers,
          uint32_t *response_code)
@@ -58,7 +61,8 @@ http_get(const char *url,
     long response;
 
     char url_full[512] = {0};
-    sprintf_s(url_full, "%s%s", url, relative_path);
+    // TODO Enable algod or indexer api
+    sprintf(url_full, "%s%s", provider->algod_url, relative_path);
 
     if (m_curl)
     {
@@ -68,10 +72,10 @@ http_get(const char *url,
         curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, chunk);
         curl_easy_setopt(m_curl, CURLOPT_URL, url_full);
         curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, NULL);
+
+// #ifdef  WIN64
         curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, 0);
-//#ifdef  WIN64
-        
-//#endif
+// #endif
 
 #ifdef DEBUG
         curl_easy_setopt(m_curl, CURLOPT_VERBOSE, 1L);
@@ -113,7 +117,7 @@ http_get(const char *url,
 }
 
 ret_code_t
-http_post(const char *url,
+http_post(const provider_info_t *provider,
           const char *relative_path,
           char *headers,
           const char *body,
@@ -126,7 +130,8 @@ http_post(const char *url,
     CURLcode res;
 
     char url_full[256] = {0};
-    sprintf_s(url_full, "%s%s", url, relative_path);
+    // TODO Enable algod or indexer api
+    sprintf(url_full, "%s%s", provider->algod_url, relative_path);
 
     if (m_curl)
     {
@@ -192,11 +197,12 @@ http_post(const char *url,
     return err_code;
 }
 
-void
-http_close(void)
+ret_code_t
+http_close()
 {
     curl_easy_cleanup(m_curl);
     curl_global_cleanup();
 
     m_curl = NULL;
+    return VTC_SUCCESS;
 }
