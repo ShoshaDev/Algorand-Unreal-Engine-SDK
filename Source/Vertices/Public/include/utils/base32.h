@@ -9,22 +9,23 @@
 #define VERTICES_SDK_LIB_BASE32_H
 
 #include <stdint.h>
+#include "include/vertices/vertices_errors.h"
 #include <stdio.h>
 
-#if defined _WIN32 || defined _WIN64
+#if defined APP_TYPE
+#define BASE32_IMPORT
+#elif defined _WIN32 || defined _WIN64
 #define BASE32_IMPORT __declspec(dllimport)
 #elif defined __linux__
 #define BASE32_IMPORT __attribute__((visibility("default")))
-#else
-#define BASE32_IMPORT
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    //! Computes how many bytes will be needed to encode/decode a binary blob of bin_len
-    //! using base32
+//! Computes how many bytes will be needed to encode/decode a binary blob of bin_len
+//! using base32
 #define BASE32_ENCODE_LEN(bin_len)      ((((bin_len * 8 + 4) / 5) % 8) != 0 ? \
                                     (((bin_len * 8 + 4) / 5) + (8 - (((bin_len * 8 + 4) / 5) % 8))) \
                                     : ((bin_len * 8 + 4) / 5))
@@ -41,17 +42,17 @@ extern "C" {
 /// \return error code:
 ///  - VTC_ERROR_INVALID_PARAM if the input binary is too long
 ///  - VTC_SUCCESS on success
-    BASE32_IMPORT ret_code_t
-        b32_encode(const char* data, size_t length, char* encoded, size_t* output_size);
+BASE32_IMPORT ret_code_t
+b32_encode(const char *data, size_t length, char *encoded, size_t *output_size);
 
-    /// Decode base-32 string into binary buffer. `output_size` must be set to the `decoded_data` buffer size.
-    /// \param encoded
-    /// \param decoded_data Pointer to decoded data
-    /// \param output_size Size of the `decoded_data` buffer. Value will be updated depending on
-    ///  how many bytes are used
-    /// \return
-    BASE32_IMPORT ret_code_t
-        b32_decode(const char* encoded, char* decoded_data, size_t* output_size);
+/// Decode base-32 string into binary buffer. `output_size` must be set to the `decoded_data` buffer size.
+/// \param encoded
+/// \param decoded_data Pointer to decoded data
+/// \param output_size Size of the `decoded_data` buffer. Value will be updated depending on
+///  how many bytes are used
+/// \return
+BASE32_IMPORT ret_code_t
+b32_decode(const char *encoded, char *decoded_data, size_t *output_size);
 
 #ifdef __cplusplus
 }

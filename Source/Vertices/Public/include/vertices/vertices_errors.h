@@ -9,12 +9,15 @@
 
 #include <stdint.h>
 
-#if defined _WIN32 || defined _WIN64
+// define whether executable type is a library or exec file
+// #define APP_TYPE EXEC
+
+#if defined APP_TYPE
+#define APPERROR_IMPORT
+#elif defined _WIN32 || defined _WIN64
 #define APPERROR_IMPORT __declspec(dllimport)
 #elif defined __linux__
 #define APPERROR_IMPORT __attribute__((visibility("default")))
-#else
-#define APPERROR_IMPORT
 #endif
 
 #ifdef __cplusplus
@@ -32,6 +35,7 @@ typedef enum
     VTC_ERROR_INVALID_ADDR,
     VTC_ERROR_OFFLINE,
     VTC_ERROR_ASSERT_FAILS,
+    VTC_SAME_MEM_EXIST,
     VTC_ERROR_HTTP_BASE = 0x10000000,
 } ret_code_t;
 
