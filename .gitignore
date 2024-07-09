@@ -1,3 +1,6 @@
 Binaries/
 Intermediate/
 Source/ThirdParty/AlgorandLibrary/Mac/
+example/unreal-algorand-demo/Content/Collections
+example/unreal-algorand-demo/Content/Developers
+example/unreal-algorand-demo/Content/StarterContent
