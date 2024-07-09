@@ -104,10 +104,10 @@ namespace vertices {
 
         /**
          * @brief check status of vertices actions with err_code
-         * @param msg_ message as output for exception process
+         * @param Msg message as output for exception process
          * @param err_code if VTC_SUCCESS, successful, not failed
          */
-        void checkVTCSuccess(char* msg_, ret_code_t& err_code);
+        void checkVTCSuccess(char* Msg, ret_code_t& err_code);
 
         /**
          * @brief set Request and Response for building api request and its result

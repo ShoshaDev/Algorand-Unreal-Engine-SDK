@@ -9,7 +9,11 @@
 #include "multicodec.hpp"
 #include "varint.hpp"
 
+#define UI UI_ST
+THIRD_PARTY_INCLUDES_START
 #include "openssl/evp.h"
+THIRD_PARTY_INCLUDES_END
+#undef UI
 
 #include <array>
 

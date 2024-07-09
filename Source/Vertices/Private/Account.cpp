@@ -28,7 +28,7 @@ Account::generate_keys(bytes seed) {
 	}
 	catch (std::exception &e)
 	{
-		UE_LOG(LogTemp, Display, TEXT("Didn't generate accounts with valid pub and sec %s"), e.what());
+		UE_LOG(LogTemp, Display, TEXT("Didn't generate accounts with valid pub and sec %hs"), e.what());
 		bytes pub, sec;  
 		pub.clear();  sec.clear();
 		return std::make_pair(pub, sec);

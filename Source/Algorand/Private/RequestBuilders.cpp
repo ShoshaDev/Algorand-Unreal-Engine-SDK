@@ -123,16 +123,22 @@ namespace request_builders {
 		request.app_args.Empty();
 		for(index = 0; index < app_args.Num(); index++)
 			request.app_args.Add(app_args[index].Value_Bytes);
-
+		
 		request.app_complete_tx = NOOP;			// set initial value
 		switch (app_complete_tx)
 		{
-			case NOOP:			request.app_complete_tx = NOOP;	break;		
-			case OPT_IN:		request.app_complete_tx = OPT_IN;	break;
-			case CLOSE_OUT:		request.app_complete_tx = CLOSE_OUT;	break;
-			case CLEAR_STATE:	request.app_complete_tx = CLEAR_STATE;	break;
-			case UPDATE_APP:	request.app_complete_tx = UPDATE_APP;	break;
-			case DELETE_APP:	request.app_complete_tx = DELETE_APP;	break;
+		case EAppOnCompleteTX::NOOP: request.app_complete_tx = NOOP;
+			break;
+		case EAppOnCompleteTX::OPT_IN: request.app_complete_tx = OPT_IN;
+			break;
+		case EAppOnCompleteTX::CLOSE_OUT: request.app_complete_tx = CLOSE_OUT;
+			break;
+		case EAppOnCompleteTX::CLEAR_STATE: request.app_complete_tx = CLEAR_STATE;
+			break;
+		case EAppOnCompleteTX::UPDATE_APP: request.app_complete_tx = UPDATE_APP;
+			break;
+		case EAppOnCompleteTX::DELETE_APP: request.app_complete_tx = DELETE_APP;
+			break;
 		}
 		return request;
 	}
