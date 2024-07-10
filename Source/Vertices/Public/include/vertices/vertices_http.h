@@ -15,7 +15,7 @@ extern "C" {
 
 // if not defined before, set default value
 #ifndef HTTP_MAXIMUM_CONTENT_LENGTH
-#define HTTP_MAXIMUM_CONTENT_LENGTH 9192
+#define HTTP_MAXIMUM_CONTENT_LENGTH 4096
 #endif
 
 /// Init HTTP client

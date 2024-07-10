@@ -14,7 +14,7 @@
 #define __FILENAME__ ((const char *)__FILE__ + SOURCE_PATH_SIZE)
 
 #include <stdio.h>
-#include "vertices/vertices_config.h"
+#include "vertices_config.h"
 
 #ifndef VTC_LOG_LEVEL
 #define LOG_LEVEL 0 // if variable has not been set, print nothing

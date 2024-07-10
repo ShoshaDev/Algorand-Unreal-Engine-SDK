@@ -40,8 +40,8 @@ namespace algorand
             bytes copy(public_key);
             unsigned char result[32] = { 0 };
     
-            ret_code_t err_code = VTC_SUCCESS;
-            err_code = sha512_256((const unsigned char*)public_key.data(), public_key.size(), result, 32);
+            // ret_code_t err_code = VTC_SUCCESS;
+            // err_code = sha512_256((const unsigned char*)public_key.data(), public_key.size(), result, 32);
             auto hash = bytes(result, result + sizeof(result));
             copy.insert(copy.end(), hash.end() - 4, hash.end());
             return copy;

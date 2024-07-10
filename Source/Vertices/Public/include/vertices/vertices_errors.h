@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 // define whether executable type is a library or exec file
-// #define APP_TYPE EXEC
+//#define APP_TYPE EXEC
 
 #if defined APP_TYPE
 #define APPERROR_IMPORT

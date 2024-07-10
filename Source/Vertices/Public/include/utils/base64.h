@@ -7,7 +7,7 @@
 #ifndef VERTICES_SDK_LIB_BASE64_H
 #define VERTICES_SDK_LIB_BASE64_H
 
-#include "include/vertices/vertices_errors.h"
+#include "vertices_errors.h"
 #include <stdio.h>
 
 #if defined APP_TYPE

@@ -3,6 +3,8 @@
 #include "VerticesSDK.h"
 #include "Misc/Paths.h"
 #include "Misc/MessageDialog.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
 #include "Containers/StringConv.h"
 #include "Internationalization/Text.h"
 #include "Interfaces/IPluginManager.h"
@@ -11,6 +13,8 @@
 #include "HAL/UnrealMemory.h"
 #include "AES.h"
 #include <cstring>
+
+#include "FileHelper.h"
 #include "SDKException.h"
 #include "include/vertices/vertices_http.h"
 #include "Windows/AllowWindowsPlatformTypes.h"
@@ -174,25 +178,25 @@ namespace algorand {
         }
 
         void VerticesSDK::loadVerticesLibrary() {
+            loaded_ = false;
             // Get the base directory of this plugin
             FString BaseDir = IPluginManager::Get().FindPlugin("Algorand")->GetBaseDir();
+            IFileManager& FileManager = IFileManager::Get();
+            FString SrcSodiumPath = FPaths::Combine(*BaseDir, TEXT("Source/Vertices/Libs"));
+            FString DestSodiumPath = FPaths::Combine(*BaseDir, TEXT("Binaries/Win64"));
+            FString VerticesPath = FPaths::Combine(
+                *BaseDir, TEXT("Source/ThirdParty/AlgorandLibrary/x64/Release/vertices.dll"));
+            
+            SodiumHandle = FPlatformProcess::GetDllHandle(*(SrcSodiumPath + "/libsodium.dll"));
+            VerticesHandle = FPlatformProcess::GetDllHandle(*VerticesPath);
 
-            // Add on the relative location of the third party dll and load it
-            FString VerticesPath, SodiumPath;
-
-            VerticesPath = FPaths::Combine(*BaseDir, TEXT("Source/ThirdParty/AlgorandLibrary/x64/Release/vertices.dll"));
-            SodiumPath = FPaths::Combine(*BaseDir, TEXT("Source/Vertices/Libs/libsodium.dll"));
-
-            VerticesHandle = !VerticesPath.IsEmpty() ? FPlatformProcess::GetDllHandle(*VerticesPath) : nullptr;
-            SodiumHandle = !SodiumPath.IsEmpty() ? FPlatformProcess::GetDllHandle(*SodiumPath) : nullptr;
-
-            if (VerticesHandle != nullptr && SodiumHandle != nullptr)
+            if (SodiumHandle == nullptr || VerticesHandle == nullptr)
             {
-                loaded_ = true;
                 return;
+            } else {
+                // Copy sodium libs to Plugin/Binaries folder
+                loaded_ = FileHelper::CopyDirectory(SrcSodiumPath, DestSodiumPath, false);
             }
-            else
-                loaded_ = false;
         }
 
         void VerticesSDK::InitVertices(ret_code_t& err_code) {
@@ -233,13 +237,13 @@ namespace algorand {
             providers.indexer_url = indexer_url;
             providers.port = port;
             providers.header = server_token_header;
-
+            
             int ret = sodium_init();
             UE_LOG(LogTemp, Warning, TEXT("Vertices sodium_init err_code %d"), ret);
-
+            
             m_vertex.provider = &providers;
             m_vertex.vertices_evt_handler = &vertices_evt_handler;
-
+            
             // create new vertex
             err_code = vertices_new(&m_vertex);
             UE_LOG(LogTemp, Warning, TEXT("Vertices new err_code %d"), err_code);
@@ -265,7 +269,7 @@ namespace algorand {
             else {
                 UE_LOG(LogTemp, Warning, TEXT("err_code vertices_version %d"), err_code);
             }
-
+            
             checkVTCSuccess(const_cast<char*>("Vertices version"),err_code);
             UE_LOG(LogTemp, Warning, TEXT("🏎 Running on %hs v.%u.%u.%u"),
                 version.network,
@@ -278,22 +282,22 @@ namespace algorand {
         {
             ret_code_t err_code;
             // copy private key to vertices account
-            // if(main_account.secret_key.size() != ADDRESS_LENGTH)
-            //     err_code = VTC_ERROR_INVALID_PARAM;
-            // checkVTCSuccess((char *)"Secret key length is not 32 byte", err_code);
+            if(main_account.secret_key.size() != ADDRESS_LENGTH)
+                err_code = VTC_ERROR_INVALID_PARAM;
+            checkVTCSuccess((char *)"Secret key length is not 32 byte", err_code);
 
             memset(sender_account.private_key, 0 , ADDRESS_LENGTH);
             memcpy(sender_account.private_key, (unsigned char*)main_account.secret_key.data(), ADDRESS_LENGTH);
-
+            
             // copy public key to vertices account
             unsigned char pub_key[ADDRESS_LENGTH]; 
             memset(pub_key, 0 , ADDRESS_LENGTH);
             memcpy(pub_key, main_account.public_key().data(), ADDRESS_LENGTH);
-
+            
             err_code = vertices_account_new_from_bin((char *)pub_key, &sender_account.vtc_account);
             UE_LOG(LogTemp, Warning, TEXT("err_code vertices_account_new_from_bin %d"), err_code);
 
-            return err_code;
+            return VTC_SUCCESS;
         }
 
         // restore account with mnemonic private keys
@@ -562,10 +566,10 @@ namespace algorand {
                             err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*address), &test_account.vtc_account);
                             checkVTCSuccess(const_cast<char*>("vertices_account_new_from_b32 error occured."), err_code);
                             UE_LOG(LogTemp, Warning, TEXT("Amount of account on AlgorandGetaddressbalanceGet %d"), test_account.vtc_account->amount);
-
+                            
                             response = response_builders::buildGetBalanceResponse(test_account.vtc_account->amount);
                             response.SetSuccessful(true);
-
+                            
                             err_code = vertices_account_free(test_account.vtc_account);
                             checkVTCSuccess(const_cast<char*>("vertices_account_free error occured."), err_code);
                         }
@@ -644,7 +648,7 @@ namespace algorand {
                                 FFormatNamedArguments Arguments;
                                 Arguments.Add(TEXT("Address"), FText::FromString(sender_account.vtc_account->public_b32));
                                 FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
-
+                            
                                 UE_LOG(LogTemp, Warning, TEXT("👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: %s"), *FString(sender_account.vtc_account->public_b32));
                                 UE_LOG(LogTemp, Warning,
                                     TEXT("🙄 Amount available on account is too low to pass a transaction, consider adding Algos"));
@@ -674,18 +678,18 @@ namespace algorand {
                                     (uint64_t)Request.amount.GetValue(),
                                     notes);
                             checkVTCSuccess((char *)"vertices_transaction_pay_new error occured", err_code);
-
+                            
                             unsigned char* txID = nullptr;
                             txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
-
+                            
                             size_t queue_size = 1;
                             while (queue_size && err_code == VTC_SUCCESS) {
                                 err_code = vertices_event_process(&queue_size, txID);
                             }
-
+                            
                             checkVTCSuccess((char *)"vertices_event_process error occured", err_code);
                             UE_LOG(LogTemp, Warning, TEXT("err_code Payment TX ID Success, %hs"), (const char*)txID);
-
+                            
                             err_code = vertices_account_free(sender_account.vtc_account);
                             checkVTCSuccess((char *)"vertices_account_free error occured", err_code);
                             UE_LOG(LogTemp, Warning, TEXT("VerticesPaymentTransactionGetRequest Success"));
@@ -809,7 +813,7 @@ namespace algorand {
                                 FFormatNamedArguments Arguments;
                                 Arguments.Add(TEXT("Address"), FText::FromString(sender_account.vtc_account->public_b32));
                                 FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
-
+                            
                                 UE_LOG(LogTemp, Warning, TEXT("👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: %s"), *FString(sender_account.vtc_account->public_b32));
                                 UE_LOG(LogTemp, Warning,
                                     TEXT("🙄 Amount available on account is too low to pass a transaction, consider adding Algos"));
@@ -818,7 +822,7 @@ namespace algorand {
                                 err_code = VTC_ERROR_ASSERT_FAILS;
                                 checkVTCSuccess(const_cast<char*>("Amount available on account is too low to pass a transaction, consider adding Algos"), err_code);
                             }
-
+                            
                             FString manager = Request.Manager.GetValue();
                             if ( manager.IsEmpty() )
                                 manager = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
@@ -835,7 +839,7 @@ namespace algorand {
                             checkVTCSuccess((char *)"vertices_account_new_from_b32 error occured.", err_code);
                             UE_LOG(LogTemp, Warning, TEXT("reserve account on Asset Config TX %d"), R_Account.vtc_account->amount);
                             
-
+                            
                             FString freeze = Request.Freeze.GetValue();
                             if ( freeze.IsEmpty() )
                                 freeze = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
@@ -843,7 +847,7 @@ namespace algorand {
                             err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*freeze), &F_Account.vtc_account);
                             checkVTCSuccess((char *)"vertices_account_new_from_b32 error occured.", err_code);
                             UE_LOG(LogTemp, Warning, TEXT("freeze account on Asset Config TX %d"), F_Account.vtc_account->amount);   
-
+                            
                             FString clawback = Request.Clawback.GetValue();
                             if ( clawback.IsEmpty() )
                                 clawback = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
@@ -944,11 +948,11 @@ namespace algorand {
                 account_t asnd_account, arcv_account;
                 while (1) {
                     FScopeLock lock(&m_Mutex);
-
+                
                     if (vertices_usable) {
                         VerticesSDK::VerticesAssetTransferTransactionGetResponse response;
                         vertices_usable = false;
-
+                
                         try
                         {
                             if(!loaded_)
@@ -960,13 +964,13 @@ namespace algorand {
                             // validation Request
                             auto auto_notes = StringCast<ANSICHAR>(*(Request.notes.GetValue()));
                             char* notes = (char *)auto_notes.Get();
-
+                
                             if(strlen(notes) == 0)
                             {
                                 notes = (char *) malloc(strlen("Asset Transfer Transaction"));
                                 strcpy_s(notes,  strlen("Asset Transfer Transaction"),"Asset Transfer Transaction");
                             }
-
+                
                             if ( Request.senderAddress.GetValue().Len() != PUBLIC_ADDRESS_LENGTH )
                             {
                                 err_code = VTC_ERROR_INVALID_ADDR;
@@ -981,15 +985,15 @@ namespace algorand {
                             
                             InitVertices(err_code);
                             checkVTCSuccess((char *)"When initing vertices network, an error occured", err_code);
-
+                
                             err_code = convert_Account_Vertices();
                             checkVTCSuccess((char *)"Vertices convert_Account_Vertices error", err_code);
-
+                
                             if (sender_account.vtc_account->amount < 1000) {
                                 FFormatNamedArguments Arguments;
                                 Arguments.Add(TEXT("Address"), FText::FromString(sender_account.vtc_account->public_b32));
                                 FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
-
+                
                                 UE_LOG(LogTemp, Warning, TEXT("👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: %s"), *FString(sender_account.vtc_account->public_b32));
                                 UE_LOG(LogTemp, Warning,
                                     TEXT("🙄 Amount available on account is too low to pass a transaction, consider adding Algos"));
@@ -1005,11 +1009,11 @@ namespace algorand {
                             err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*asnd), &asnd_account.vtc_account);
                             checkVTCSuccess((char *)"vertices_account_new_from_b32 error occured.", err_code);
                             UE_LOG(LogTemp, Warning, TEXT("Amount of sender_account on Asset Transfer TX %d"), asnd_account.vtc_account->amount);
-
+                
                             err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*arcv), &arcv_account.vtc_account);
                             checkVTCSuccess((char *)"vertices_account_new_from_b32 error occured.", err_code);
                             UE_LOG(LogTemp, Warning, TEXT("Amount of receiver_account on Asset Transfer TX %d"), arcv_account.vtc_account->amount);
-
+                
                             err_code = VTC_ERROR_INVALID_STATE;
                             throw SDKException(const_cast<char*>("tx_axfer are not registered"), err_code);
                             
@@ -1042,7 +1046,7 @@ namespace algorand {
                             //
                             // response = response_builders::buildAssetTransferTransactionResponse(FString(UTF8_TO_TCHAR(txID)));
                             // response.SetSuccessful(true);
-
+                
                             //free(txID);
                         }
                         catch(SDKException& e)
@@ -1059,13 +1063,13 @@ namespace algorand {
                             response.SetSuccessful(false);
                             response.SetResponseString(FString(UTF8_TO_TCHAR("Opt-In Transaction should be done at first for Asset Transfer TX.")));
                         }
-
+                
                         // after build response, execute delegate to run callback with response
                         AsyncTask(ENamedThreads::GameThread, [delegate, response]()
                         {
                             delegate.ExecuteIfBound(response);
                         });
-
+                
                         vertices_usable = true;
                         break;
                     }
@@ -1111,7 +1115,7 @@ namespace algorand {
                                 FFormatNamedArguments Arguments;
                                 Arguments.Add(TEXT("Address"), FText::FromString(sender_account.vtc_account->public_b32));
                                 FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Warning", "Go to https://bank.testnet.algorand.network/, dispense Algos to: {Address}"), Arguments));
-
+                            
                                 UE_LOG(LogTemp, Warning, TEXT("👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: %s"), *FString(sender_account.vtc_account->public_b32));
                                 UE_LOG(LogTemp, Warning,
                                     TEXT("🙄 Amount available on account is too low to pass a transaction, consider adding Algos"));
@@ -1123,7 +1127,7 @@ namespace algorand {
                             
                             // get application information
                             UE_LOG(LogTemp, Warning, TEXT("Application %u, global states"), Request.app_ID.GetValue());
-
+                            
                             app_values_t app_kv = { 0 };
                             err_code = vertices_application_get(Request.app_ID.GetValue(), &app_kv);
                             checkVTCSuccess(const_cast<char*>("vertices_application_get error occured"), err_code);
