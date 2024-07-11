@@ -8,50 +8,58 @@ namespace {
 	using Vertices = algorand::vertices::VerticesSDK;
 }
 namespace request_builders {
-	Vertices::VerticesRestoreWalletGetRequest
-	buildRestoreWalletRequest(const FString& mnemonics)
+	Vertices::VerticesInitWalletRequest
+	buildInitWalletRequest()
 	{
-		Vertices::VerticesRestoreWalletGetRequest request;
+		Vertices::VerticesInitWalletRequest request;
+		return request;
+	}
+	
+	Vertices::VerticesLoadWalletRequest
+	buildLoadWalletRequest(const FString& mnemonics)
+	{
+		Vertices::VerticesLoadWalletRequest request;
 		request.Mnemonics = mnemonics;
 		return request;
 	}
 
-	Vertices::VerticesInitializeNewWalletGetRequest
-	buildInitializeNewWalletRequest()
+	Vertices::VerticesSaveWalletRequest
+	buildSaveWalletRequest(const FString& mnemonics)
 	{
-		Vertices::VerticesInitializeNewWalletGetRequest request;
+		Vertices::VerticesSaveWalletRequest request;
+		request.Mnemonics = mnemonics;
 		return request;
 	}
 
-	Vertices::VerticesGetBackupMnemonicPhraseGetRequest
-	buildGetBackupMnemonicPhraseRequest()
+	Vertices::VerticesGetMnemonicsByAccountNameRequest
+	buildgetMnemonicsByAccountNameRequest()
 	{
-		Vertices::VerticesGetBackupMnemonicPhraseGetRequest request;
+		Vertices::VerticesGetMnemonicsByAccountNameRequest request;
 		return request;
 	}
 
-	Vertices::VerticesGenerateMnemonicsGetRequest
-	buildGenerateMnemonicsRequest()
+	Vertices::VerticesGenerateAccountFromMnemonicsRequest
+	buildgenerateAccountFromMnemonicsRequest()
 	{
-		Vertices::VerticesGenerateMnemonicsGetRequest request;
+		Vertices::VerticesGenerateAccountFromMnemonicsRequest request;
 		return request;
 	}
 
-	Vertices::VerticesGetaddressbalanceGetRequest
+	Vertices::VerticesGetAddrBalanceRequest
 	buildGetBalanceRequest(const FString& address)
 	{
-		Vertices::VerticesGetaddressbalanceGetRequest request;
+		Vertices::VerticesGetAddrBalanceRequest request;
 		request.Address = address;
 		return request;
 	}
 	
-	Vertices::VerticesPaymentTransactionGetRequest
+	Vertices::VerticesSendPayTxRequest
 		buildPaymentTransactionRequest(const FString& sender, 
 									   const FString& receiver,
 									   const FUInt64& amount,
 									   const FString& notes)
 	{
-		Vertices::VerticesPaymentTransactionGetRequest request;
+		Vertices::VerticesSendPayTxRequest request;
 		request.senderAddress = sender;
 		request.receiverAddress = receiver;
 		request.amount = amount;
@@ -59,7 +67,7 @@ namespace request_builders {
 		return request;
 	}
 
-	Vertices::VerticesAssetConfigTransactionGetRequest
+	Vertices::VerticesSendAcfgTxRequest
 		buildAssetConfigTransactionRequest(const FString& creator, 
 									   const FString& manager,
 									   const FString& reserve,
@@ -74,7 +82,7 @@ namespace request_builders {
 									   const FString& url,
 									   const FString& notes)
 	{
-		Vertices::VerticesAssetConfigTransactionGetRequest request;
+		Vertices::VerticesSendAcfgTxRequest request;
 		request.Creator = creator;
 		request.Manager = manager;
 		request.Reserve = reserve;
@@ -94,14 +102,14 @@ namespace request_builders {
 		return request;
 	}
 
-	Vertices::VerticesAssetTransferTransactionGetRequest
+	Vertices::VerticesSendAxferTxRequest
 		buildAssetTransferTransactionRequest(const FString& sender, 
 									   const FString& receiver,
 									   const FUInt64& asset_id,
 									   const FString& amount,
 									   const FString& notes)
 	{
-		Vertices::VerticesAssetTransferTransactionGetRequest request;
+		Vertices::VerticesSendAxferTxRequest request;
 		request.senderAddress = sender;
 		request.receiverAddress = receiver;
 		request.asset_id = asset_id;
@@ -110,13 +118,13 @@ namespace request_builders {
 		return request;
 	}
 
-	Vertices::VerticesApplicationCallTransactionGetRequest
+	Vertices::VerticesSendApplCallTxRequest
 		buildApplicationCallTransactionRequest(const FString& sender, 
 									   const FUInt64& app_ID,
 									   const TArray<FAppArg>& app_args,
 									   const EAppOnCompleteTX& app_complete_tx)
 	{
-		Vertices::VerticesApplicationCallTransactionGetRequest request;
+		Vertices::VerticesSendApplCallTxRequest request;
 		uint8_t index;
 		request.senderAddress = sender;
 		request.app_ID = app_ID;
@@ -143,18 +151,18 @@ namespace request_builders {
 		return request;
 	}
 
-	Vertices::VerticesArcAssetDetailsGetRequest
+	Vertices::VerticesArcAssetDetailsRequest
 		buildArcAssetDetailsRequest(const FUInt64& asset_ID)
 	{
-		Vertices::VerticesArcAssetDetailsGetRequest request;
+		Vertices::VerticesArcAssetDetailsRequest request;
 		request.asset_ID = asset_ID;
 		return request;
 	}
 
-	Vertices::VerticesAccountInformationGetRequest
+	Vertices::VerticesAccountInformationRequest
 		buildAccountInformationRequest(const FString& address)
 	{
-		Vertices::VerticesAccountInformationGetRequest request;
+		Vertices::VerticesAccountInformationRequest request;
 		request.address = address;
 		return request;
 	}

@@ -26,12 +26,12 @@ New Account is generated from mnemonic private key:
 
 void UAlgorandHandler::RunSomeLogic() {
     FScriptDelegate _delegate;
-    _delegate.BindUFunction(this, FName("OnGenerateMnemonicsCallback"));
-    algorandManager->GenerateMnemonicsCallback.Add(_delegate);
-    algorandManager->generateMnemonics();
+    _delegate.BindUFunction(this, FName("OngenerateAccountFromMnemonicsCallback"));
+    algorandManager->generateAccountFromMnemonicsCallback.Add(_delegate);
+    algorandManager->generateAccountFromMnemonics();
 }
 
-void UAlgorandHandler::OnGenerateMnemonicsCallback(const FString& output) {
+void UAlgorandHandler::OngenerateAccountFromMnemonicsCallback(const FString& output) {
     UE_LOG(LogTemp, Display, TEXT("Generated mnemonics: %s"),
         *output);
 }

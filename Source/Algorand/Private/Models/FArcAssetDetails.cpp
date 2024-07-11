@@ -19,7 +19,7 @@ FArcAssetDetails::FArcAssetDetails()
 	properties = TMap<FString, FString>();
 }
 
-FArcAssetDetails::FArcAssetDetails(const algorand::vertices::VerticesSDK::VerticesArcAssetDetailsGetResponse& response)
+FArcAssetDetails::FArcAssetDetails(const algorand::vertices::VerticesSDK::VerticesArcAssetDetailsResponse& response)
 {
 	standard = EArcType(response.standard);
 	unit_name = response.unit_name;

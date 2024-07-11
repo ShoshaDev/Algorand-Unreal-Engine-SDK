@@ -33,58 +33,64 @@ namespace {
 }
 
 /**
- * restore wallet callback 
+ * initialize algorand wallet callback 
  * @param output generated address
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRestoreWalletDelegate, const FString&, output);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInitWalletDelegate, const FString&, output);
 
 /**
- * initialize new wallet callback 
+ * load wallet callback 
  * @param output generated address
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInitializeNewWalletDelegate, const FString&, output);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLoadWalletDelegate, const FString&, output);
 
 /**
- * get backup mnemonics phrase callback 
+ * save wallet callback 
+ * @param output generated address
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSaveWalletDelegate, const FString&, output);
+
+/**
+ * get mnemonics by account name callback 
  * @param output backup mnemonics
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetBackupMnemonicPhraseDelegate, const FString&, output);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetMnemonicsByAccountNameDelegate, const FString&, output);
 
 /**
- * generate mnemonics callback 
- * @param output generated mnemonics
+ * generate account from mnemonics callback 
+ * @param output generated address
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGenerateMnemonicsDelegate, const FString&, output);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGenerateAccountFromMnemonicsDelegate, const FString&, output);
 
 /**
- * get balance callback
+ * get balance by any address callback
  * @param money account balance
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetBalanceDelegate, const FUInt64&, money);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetAddressBalanceDelegate, const FUInt64&, money);
 
 /**
- * payment tx callback
+ * send payment tx callback
  * @param txID transaction hash
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPaymentTransactionDelegate, const FString&, txID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSendPaymentTxDelegate, const FString&, txID);
 
 /**
- * asset config tx callback
+ * send asset config tx callback
  * @param txID transaction hash
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAssetConfigTransactionDelegate, const FString&, txID, const FUInt64&,  assetID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSendAssetConfigTxDelegate, const FString&, txID, const FUInt64&,  assetID);
 
 /**
- * asset transfer tx callback
+ * send asset transfer tx callback
  * @param txID transaction hash
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAssetTransferTransactionDelegate, const FString&, txID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSendAssetTransferTxDelegate, const FString&, txID);
 
 /**
- * application call tx callback
+ * send application call tx callback
  * @param txID transaction hash
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FApplicationCallTransactionDelegate, const FString&, txID, const FString&, tx_result);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSendApplicationCallTxDelegate, const FString&, txID, const FString&, tx_result);
 
 /**
  * nft details callback
@@ -243,106 +249,105 @@ public:
     UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
         FErrorDelegate ErrorDelegateCallback;
 
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "Initialize Algorand Wallet", Keywords = "Wallet"),
+			  Category = "AlgorandUnrealManager")
+	void initWallet();
+	
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+        FInitWalletDelegate InitWalletCallback;
+
 	/**
-	 * Restore Wallet
+	 * get response after initializing algorand wallet
+	 * @param response address got by initializing algorand wallet
+	 */
+    void OnInitWalletCompleteCallback(const Vertices::VerticesInitWalletResponse& response);
+
+	/**
+	 * Load Wallet
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "Load Wallet", Keywords = "Wallet"),
+			  Category = "AlgorandUnrealManager")
+	void loadWallet(const FString& mnemonics);
+	
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+	FLoadWalletDelegate LoadWalletCallback;
+	
+	/**
+	 * get response after loading wallet
+	 * @param response address got by loading wallet
+	 */
+	void OnLoadWalletCompleteCallback(const Vertices::VerticesLoadWalletResponse& response);
+
+	/**
+	 * Save Wallet
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "Save Wallet", Keywords = "wallet"),
+			  Category = "AlgorandUnrealManager")
+	void saveWallet(const FString& mnemonics);
+	
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+	FLoadWalletDelegate SaveWalletCallback;
+	
+	/**
+	 * get response after saving wallet
+	 * @param response address got by saving wallet
+	 */
+	void OnSaveWalletCompleteCallback(const Vertices::VerticesSaveWalletResponse& response);
+	
+	/**
+	 * Get Mnemonics By Account Name
 	 */
     UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "RestoreWallet", Keywords = "Wallet"),
+			  meta = (DisplayName = "Get Mnemonics By Account Name", Keywords = "wallet"),
     		  Category = "AlgorandUnrealManager")
-    void restoreWallet(const FString& mnemonics);
+    void getMnemonicsByAccountName();
 
-	/**
-	 * restore wallet callback
-	 */
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
-        FRestoreWalletDelegate RestoreWalletCallback;
+        FGetMnemonicsByAccountNameDelegate GetMnemonicsByAccountNameCallback;
 
 	/**
-	 * get response after restore wallet with mnemonics
-	 * @param response address got by restoring wallet
-	 */
-    void OnRestoreWalletCompleteCallback(const Vertices::VerticesRestoreWalletGetResponse& response);
-    
-    /**
-	 * Initialize New Wallet
-	 */
-    UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "InitializeNewWallet", Keywords = "Wallet"),
-    		  Category = "AlgorandUnrealManager")
-    void initializeNewWallet();
-
-	/**
-	 * initialize new wallet callback
-	 */
-	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
-        FInitializeNewWalletDelegate InitializeNewWalletCallback;
-
-	/**
-	 * get response after initialize new wallet
-	 * @param response address got by initializing new wallet
-	 */
-    void OnInitializeNewWalletCompleteCallback(const Vertices::VerticesInitializeNewWalletGetResponse& response);
-
-	/**
-	 * Get Backup Mnemonics Phrase
-	 */
-    UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "GetBackupMnemonicsPhrase", Keywords = "Wallet"),
-    		  Category = "AlgorandUnrealManager")
-    void getBackupMnemonicPhrase();
-
-	/**
-	 * get backup mnemonic phrase
-	 */
-	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
-        FGetBackupMnemonicPhraseDelegate GetBackupMnemonicPhraseCallback;
-
-	/**
-	 * get response of backup mnemonics phrase
+	 * Get mnemonics by account name
 	 * @param response mnemonics phrase of backup
 	 */
-    void OnGetBackupMnemonicPhraseCompleteCallback(const Vertices::VerticesGetBackupMnemonicPhraseGetResponse& response);
+    void OnGetMnemonicsByAccountNameCompleteCallback(const Vertices::VerticesGetMnemonicsByAccountNameResponse& response);
     
 	/**
-	 * Generate Mnemonics
+	 * Generate Account From mnemonics
 	 */
     UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "GenerateMnemonics", Keywords = "Wallet"),
+			  meta = (DisplayName = "Generate Account From Mnemonics", Keywords = "wallet"),
     		  Category = "AlgorandUnrealManager")
-    void generateMnemonics();
-
-	/**
-	 * generate mnemonics callback
-	 */
+    void generateAccountFromMnemonics();
+	
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
-        FGenerateMnemonicsDelegate GenerateMnemonicsCallback;
+        FGenerateAccountFromMnemonicsDelegate GenerateAccountFromMnemonicsCallback;
 
 	/**
-	 * get response after generating mnemonics
-	 * @param response mnemonics got by generating mnemonics
+	 * get response after generating account from mnemonics
+	 * @param response address got by generating account from given mnemonics
 	 */
-    void OnGenerateMnemonicsCompleteCallback(const Vertices::VerticesGenerateMnemonicsGetResponse& response);
+    void OngenerateAccountFromMnemonicsCompleteCallback(const Vertices::VerticesGenerateAccountFromMnemonicsResponse& response);
     
 	/**
 	 * get balance by specific address
 	 * 
 	 */
     UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "getBalance", Keywords = "Balance"),
+			  meta = (DisplayName = "get Address Balance", Keywords = "balance"),
     		  Category = "AlgorandUnrealManager")
-    void getBalance(const FString& address);
-
-	/**
-	 * get balance information callback
-	 */
+    void getAddressBalance(const FString& address);
+	
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
-        FGetBalanceDelegate GetBalanceCallback;
+        FGetAddressBalanceDelegate GetAddressBalanceCallback;
 
 	/**
-	 * get response after get balance
+	 * get response after getting balance
 	 * @param response token amount by specific address
 	 */
-    void OnGetBalanceCompleteCallback(const Vertices::VerticesGetaddressbalanceGetResponse& response);
+    void OnGetAddressBalanceCompleteCallback(const Vertices::VerticesGetAddrBalanceResponse& response);
 
 	/**
 	 * send payment TX to algorand node
@@ -351,25 +356,23 @@ public:
 	 * @param notes tx description when send payment tx
 	 */
     UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "sendPaymentTX", Keywords = "PaymentTX"),
+			  meta = (DisplayName = "Send Payment TX", Keywords = "pay"),
     		  Category = "AlgorandUnrealManager")
     void sendPaymentTransaction(const FString& receiverAddress,
                                 const FUInt64& amount,
                                 const FString& notes);   
-	/**
-	 * payment transaction information callback
-	 */ 
+	
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
-        FPaymentTransactionDelegate SendPaymentTransactionCallback;
+        FSendPaymentTxDelegate SendPaymentTxCallback;
 
 	/**
 	 * get response after payment tx
 	 * @param response txID after payment tx
 	 */
-    void OnSendPaymentTransactionCompleteCallback(const Vertices::VerticesPaymentTransactionGetResponse& response);
+    void OnSendPaymentTransactionCompleteCallback(const Vertices::VerticesSendPayTxResponse& response);
 
 	/**
-	 * send asset transfer TX to algorand node
+	 * send asset config TX to algorand node
 	 * @param creator address which create token
 	 * @param manager address which take token 
 	 * @param reserve address which take token 
@@ -384,7 +387,7 @@ public:
 	 * @param notes tx description when send payment tx
 	 */
 	UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "sendAssetConfigTX", Keywords = "AssetConfigTX"),
+			  meta = (DisplayName = "Send Asset Config TX", Keywords = "acfg"),
 			  Category = "AlgorandUnrealManager")
 	void sendAssetConfigTransaction(const FString& manager,
 									const FString& reserve,
@@ -397,19 +400,19 @@ public:
 									const FString& unit_name,
 									const FString& asset_name,
 									const FString& url,
-									const FString& notes);   
+									const FString& notes);
 
-	/**
-	 * asset transfer transaction information callback
-	 */ 
+    /**
+     * asset transfer transaction information callback
+     */ 
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
-	FAssetConfigTransactionDelegate SendAssetConfigTransactionCallback;
+	FSendAssetConfigTxDelegate SendAssetConfigTransactionCallback;
 
 	/**
 	 * get response after asset config tx
 	 * @param response txID after asset config tx
 	 */
-	void OnSendAssetConfigTransactionCompleteCallback(const Vertices::VerticesAssetConfigTransactionGetResponse& response);
+	void OnSendAssetConfigTransactionCompleteCallback(const Vertices::VerticesSendAcfgTxResponse& response);
 
 	/**
 	 * send asset transfer TX to algorand node
@@ -420,58 +423,50 @@ public:
 	 * @param notes tx description when send payment tx
 	 */
 	UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "sendAssetTransferTX", Keywords = "AssetTransferTX"),
+			  meta = (DisplayName = "Send Asset Transfer TX", Keywords = "axfer"),
 			  Category = "AlgorandUnrealManager")
 	void sendAssetTransferTransaction(const FString& senderAddress,
 								const FString& receiverAddress,
 								const FUInt64& asset_ID,
 								const FString& amount,
 								const FString& notes);   
-	/**
-	 * asset transfer transaction information callback
-	 */ 
+	
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
-	FAssetTransferTransactionDelegate SendAssetTransferTransactionCallback;
+	FSendAssetTransferTxDelegate SendAssetTransferTransactionCallback;
 
 	/**
 	 * get response after asset transfer tx
 	 * @param response txID after asset transfer tx
 	 */
-	void OnSendAssetTransferTransactionCompleteCallback(const Vertices::VerticesAssetTransferTransactionGetResponse& response);
+	void OnSendAssetTransferTransactionCompleteCallback(const Vertices::VerticesSendAxferTxResponse& response);
 
 	/**
 	 * send application call TX to algorand node
 	 * @param app_ID application id created by algorand node
 	 */
     UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "sendApplicationCallTX", Keywords = "ApplCallTX"),	
+			  meta = (DisplayName = "Send Application Call TX", Keywords = "applcall"),	
     		  Category = "AlgorandUnrealManager")
     void sendApplicationCallTransaction(const FUInt64& app_ID, const TArray<FAppArg>& app_Args, const EAppOnCompleteTX& app_complete_tx);
-
-	/**
-	 * application transaction information callback
-	 */
+	
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
-        FApplicationCallTransactionDelegate SendApplicationCallTransactionCallback;
+        FSendApplicationCallTxDelegate SendApplicationCallTransactionCallback;
 
 	/**
 	 * get response after application call tx
 	 * @param response txID after application call tx
 	 */ 
-    void OnSendApplicationCallTransactionCompleteCallback(const Vertices::VerticesApplicationCallTransactionGetResponse& response);
+    void OnSendApplicationCallTransactionCompleteCallback(const Vertices::VerticesSendApplCallTxResponse& response);
 
 	/**
 	 * send request to algorand node to fetch arc-asset details
 	 * @param asset_ID asset id to be fetched from algorand node
 	 */
 	UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "fetchArcAssetDetails", Keywords = "ArcAsset"),	
+			  meta = (DisplayName = "Fetch ArcAsset Details", Keywords = "arcasset"),	
 			  Category = "AlgorandUnrealManager")
 	void fetchArcAssetDetails(const FUInt64& asset_ID);
-
-	/**
-	 * arc asset details callback
-	 */
+	
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
 	FArcAssetDetailsDelegate FetchArcAssetDetailsCallback;
 
@@ -479,20 +474,17 @@ public:
 	 * get response after arc asset details
 	 * @param response after arc asset details
 	 */ 
-	void OnFetchArcAssetDetailsCompleteCallback(const Vertices::VerticesArcAssetDetailsGetResponse& response);
+	void OnFetchArcAssetDetailsCompleteCallback(const Vertices::VerticesArcAssetDetailsResponse& response);
 
 	/**
 	 * send request to algorand node to fetech account information
 	 * @param asset_ID asset id to be fetched from algorand node
 	 */
 	UFUNCTION(BlueprintCallable,
-			  meta = (DisplayName = "fetchAccountInfo", Keywords = "CreatedAsset"),	
+			  meta = (DisplayName = "Fetch Account Information", Keywords = "asset"),	
 			  Category = "AlgorandUnrealManager")
 	void fetchAccountInformation(const FString& address);
-
-	/**
-	 * account information callback
-	 */
+	
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
 	FAccountInfoDelegate FetchAccountInformationCallback;
 
@@ -500,7 +492,7 @@ public:
 	 * get response after account information
 	 * @param response after account information
 	 */ 
-	void OnFetchAccountInformationCompleteCallback(const Vertices::VerticesAccountInformationGetResponse& response);
+	void OnFetchAccountInformationCompleteCallback(const Vertices::VerticesAccountInformationResponse& response);
 	
 	/**
 	 * return world of outer

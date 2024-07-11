@@ -134,7 +134,6 @@ vertex_t m_vertex;
 
 namespace algorand {
     namespace vertices {
-
         // load thirdparty libs
         VerticesSDK::VerticesSDK() {
             loaded_ = false;
@@ -161,27 +160,10 @@ namespace algorand {
             SodiumHandle = nullptr;
         }
 
-        void VerticesSDK::setIndexerRpc(const FString& indexerRpc) {
-            myIndexerRpc = indexerRpc;
-        }
-        
-        void VerticesSDK::setAlgodRpc(const FString& algodRpc) {
-            myAlgodRpc = algodRpc;
-        }
-
-        void VerticesSDK::setAlgoPort(const int& algoPort) {
-            myAlgoPort = algoPort;
-        }
-
-        void VerticesSDK::setAlgoTokenHeader(const FString& algoTokenHeader) {
-            myAlgoTokenHeader = algoTokenHeader;
-        }
-
         void VerticesSDK::loadVerticesLibrary() {
             loaded_ = false;
             // Get the base directory of this plugin
             FString BaseDir = IPluginManager::Get().FindPlugin("Algorand")->GetBaseDir();
-            IFileManager& FileManager = IFileManager::Get();
             FString SrcSodiumPath = FPaths::Combine(*BaseDir, TEXT("Source/Vertices/Libs"));
             FString DestSodiumPath = FPaths::Combine(*BaseDir, TEXT("Binaries/Win64"));
             FString VerticesPath = FPaths::Combine(
@@ -299,65 +281,8 @@ namespace algorand {
 
             return VTC_SUCCESS;
         }
-
-        // restore account with mnemonic private keys
-        void VerticesSDK::VerticesRestoreWalletGet(const VerticesRestoreWalletGetRequest& Request, const FVerticesRestoreWalletGetDelegate& delegate)
-        {           
-            ret_code_t err_code = VTC_SUCCESS;
-            while (1)
-            {
-                FScopeLock lock(&m_Mutex);
-
-                if (vertices_usable)
-                {
-                    VerticesSDK::VerticesRestoreWalletGetResponse response;
-                    vertices_usable = false;
-            
-                    try
-                    {
-                        if(!loaded_)
-                        {
-                            UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
-                            err_code = VTC_ERROR_ASSERT_FAILS;
-                            checkVTCSuccess(const_cast<char*>("Failed loading of dll libraries."), err_code);
-                        }
-                        auto mnemonics = StringCast<ANSICHAR>(*(Request.Mnemonics.GetValue()));
-                        auto s_mnemonics = mnemonics.Get();
-                        main_account = Account::from_mnemonic(s_mnemonics);
-                        
-                        // copy private key to vertices account
-                        if(main_account.secret_key.size() != ADDRESS_LENGTH)
-                            checkVTCSuccess((char *)"Secret key length is not 32 byte", err_code);
-                        
-                        UE_LOG(LogTemp, Display, TEXT("💳 Created Core account: %s"), *FString(main_account.address.as_string.data()));
-                        
-                        response = response_builders::buildRestoreWalletResponse(FString(main_account.address.as_string.data()));
-                        response.SetSuccessful(true);
-                    }
-                    catch(SDKException& e)
-                    {
-                        response.SetSuccessful(false);
-                        response.SetResponseString(FString(e.what()));   
-                    }
-                    catch(std::exception& ex)
-                    {
-                        response.SetSuccessful(false);
-                        response.SetResponseString(FString(ex.what()));
-                    }
-
-                    AsyncTask(ENamedThreads::GameThread, [delegate, response]()
-                        {
-                            delegate.ExecuteIfBound(response);
-                        });
-
-                    vertices_usable = true;
-                    break;
-                }
-            };
-        }
-
-        // initialize new account
-        void VerticesSDK::VerticesInitializeNewWalletGet(const VerticesInitializeNewWalletGetRequest& Request, const FVerticesInitializeNewWalletGetDelegate& delegate)
+        
+        void VerticesSDK::VerticesInitWallet(const VerticesInitWalletRequest& Request, const FVerticesInitWalletDelegate& delegate)
         {           
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
@@ -366,7 +291,7 @@ namespace algorand {
                     FScopeLock lock(&m_Mutex);
                     
                     if (vertices_usable) {
-                        VerticesSDK::VerticesInitializeNewWalletGetResponse response;
+                        VerticesSDK::VerticesInitWalletResponse response;
                         vertices_usable = false;
                         
                         try
@@ -385,7 +310,7 @@ namespace algorand {
                             
                             UE_LOG(LogTemp, Display, TEXT("💳 Created Core account: %s"), *FString(main_account.address.as_string.data()));
                             
-                            response = response_builders::buildInitializeNewWalletResponse(FString(main_account.address.as_string.data()));
+                            response = response_builders::buildInitWalletResponse(FString(main_account.address.as_string.data()));
                             response.SetSuccessful(true);
                         }
                         catch(SDKException& e)
@@ -410,9 +335,118 @@ namespace algorand {
                 }
             });
         }
+        
+        void VerticesSDK::VerticesLoadWallet(const VerticesLoadWalletRequest& Request, const FVerticesLoadWalletDelegate& delegate)
+        {           
+            ret_code_t err_code = VTC_SUCCESS;
+            while (1)
+            {
+                FScopeLock lock(&m_Mutex);
 
-        // get backup mnemonic phrase
-        void VerticesSDK::VerticesGetBackupMnemonicPhraseGet(const VerticesGetBackupMnemonicPhraseGetRequest& Request, const FVerticesGetBackupMnemonicPhraseGetDelegate& delegate)
+                if (vertices_usable)
+                {
+                    VerticesSDK::VerticesLoadWalletResponse response;
+                    vertices_usable = false;
+            
+                    try
+                    {
+                        if(!loaded_)
+                        {
+                            UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                            err_code = VTC_ERROR_ASSERT_FAILS;
+                            checkVTCSuccess(const_cast<char*>("Failed loading of dll libraries."), err_code);
+                        }
+                        auto mnemonics = StringCast<ANSICHAR>(*(Request.Mnemonics.GetValue()));
+                        auto s_mnemonics = mnemonics.Get();
+                        main_account = Account::from_mnemonic(s_mnemonics);
+                        
+                        // copy private key to vertices account
+                        if(main_account.secret_key.size() != ADDRESS_LENGTH)
+                            checkVTCSuccess((char *)"Secret key length is not 32 byte", err_code);
+                        
+                        UE_LOG(LogTemp, Display, TEXT("💳 Created Core account: %s"), *FString(main_account.address.as_string.data()));
+                        
+                        response = response_builders::buildLoadWalletResponse(FString(main_account.address.as_string.data()));
+                        response.SetSuccessful(true);
+                    }
+                    catch(SDKException& e)
+                    {
+                        response.SetSuccessful(false);
+                        response.SetResponseString(FString(e.what()));   
+                    }
+                    catch(std::exception& ex)
+                    {
+                        response.SetSuccessful(false);
+                        response.SetResponseString(FString(ex.what()));
+                    }
+
+                    AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+                        {
+                            delegate.ExecuteIfBound(response);
+                        });
+
+                    vertices_usable = true;
+                    break;
+                }
+            };
+        }
+        
+        void VerticesSDK::VerticesSaveWallet(const VerticesSaveWalletRequest& Request, const FVerticesSaveWalletDelegate& delegate)
+        {           
+            ret_code_t err_code = VTC_SUCCESS;
+            while (1)
+            {
+                FScopeLock lock(&m_Mutex);
+
+                if (vertices_usable)
+                {
+                    VerticesSDK::VerticesSaveWalletResponse response;
+                    vertices_usable = false;
+            
+                    try
+                    {
+                        if(!loaded_)
+                        {
+                            UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
+                            err_code = VTC_ERROR_ASSERT_FAILS;
+                            checkVTCSuccess(const_cast<char*>("Failed loading of dll libraries."), err_code);
+                        }
+                        auto mnemonics = StringCast<ANSICHAR>(*(Request.Mnemonics.GetValue()));
+                        auto s_mnemonics = mnemonics.Get();
+                        main_account = Account::from_mnemonic(s_mnemonics);
+                        
+                        // copy private key to vertices account
+                        if(main_account.secret_key.size() != ADDRESS_LENGTH)
+                            checkVTCSuccess((char *)"Secret key length is not 32 byte", err_code);
+                        
+                        UE_LOG(LogTemp, Display, TEXT("💳 Created Core account: %s"), *FString(main_account.address.as_string.data()));
+                        
+                        response = response_builders::buildSaveWalletResponse(FString(main_account.address.as_string.data()));
+                        response.SetSuccessful(true);
+                    }
+                    catch(SDKException& e)
+                    {
+                        response.SetSuccessful(false);
+                        response.SetResponseString(FString(e.what()));   
+                    }
+                    catch(std::exception& ex)
+                    {
+                        response.SetSuccessful(false);
+                        response.SetResponseString(FString(ex.what()));
+                    }
+
+                    AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+                        {
+                            delegate.ExecuteIfBound(response);
+                        });
+
+                    vertices_usable = true;
+                    break;
+                }
+            };
+        }
+        
+        void VerticesSDK::VerticesGetMnemonicsByAccountName(const VerticesGetMnemonicsByAccountNameRequest& Request, const FVerticesGetMnemonicsByAccountNameDelegate& delegate)
         {           
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
@@ -421,7 +455,7 @@ namespace algorand {
                     FScopeLock lock(&m_Mutex);
 
                     if (vertices_usable) {
-                        VerticesSDK::VerticesGetBackupMnemonicPhraseGetResponse response;
+                        VerticesSDK::VerticesGetMnemonicsByAccountNameResponse response;
                         vertices_usable = false;
                         
                         try
@@ -446,9 +480,9 @@ namespace algorand {
                             Account account{pub_key, secret_key};
 
                             std::string mnemonics = account.mnemonic();
-                            UE_LOG(LogTemp, Warning, TEXT("VerticesGetBackupMnemonicPhraseGet mnemonics of backup %s"), *FString(mnemonics.data()));
+                            UE_LOG(LogTemp, Warning, TEXT("VerticesGetMnemonicsByAccountName mnemonics of backup %s"), *FString(mnemonics.data()));
                             
-                            response = response_builders::buildGetBackupMnemonicPhraseResponse(FString(mnemonics.data()));
+                            response = response_builders::buildGetMnemonicsByAccountNameResponse(FString(mnemonics.data()));
                             response.SetSuccessful(true);
                         }
                         catch(SDKException& e)
@@ -473,9 +507,8 @@ namespace algorand {
                 }
             });
         }
-
-        // generate mnemonics
-        void VerticesSDK::VerticesGenerateMnemonicsGet(const VerticesGenerateMnemonicsGetRequest& Request, const FVerticesGenerateMnemonicsGetDelegate& delegate)
+        
+        void VerticesSDK::VerticesGenerateAccountFromMnemonics(const VerticesGenerateAccountFromMnemonicsRequest& Request, const FVerticesGenerateAccountFromMnemonicsDelegate& delegate)
         {           
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
@@ -484,7 +517,7 @@ namespace algorand {
                     FScopeLock lock(&m_Mutex);
 
                     if (vertices_usable) {
-                        VerticesSDK::VerticesGenerateMnemonicsGetResponse response;
+                        VerticesSDK::VerticesGenerateAccountFromMnemonicsResponse response;
                         vertices_usable = false;
                         
                         try
@@ -498,9 +531,9 @@ namespace algorand {
                             Account account = Account::initialize_new();
                             
                             std::string mnemonics = account.mnemonic();
-                            UE_LOG(LogTemp, Warning, TEXT("VerticesGetBackupMnemonicPhraseGet mnemonics of backup %s"), *FString(mnemonics.data()));
+                            UE_LOG(LogTemp, Warning, TEXT("VerticesGetMnemonicsByAccountName mnemonics of backup %s"), *FString(mnemonics.data()));
                             
-                            response = response_builders::buildGenerateMnemonicsResponse(FString(mnemonics.data()));
+                            response = response_builders::buildGenerateAccountFromMnemonicsResponse(FString(mnemonics.data()));
                             response.SetSuccessful(true);
                         }
                         catch(SDKException& e)
@@ -526,7 +559,7 @@ namespace algorand {
             });
         }
 
-        void VerticesSDK::VerticesGetaddressbalanceGet(const VerticesGetaddressbalanceGetRequest& Request, const FVerticesGetaddressbalanceGetDelegate& delegate)
+        void VerticesSDK::VerticesGetAddrBalance(const VerticesGetAddrBalanceRequest& Request, const FVerticesGetAddrBalanceDelegate& delegate)
         {            
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
@@ -536,7 +569,7 @@ namespace algorand {
                     FScopeLock lock(&m_Mutex);
                     
                     if (vertices_usable) {
-                        VerticesSDK::VerticesGetaddressbalanceGetResponse response;
+                        VerticesSDK::VerticesGetAddrBalanceResponse response;
                         vertices_usable = false;
 
                         try
@@ -565,9 +598,9 @@ namespace algorand {
                             
                             err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*address), &test_account.vtc_account);
                             checkVTCSuccess(const_cast<char*>("vertices_account_new_from_b32 error occured."), err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("Amount of account on AlgorandGetaddressbalanceGet %d"), test_account.vtc_account->amount);
+                            UE_LOG(LogTemp, Warning, TEXT("Amount of account on AlgorandGetAddrBalance %d"), test_account.vtc_account->amount);
                             
-                            response = response_builders::buildGetBalanceResponse(test_account.vtc_account->amount);
+                            response = response_builders::buildGetAddrBalanceResponse(test_account.vtc_account->amount);
                             response.SetSuccessful(true);
                             
                             err_code = vertices_account_free(test_account.vtc_account);
@@ -602,7 +635,8 @@ namespace algorand {
             });
         }
 
-        void VerticesSDK::VerticesPaymentTransactionGet(const VerticesPaymentTransactionGetRequest& Request, const FVerticesPaymentTransactionGetDelegate& delegate)
+        // transactions
+        void VerticesSDK::VerticesSendPayTx(const VerticesSendPayTxRequest& Request, const FVerticesSendPayTxDelegate& delegate)
         {
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
@@ -612,7 +646,7 @@ namespace algorand {
                     FScopeLock lock(&m_Mutex);
 
                     if (vertices_usable) {
-                        VerticesSDK::VerticesPaymentTransactionGetResponse response;
+                        VerticesSDK::VerticesSendPayTxResponse response;
                         vertices_usable = false;
 
                         try
@@ -692,9 +726,9 @@ namespace algorand {
                             
                             err_code = vertices_account_free(sender_account.vtc_account);
                             checkVTCSuccess((char *)"vertices_account_free error occured", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("VerticesPaymentTransactionGetRequest Success"));
+                            UE_LOG(LogTemp, Warning, TEXT("VerticesSendPayTxRequest Success"));
 
-                            response = response_builders::buildPaymentTransactionResponse(FString(UTF8_TO_TCHAR(txID)));
+                            response = response_builders::buildSendPayTxResponse(FString(UTF8_TO_TCHAR(txID)));
                             response.SetSuccessful(true);
 
                             //free(txID);
@@ -727,7 +761,7 @@ namespace algorand {
             });
         }
         
-        void VerticesSDK::VerticesAssetConfigTransactionGet(const VerticesAssetConfigTransactionGetRequest& Request, const FVerticesAssetConfigTransactionGetDelegate& delegate)
+        void VerticesSDK::VerticesSendAcfgTx(const VerticesSendAcfgTxRequest& Request, const FVerticesSendAcfgTxDelegate& delegate)
         {
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
@@ -737,7 +771,7 @@ namespace algorand {
                     FScopeLock lock(&m_Mutex);
 
                     if (vertices_usable) {
-                        VerticesSDK::VerticesAssetConfigTransactionGetResponse response;
+                        VerticesSDK::VerticesSendAcfgTxResponse response;
                         vertices_usable = false;
 
                         try
@@ -884,16 +918,16 @@ namespace algorand {
                             // }
                             //
                             // checkVTCSuccess((char *)"vertices_event_process error occured", err_code);
-                            // UE_LOG(LogTemp, Warning, TEXT("err_code Asset Config TX ID Success, %hs"), (const char*)txID);
+                            // UE_LOG(LogTemp, Warning, TEXT("err_code Asset Config TX ID Success, %s"), (const char*)txID);
                             //
                             // err_code = vertices_account_free(sender_account.vtc_account);
                             // checkVTCSuccess((char *)"vertices_account_free error occured", err_code);
-                            // UE_LOG(LogTemp, Warning, TEXT("VerticesAssetConfigTransactionGetRequest Success"));
+                            // UE_LOG(LogTemp, Warning, TEXT("VerticesSendAcfgTxRequest Success"));
                             //
                             // InitVertices(err_code);
                             // checkVTCSuccess((char *)"When reiniting vertices network, an error occured", err_code);
                             //
-                            // UE_LOG(LogTemp, Warning, TEXT("Asset Config TX ASSET TX Success, %hs"), (const char*)UTF8_TO_TCHAR(txID));
+                            // UE_LOG(LogTemp, Warning, TEXT("Asset Config TX ASSET TX Success, %s"), (const char*)UTF8_TO_TCHAR(txID));
                             // // uint64 asset_id;
                             //
                             // err_code = VTC_ERROR_INVALID_STATE;
@@ -940,7 +974,7 @@ namespace algorand {
             });
         }
 
-        void VerticesSDK::VerticesAssetTransferTransactionGet(const VerticesAssetTransferTransactionGetRequest& Request, const FVerticesAssetTransferTransactionGetDelegate& delegate)
+        void VerticesSDK::VerticesSendAxferTx(const VerticesSendAxferTxRequest& Request, const FVerticesSendAxferTxDelegate& delegate)
         {
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
@@ -950,7 +984,7 @@ namespace algorand {
                     FScopeLock lock(&m_Mutex);
                 
                     if (vertices_usable) {
-                        VerticesSDK::VerticesAssetTransferTransactionGetResponse response;
+                        VerticesSDK::VerticesSendAxferTxResponse response;
                         vertices_usable = false;
                 
                         try
@@ -1038,11 +1072,11 @@ namespace algorand {
                             // }
                             //
                             // checkVTCSuccess((char *)"vertices_event_process error occured", err_code);
-                            // UE_LOG(LogTemp, Warning, TEXT("err_code Asset Transfer TX ID Success, %hs"), (const char*)txID);
+                            // UE_LOG(LogTemp, Warning, TEXT("err_code Asset Transfer TX ID Success, %s"), (const char*)txID);
                             //
                             // err_code = vertices_account_free(sender_account.vtc_account);
                             // checkVTCSuccess((char *)"vertices_account_free error occured", err_code);
-                            // UE_LOG(LogTemp, Warning, TEXT("VerticesAssetTransferTransactionGetRequest Success"));
+                            // UE_LOG(LogTemp, Warning, TEXT("VerticesSendAxferTxRequest Success"));
                             //
                             // response = response_builders::buildAssetTransferTransactionResponse(FString(UTF8_TO_TCHAR(txID)));
                             // response.SetSuccessful(true);
@@ -1077,7 +1111,7 @@ namespace algorand {
             });
         }
         
-        void VerticesSDK::VerticesApplicationCallTransactionGet(const VerticesApplicationCallTransactionGetRequest& Request, const FVerticesApplicationCallTransactionGetDelegate& delegate)
+        void VerticesSDK::VerticesSendApplCallTx(const VerticesSendApplCallTxRequest& Request, const FVerticesSendApplCallTxDelegate& delegate)
         {
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
@@ -1087,7 +1121,7 @@ namespace algorand {
                     FScopeLock lock(&m_Mutex);
 
                     if (vertices_usable) {
-                        VerticesSDK::VerticesApplicationCallTransactionGetResponse response;
+                        VerticesSDK::VerticesSendApplCallTxResponse response;
                         vertices_usable = false;
 
                         try
@@ -1126,7 +1160,7 @@ namespace algorand {
                             }
                             
                             // get application information
-                            UE_LOG(LogTemp, Warning, TEXT("Application %u, global states"), Request.app_ID.GetValue());
+                            UE_LOG(LogTemp, Warning, TEXT("Application %llu, global states"), Request.app_ID.GetValue());
                             
                             app_values_t app_kv = { 0 };
                             err_code = vertices_application_get(Request.app_ID.GetValue(), &app_kv);
@@ -1177,7 +1211,7 @@ namespace algorand {
 //
 //                             // checkVTCSuccess((char *)"When getting logs after NoOp Tx, an error occured", err_code);
 //                             // UE_LOG(LogTemp, Warning, TEXT("👉 Haha This is NoOp Tx Logs Status: %llu"), (long long unsigned) err_code);
-//                             // UE_LOG(LogTemp, Warning, TEXT("👉 Haha This is logs: %hs"), (const char *) logs);
+//                             // UE_LOG(LogTemp, Warning, TEXT("👉 Haha This is logs: %s"), (const char *) logs);
 //                             /*unsigned char * u8_logs = new unsigned char[strlen((const char*)logs)];
 //                             memset(u8_logs, 0, strlen((const char*)logs));
 //                             len = strlen((const char*)logs);
@@ -1223,16 +1257,21 @@ namespace algorand {
             });
         }
 
-        void VerticesSDK::checkVTCSuccess(ret_code_t& err_code)
-        {
-            if(err_code != VTC_SUCCESS)
-                throw SDKException(err_code);
+        // Vertices Setters
+        void VerticesSDK::setIndexerRpc(const FString& indexerRpc) {
+            myIndexerRpc = indexerRpc;
+        }
+        
+        void VerticesSDK::setAlgodRpc(const FString& algodRpc) {
+            myAlgodRpc = algodRpc;
         }
 
-        void VerticesSDK::checkVTCSuccess(char* Msg, ret_code_t& err_code)
-        {
-            if(err_code != VTC_SUCCESS)
-                throw SDKException(Msg, err_code);
+        void VerticesSDK::setAlgoPort(const int& algoPort) {
+            myAlgoPort = algoPort;
+        }
+
+        void VerticesSDK::setAlgoTokenHeader(const FString& algoTokenHeader) {
+            myAlgoTokenHeader = algoTokenHeader;
         }
 
         void VerticesSDK::setHTTPCURLs() 
@@ -1262,6 +1301,19 @@ namespace algorand {
             {
                 UE_LOG(LogTemp, Display, TEXT("Failed to load C-Vertices-sdk.dll & libsodium.dll. Error: %s"), *FString(ex.what()));
             }
+        }
+
+        // Vertices Exception Process
+        void VerticesSDK::checkVTCSuccess(ret_code_t& err_code)
+        {
+            if(err_code != VTC_SUCCESS)
+                throw SDKException(err_code);
+        }
+
+        void VerticesSDK::checkVTCSuccess(char* Msg, ret_code_t& err_code)
+        {
+            if(err_code != VTC_SUCCESS)
+                throw SDKException(Msg, err_code);
         }
     }
 }

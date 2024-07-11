@@ -36,172 +36,190 @@ void UnrealApi::setIndexerRpcInfo(const FString& indexerRpc, const uint64_t& ind
     myIndexerPort = indexerPort;
     myIndexerTokenHeader = indexerTokenHeader;
 }
-    
-void UnrealApi::AlgorandRestoreWalletGet(const Vertices::VerticesRestoreWalletGetRequest& Request, const FAlgorandRestoreWalletGetDelegate& Delegate) const
+
+void UnrealApi::AlgorandAPIInitWallet(const Vertices::VerticesInitWalletRequest& Request, const FAlgorandAPIInitWalletDelegate& Delegate) const
 {
-    TSharedRef<Vertices::FVerticesRestoreWalletGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesRestoreWalletGetDelegate>());
+    TSharedRef<Vertices::FVerticesInitWalletDelegate> delegatePtr(MakeShared<Vertices::FVerticesInitWalletDelegate>());
     
-    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesRestoreWalletGetResponse& response) {
-        OnAlgorandRestoreWalletGetResponse(response, Delegate);
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesInitWalletResponse& response) {
+        OnAlgorandAPIInitWalletResponse(response, Delegate);
     });
-    vertices_->VerticesRestoreWalletGet( Request, delegatePtr.Get());
+    vertices_->VerticesInitWallet( Request, delegatePtr.Get());
+}
+
+    /**
+     * @brief callback after initialize new wallet
+     */
+    void UnrealApi::OnAlgorandAPIInitWalletResponse(const Vertices::VerticesInitWalletResponse& response, const FAlgorandAPIInitWalletDelegate& Delegate) const
+{
+    Delegate.ExecuteIfBound(response);
+}
+    
+void UnrealApi::AlgorandAPILoadWallet(const Vertices::VerticesLoadWalletRequest& Request, const FAlgorandAPILoadWalletDelegate& Delegate) const
+{
+    TSharedRef<Vertices::FVerticesLoadWalletDelegate> delegatePtr(MakeShared<Vertices::FVerticesLoadWalletDelegate>());
+    
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesLoadWalletResponse& response) {
+        OnAlgorandAPILoadWalletResponse(response, Delegate);
+    });
+    vertices_->VerticesLoadWallet( Request, delegatePtr.Get());
 }
  
 /**
  * @brief callback after restore wallet
  */
-void UnrealApi::OnAlgorandRestoreWalletGetResponse(const Vertices::VerticesRestoreWalletGetResponse& response, const FAlgorandRestoreWalletGetDelegate& Delegate) const
+void UnrealApi::OnAlgorandAPILoadWalletResponse(const Vertices::VerticesLoadWalletResponse& response, const FAlgorandAPILoadWalletDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
-}
-   
-void UnrealApi::AlgorandInitializeNewWalletGet(const Vertices::VerticesInitializeNewWalletGetRequest& Request, const FAlgorandInitializeNewWalletGetDelegate& Delegate) const
-{
-    TSharedRef<Vertices::FVerticesInitializeNewWalletGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesInitializeNewWalletGetDelegate>());
-    
-    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesInitializeNewWalletGetResponse& response) {
-        OnAlgorandInitializeNewWalletGetResponse(response, Delegate);
-    });
-    vertices_->VerticesInitializeNewWalletGet( Request, delegatePtr.Get());
 }
 
-/**
- * @brief callback after initialize new wallet
- */
-void UnrealApi::OnAlgorandInitializeNewWalletGetResponse(const Vertices::VerticesInitializeNewWalletGetResponse& response, const FAlgorandInitializeNewWalletGetDelegate& Delegate) const
+void UnrealApi::AlgorandAPISaveWallet(const Vertices::VerticesSaveWalletRequest& Request, const FAlgorandAPISaveWalletDelegate& Delegate) const
+{
+    TSharedRef<Vertices::FVerticesSaveWalletDelegate> delegatePtr(MakeShared<Vertices::FVerticesSaveWalletDelegate>());
+    
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesSaveWalletResponse& response) {
+        OnAlgorandAPISaveWalletResponse(response, Delegate);
+    });
+    vertices_->VerticesSaveWallet( Request, delegatePtr.Get());
+}
+ 
+    /**
+     * @brief callback after restore wallet
+     */
+    void UnrealApi::OnAlgorandAPISaveWalletResponse(const Vertices::VerticesSaveWalletResponse& response, const FAlgorandAPISaveWalletDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
 }
     
-void UnrealApi::AlgorandGetBackupMnemonicPhraseGet(const Vertices::VerticesGetBackupMnemonicPhraseGetRequest& Request, const FAlgorandGetBackupMnemonicPhraseGetDelegate& Delegate) const
+void UnrealApi::AlgorandAPIGetMnemonicsByAccountName(const Vertices::VerticesGetMnemonicsByAccountNameRequest& Request, const FAlgorandAPIGetMnemonicsByAccountNameDelegate& Delegate) const
 {
-    TSharedRef<Vertices::FVerticesGetBackupMnemonicPhraseGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesGetBackupMnemonicPhraseGetDelegate>());
+    TSharedRef<Vertices::FVerticesGetMnemonicsByAccountNameDelegate> delegatePtr(MakeShared<Vertices::FVerticesGetMnemonicsByAccountNameDelegate>());
     
-    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesGetBackupMnemonicPhraseGetResponse& response) {
-        OnAlgorandGetBackupMnemonicPhraseGetResponse(response, Delegate);
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesGetMnemonicsByAccountNameResponse& response) {
+        OnAlgorandAPIGetMnemonicsByAccountNameResponse(response, Delegate);
     });
-    vertices_->VerticesGetBackupMnemonicPhraseGet( Request, delegatePtr.Get());
+    vertices_->VerticesGetMnemonicsByAccountName( Request, delegatePtr.Get());
 }
 
 /**
  * @brief callback after get backup mnemonic phrase
  */
-void UnrealApi::OnAlgorandGetBackupMnemonicPhraseGetResponse(const Vertices::VerticesGetBackupMnemonicPhraseGetResponse& response, const FAlgorandGetBackupMnemonicPhraseGetDelegate& Delegate) const
+void UnrealApi::OnAlgorandAPIGetMnemonicsByAccountNameResponse(const Vertices::VerticesGetMnemonicsByAccountNameResponse& response, const FAlgorandAPIGetMnemonicsByAccountNameDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
 }
     
-void UnrealApi::AlgorandGenerateMnemonicsGet(const Vertices::VerticesGenerateMnemonicsGetRequest& Request, const FAlgorandGenerateMnemonicsGetDelegate& Delegate) const
+void UnrealApi::AlgorandAPIGenerateAccountFromMnemonics(const Vertices::VerticesGenerateAccountFromMnemonicsRequest& Request, const FAlgorandAPIGenerateAccountFromMnemonicsDelegate& Delegate) const
 {
-    TSharedRef<Vertices::FVerticesGenerateMnemonicsGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesGenerateMnemonicsGetDelegate>());
+    TSharedRef<Vertices::FVerticesGenerateAccountFromMnemonicsDelegate> delegatePtr(MakeShared<Vertices::FVerticesGenerateAccountFromMnemonicsDelegate>());
     
-    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesGenerateMnemonicsGetResponse& response) {
-        OnAlgorandGenerateMnemonicsGetResponse(response, Delegate);
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesGenerateAccountFromMnemonicsResponse& response) {
+        OnAlgorandAPIGenerateAccountFromMnemonicsGetResponse(response, Delegate);
     });
-    vertices_->VerticesGenerateMnemonicsGet( Request, delegatePtr.Get());
+    vertices_->VerticesGenerateAccountFromMnemonics( Request, delegatePtr.Get());
 }
 
 /**
  * @brief callback after generate mnemonics
  */
-void UnrealApi::OnAlgorandGenerateMnemonicsGetResponse(const Vertices::VerticesGenerateMnemonicsGetResponse& response, const FAlgorandGenerateMnemonicsGetDelegate& Delegate) const
+void UnrealApi::OnAlgorandAPIGenerateAccountFromMnemonicsGetResponse(const Vertices::VerticesGenerateAccountFromMnemonicsResponse& response, const FAlgorandAPIGenerateAccountFromMnemonicsDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
 }
 
-void UnrealApi::AlgorandGetaddressbalanceGet(const Vertices::VerticesGetaddressbalanceGetRequest& Request, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const
+void UnrealApi::AlgorandAPIGetAddrBalance(const Vertices::VerticesGetAddrBalanceRequest& Request, const FAlgorandAPIGetAddrBalanceDelegate& Delegate) const
 {
-    TSharedRef<Vertices::FVerticesGetaddressbalanceGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesGetaddressbalanceGetDelegate>());
+    TSharedRef<Vertices::FVerticesGetAddrBalanceDelegate> delegatePtr(MakeShared<Vertices::FVerticesGetAddrBalanceDelegate>());
     
-    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesGetaddressbalanceGetResponse& response) {
-        OnAlgorandGetaddressbalanceGetResponse(response, Delegate);
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesGetAddrBalanceResponse& response) {
+        OnAlgorandAPIGetAddrBalanceResponse(response, Delegate);
     });
-    vertices_->VerticesGetaddressbalanceGet( Request, delegatePtr.Get());
+    vertices_->VerticesGetAddrBalance( Request, delegatePtr.Get());
     
 }
 
 /**
  * @brief callback after get balance
  */
-void UnrealApi::OnAlgorandGetaddressbalanceGetResponse(const Vertices::VerticesGetaddressbalanceGetResponse& response, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const
+void UnrealApi::OnAlgorandAPIGetAddrBalanceResponse(const Vertices::VerticesGetAddrBalanceResponse& response, const FAlgorandAPIGetAddrBalanceDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
 }
 
-void UnrealApi::AlgorandPaymentTransactionGet(const Vertices::VerticesPaymentTransactionGetRequest& Request, const FAlgorandPaymentTransactionGetDelegate& Delegate) const
+void UnrealApi::AlgorandAPISendPayTx(const Vertices::VerticesSendPayTxRequest& Request, const FAlgorandAPISendPayTxDelegate& Delegate) const
 {
-    TSharedRef<Vertices::FVerticesPaymentTransactionGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesPaymentTransactionGetDelegate>());
+    TSharedRef<Vertices::FVerticesSendPayTxDelegate> delegatePtr(MakeShared<Vertices::FVerticesSendPayTxDelegate>());
 
-    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesPaymentTransactionGetResponse& response) {
-        OnAlgorandPaymentTransactionGetResponse(response, Delegate);
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesSendPayTxResponse& response) {
+        OnAlgorandAPISendPayTxResponse(response, Delegate);
         });
-    vertices_->VerticesPaymentTransactionGet(Request, delegatePtr.Get());
+    vertices_->VerticesSendPayTx(Request, delegatePtr.Get());
 }
 
 /**
  * @brief callback after payment tx
  */
-void UnrealApi::OnAlgorandPaymentTransactionGetResponse(const Vertices::VerticesPaymentTransactionGetResponse& response, const FAlgorandPaymentTransactionGetDelegate& Delegate) const
+void UnrealApi::OnAlgorandAPISendPayTxResponse(const Vertices::VerticesSendPayTxResponse& response, const FAlgorandAPISendPayTxDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
 }
 
-void UnrealApi::AlgorandAssetConfigTransactionGet(const Vertices::VerticesAssetConfigTransactionGetRequest& Request, const FAlgorandAssetConfigTransactionGetDelegate& Delegate) const
+void UnrealApi::AlgorandAPISendAcfgTx(const Vertices::VerticesSendAcfgTxRequest& Request, const FAlgorandAPISendAcfgTxDelegate& Delegate) const
 {
-    TSharedRef<Vertices::FVerticesAssetConfigTransactionGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesAssetConfigTransactionGetDelegate>());
+    TSharedRef<Vertices::FVerticesSendAcfgTxDelegate> delegatePtr(MakeShared<Vertices::FVerticesSendAcfgTxDelegate>());
 
-    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesAssetConfigTransactionGetResponse& response) {
-        OnAlgorandAssetConfigTransactionGetResponse(response, Delegate);
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesSendAcfgTxResponse& response) {
+        OnAlgorandAPISendAcfgTxResponse(response, Delegate);
         });
-    vertices_->VerticesAssetConfigTransactionGet(Request, delegatePtr.Get());
+    vertices_->VerticesSendAcfgTx(Request, delegatePtr.Get());
 }
 
 /**
  * @brief callback after asset config tx
  */
-void UnrealApi::OnAlgorandAssetConfigTransactionGetResponse(const Vertices::VerticesAssetConfigTransactionGetResponse& response, const FAlgorandAssetConfigTransactionGetDelegate& Delegate) const
+void UnrealApi::OnAlgorandAPISendAcfgTxResponse(const Vertices::VerticesSendAcfgTxResponse& response, const FAlgorandAPISendAcfgTxDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
 }
 
-void UnrealApi::AlgorandAssetTransferTransactionGet(const Vertices::VerticesAssetTransferTransactionGetRequest& Request, const FAlgorandAssetTransferTransactionGetDelegate& Delegate) const
+void UnrealApi::AlgorandAPISendAxferTx(const Vertices::VerticesSendAxferTxRequest& Request, const FAlgorandAPISendAxferTxDelegate& Delegate) const
 {
-    TSharedRef<Vertices::FVerticesAssetTransferTransactionGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesAssetTransferTransactionGetDelegate>());
+    TSharedRef<Vertices::FVerticesSendAxferTxDelegate> delegatePtr(MakeShared<Vertices::FVerticesSendAxferTxDelegate>());
 
-    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesAssetTransferTransactionGetResponse& response) {
-        OnAlgorandAssetTransferTransactionGetResponse(response, Delegate);
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesSendAxferTxResponse& response) {
+        OnAlgorandAPISendAxferTxResponse(response, Delegate);
         });
-    vertices_->VerticesAssetTransferTransactionGet(Request, delegatePtr.Get());
+    vertices_->VerticesSendAxferTx(Request, delegatePtr.Get());
 }
 
 /**
  * @brief callback after asset transfer tx
  */
-void UnrealApi::OnAlgorandAssetTransferTransactionGetResponse(const Vertices::VerticesAssetTransferTransactionGetResponse& response, const FAlgorandAssetTransferTransactionGetDelegate& Delegate) const
+void UnrealApi::OnAlgorandAPISendAxferTxResponse(const Vertices::VerticesSendAxferTxResponse& response, const FAlgorandAPISendAxferTxDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
 }
     
-void UnrealApi::AlgorandApplicationCallTransactionGet(const Vertices::VerticesApplicationCallTransactionGetRequest& Request, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const
+void UnrealApi::AlgorandAPISendApplCallTx(const Vertices::VerticesSendApplCallTxRequest& Request, const FAlgorandAPISendApplCallTxDelegate& Delegate) const
 {
-    TSharedRef<Vertices::FVerticesApplicationCallTransactionGetDelegate> delegatePtr(MakeShared<Vertices::FVerticesApplicationCallTransactionGetDelegate>());
+    TSharedRef<Vertices::FVerticesSendApplCallTxDelegate> delegatePtr(MakeShared<Vertices::FVerticesSendApplCallTxDelegate>());
 
-    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesApplicationCallTransactionGetResponse& response) {
-        OnAlgorandApplicationCallTransactionGetResponse(response, Delegate);
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesSendApplCallTxResponse& response) {
+        OnAlgorandAPISendApplCallTxResponse(response, Delegate);
     });
 
-    vertices_->VerticesApplicationCallTransactionGet(Request, delegatePtr.Get());
+    vertices_->VerticesSendApplCallTx(Request, delegatePtr.Get());
 }
 
 /**
  * @brief callback after application call tx
  */
-void UnrealApi::OnAlgorandApplicationCallTransactionGetResponse(const Vertices::VerticesApplicationCallTransactionGetResponse& response, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const
+void UnrealApi::OnAlgorandAPISendApplCallTxResponse(const Vertices::VerticesSendApplCallTxResponse& response, const FAlgorandAPISendApplCallTxDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
 }
 
-void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetailsGetRequest& Request, const FAlgorandArcAssetDetailsGetDelegate& Delegate) const
+void UnrealApi::AlgorandAPIArcAssetDetails(const Vertices::VerticesArcAssetDetailsRequest& Request, const FAlgorandAPIArcAssetDetailsDelegate& Delegate) const
 {
     AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, Delegate]()
     {   
@@ -217,8 +235,8 @@ void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetai
             std::string s_url = param_url.Get();
             arc03_data.from_asset_url(s_url);
             
-            delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesArcAssetDetailsGetResponse& response) {
-                OnAlgorandArcAssetDetailsGetResponse(response, Delegate);
+            delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesArcAssetDetailsResponse& response) {
+                OnAlgorandAPIArcAssetDetailsResponse(response, Delegate);
             });
 
             ArcResponseBuilders::buildArcAssetDetailsResponse(arc03_data, delegatePtr.Get());
@@ -231,8 +249,8 @@ void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetai
             arc19_data.ParseASAUrl();
             arc19_data.from_temp_ipfs();
 
-            delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesArcAssetDetailsGetResponse& response) {
-                OnAlgorandArcAssetDetailsGetResponse(response, Delegate);
+            delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesArcAssetDetailsResponse& response) {
+                OnAlgorandAPIArcAssetDetailsResponse(response, Delegate);
             });
 
             ArcResponseBuilders::buildArcAssetDetailsResponse(arc19_data, delegatePtr.Get());
@@ -246,18 +264,18 @@ void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetai
             std::string s_tx_note = tx_note.Get();
             arc69_data.from_tx_note(s_tx_note);
 
-            delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesArcAssetDetailsGetResponse& response) {
-                OnAlgorandArcAssetDetailsGetResponse(response, Delegate);
+            delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesArcAssetDetailsResponse& response) {
+                OnAlgorandAPIArcAssetDetailsResponse(response, Delegate);
             });
 
             ArcResponseBuilders::buildArcAssetDetailsResponse(arc69_data, delegatePtr.Get());
             return;
         }
 
-        Vertices::VerticesArcAssetDetailsGetResponse response;
+        Vertices::VerticesArcAssetDetailsResponse response;
         response.SetSuccessful(false);
         response.SetResponseString("This arc asset doesn't have correct type.");
-        OnAlgorandArcAssetDetailsGetResponse(response, Delegate);
+        OnAlgorandAPIArcAssetDetailsResponse(response, Delegate);
         AsyncTask(ENamedThreads::GameThread, [Delegate, response]()
         {
             Delegate.ExecuteIfBound(response);
@@ -268,12 +286,12 @@ void UnrealApi::AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetai
 /**
  * @brief callback after arc asset details
  */
-void UnrealApi::OnAlgorandArcAssetDetailsGetResponse(const Vertices::VerticesArcAssetDetailsGetResponse& response, const FAlgorandArcAssetDetailsGetDelegate& Delegate) const
+void UnrealApi::OnAlgorandAPIArcAssetDetailsResponse(const Vertices::VerticesArcAssetDetailsResponse& response, const FAlgorandAPIArcAssetDetailsDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
 }
 
-void UnrealApi::AlgorandAccountInformationGet(const Vertices::VerticesAccountInformationGetRequest& Request, const FAlgorandAccountInformationGetDelegate& Delegate) const
+void UnrealApi::AlgorandAPIAccountInformation(const Vertices::VerticesAccountInformationRequest& Request, const FAlgorandAPIAccountInformationDelegate& Delegate) const
 {
     AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, Delegate]()
     {   
@@ -284,15 +302,15 @@ void UnrealApi::AlgorandAccountInformationGet(const Vertices::VerticesAccountInf
             AccountAsset accountInfo(myAlgodRpc, myAlgodPort, myAlgodTokenHeader);
             accountInfo.getInformation(Request.address.GetValue());
             
-            delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesAccountInformationGetResponse& response) {
-                OnAlgorandAccountInformationGetResponse(response, Delegate);
+            delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesAccountInformationResponse& response) {
+                OnAlgorandAPIAccountInformationGetResponse(response, Delegate);
             });
 
             ArcResponseBuilders::buildAccountInformationResponse(accountInfo, delegatePtr.Get());   
         }
         else
         {
-            Vertices::VerticesAccountInformationGetResponse response;
+            Vertices::VerticesAccountInformationResponse response;
             response.SetSuccessful(false);
             response.SetResponseString("Address Length is invalid.");
             
@@ -307,7 +325,7 @@ void UnrealApi::AlgorandAccountInformationGet(const Vertices::VerticesAccountInf
 /**
  * @brief callback after arc asset details
  */
-void UnrealApi::OnAlgorandAccountInformationGetResponse(const Vertices::VerticesAccountInformationGetResponse& response, const FAlgorandAccountInformationGetDelegate& Delegate) const
+void UnrealApi::OnAlgorandAPIAccountInformationGetResponse(const Vertices::VerticesAccountInformationResponse& response, const FAlgorandAPIAccountInformationDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
 }

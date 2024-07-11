@@ -2,6 +2,16 @@
 
 #pragma once
 #include "CoreMinimal.h"
+#include "VerticesApiOperations.h"
+#include "VerticesApiOperations.h"
+#include "VerticesApiOperations.h"
+#include "VerticesApiOperations.h"
+#include "VerticesApiOperations.h"
+#include "VerticesApiOperations.h"
+#include "VerticesApiOperations.h"
+#include "VerticesApiOperations.h"
+#include "VerticesApiOperations.h"
+#include "VerticesApiOperations.h"
 #include "VerticesSDK.h"
 
 namespace {
@@ -29,39 +39,30 @@ class ALGORANDAPI_API UnrealApi
 public:
     UnrealApi(TSharedPtr<algorand::vertices::VerticesSDK>&);
     ~UnrealApi();
-
-	/// restore wallet api callabck
-    DECLARE_DELEGATE_OneParam(FAlgorandRestoreWalletGetDelegate, const Vertices::VerticesRestoreWalletGetResponse&);
-
-	/// initialize new wallet api callabck
-    DECLARE_DELEGATE_OneParam(FAlgorandInitializeNewWalletGetDelegate, const Vertices::VerticesInitializeNewWalletGetResponse&);
-
-	/// get backup mnemonics phrase api callabck
-    DECLARE_DELEGATE_OneParam(FAlgorandGetBackupMnemonicPhraseGetDelegate, const Vertices::VerticesGetBackupMnemonicPhraseGetResponse&);
-
-	/// generate mnemonics api callabck
-    DECLARE_DELEGATE_OneParam(FAlgorandGenerateMnemonicsGetDelegate, const Vertices::VerticesGenerateMnemonicsGetResponse&);
-
-	/// get balance api callabck
-    DECLARE_DELEGATE_OneParam(FAlgorandGetaddressbalanceGetDelegate, const Vertices::VerticesGetaddressbalanceGetResponse&);
-
-	/// payment tx api callabck
-    DECLARE_DELEGATE_OneParam(FAlgorandPaymentTransactionGetDelegate, const Vertices::VerticesPaymentTransactionGetResponse&);
-
-	/// asset config tx api callabck
-	DECLARE_DELEGATE_OneParam(FAlgorandAssetConfigTransactionGetDelegate, const Vertices::VerticesAssetConfigTransactionGetResponse&);
-
-	/// asset transfer tx api callabck
-	DECLARE_DELEGATE_OneParam(FAlgorandAssetTransferTransactionGetDelegate, const Vertices::VerticesAssetTransferTransactionGetResponse&);
-
-	/// application call tx api callback
-    DECLARE_DELEGATE_OneParam(FAlgorandApplicationCallTransactionGetDelegate, const Vertices::VerticesApplicationCallTransactionGetResponse&);
-
-	/// arc asset details api callback
-	DECLARE_DELEGATE_OneParam(FAlgorandArcAssetDetailsGetDelegate, const Vertices::VerticesArcAssetDetailsGetResponse&);
-
-	/// account information api callback
-	DECLARE_DELEGATE_OneParam(FAlgorandAccountInformationGetDelegate, const Vertices::VerticesAccountInformationGetResponse&);
+	
+	DECLARE_DELEGATE_OneParam(FAlgorandAPIInitWalletDelegate, const Vertices::VerticesInitWalletResponse&);
+	
+    DECLARE_DELEGATE_OneParam(FAlgorandAPILoadWalletDelegate, const Vertices::VerticesLoadWalletResponse&);
+	
+	DECLARE_DELEGATE_OneParam(FAlgorandAPISaveWalletDelegate, const Vertices::VerticesSaveWalletResponse&);
+	
+    DECLARE_DELEGATE_OneParam(FAlgorandAPIGetMnemonicsByAccountNameDelegate, const Vertices::VerticesGetMnemonicsByAccountNameResponse&);
+	
+    DECLARE_DELEGATE_OneParam(FAlgorandAPIGenerateAccountFromMnemonicsDelegate, const Vertices::VerticesGenerateAccountFromMnemonicsResponse&);
+	
+    DECLARE_DELEGATE_OneParam(FAlgorandAPIGetAddrBalanceDelegate, const Vertices::VerticesGetAddrBalanceResponse&);
+	
+    DECLARE_DELEGATE_OneParam(FAlgorandAPISendPayTxDelegate, const Vertices::VerticesSendPayTxResponse&);
+	
+	DECLARE_DELEGATE_OneParam(FAlgorandAPISendAcfgTxDelegate, const Vertices::VerticesSendAcfgTxResponse&);
+	
+	DECLARE_DELEGATE_OneParam(FAlgorandAPISendAxferTxDelegate, const Vertices::VerticesSendAxferTxResponse&);
+	
+    DECLARE_DELEGATE_OneParam(FAlgorandAPISendApplCallTxDelegate, const Vertices::VerticesSendApplCallTxResponse&);
+	
+	DECLARE_DELEGATE_OneParam(FAlgorandAPIArcAssetDetailsDelegate, const Vertices::VerticesArcAssetDetailsResponse&);
+	
+	DECLARE_DELEGATE_OneParam(FAlgorandAPIAccountInformationDelegate, const Vertices::VerticesAccountInformationResponse&);
 
 	/**
 		 * @brief set algod rpc url, port, token of algorand node 
@@ -78,166 +79,181 @@ public:
 		 * @param indexerTokenHeader indexerRpc rpc token
 		 */
 	void setIndexerRpcInfo(const FString& indexerRpc, const uint64_t& indexerPort, const FString& indexerTokenHeader);
+
+	/**
+	 * @brief send api request for initializing the algorand wallet
+	 * @param Request value to send as params for calling api
+	 * @param Delegate is used to implement async task after get response as api result
+	 */
+	void AlgorandAPIInitWallet(const Vertices::VerticesInitWalletRequest& Request,
+								   const FAlgorandAPIInitWalletDelegate& Delegate = FAlgorandAPIInitWalletDelegate()) const;
 	
     /**
-     * @brief send api request for restore wallet
+     * @brief send api request for loading wallet
      * @param Request value to send as params for calling api
      * @param Delegate is used to implement async task after get response as api result
      */
-    void AlgorandRestoreWalletGet(const Vertices::VerticesRestoreWalletGetRequest& Request,
-								   const FAlgorandRestoreWalletGetDelegate& Delegate = FAlgorandRestoreWalletGetDelegate()) const;
+    void AlgorandAPILoadWallet(const Vertices::VerticesLoadWalletRequest& Request,
+								   const FAlgorandAPILoadWalletDelegate& Delegate = FAlgorandAPILoadWalletDelegate()) const;
 
 	/**
-     * @brief send api request for initialize new wallet
+	 * @brief send api request for saving wallet
+	 * @param Request value to send as params for calling api
+	 * @param Delegate is used to implement async task after get response as api result
+	 */
+	void AlgorandAPISaveWallet(const Vertices::VerticesSaveWalletRequest& Request,
+								   const FAlgorandAPISaveWalletDelegate& Delegate = FAlgorandAPISaveWalletDelegate()) const;
+
+	/**
+     * @brief send api request for Getting Mnemonic Phrase by account name
      * @param Request value to send as params for calling api
      * @param Delegate is used to implement async task after get response as api result
      */
-    void AlgorandInitializeNewWalletGet(const Vertices::VerticesInitializeNewWalletGetRequest& Request,
-								   const FAlgorandInitializeNewWalletGetDelegate& Delegate = FAlgorandInitializeNewWalletGetDelegate()) const;
+    void AlgorandAPIGetMnemonicsByAccountName(const Vertices::VerticesGetMnemonicsByAccountNameRequest& Request,
+								   const FAlgorandAPIGetMnemonicsByAccountNameDelegate& Delegate = FAlgorandAPIGetMnemonicsByAccountNameDelegate()) const;
 
 	/**
-     * @brief send api request for Get Backup Mnemonic Phrase
+     * @brief send api request for Generating new account from Mnemonics
      * @param Request value to send as params for calling api
      * @param Delegate is used to implement async task after get response as api result
      */
-    void AlgorandGetBackupMnemonicPhraseGet(const Vertices::VerticesGetBackupMnemonicPhraseGetRequest& Request,
-								   const FAlgorandGetBackupMnemonicPhraseGetDelegate& Delegate = FAlgorandGetBackupMnemonicPhraseGetDelegate()) const;
+    void AlgorandAPIGenerateAccountFromMnemonics(const Vertices::VerticesGenerateAccountFromMnemonicsRequest& Request,
+								   const FAlgorandAPIGenerateAccountFromMnemonicsDelegate& Delegate = FAlgorandAPIGenerateAccountFromMnemonicsDelegate()) const;
 
 	/**
-     * @brief send api request for Generate Mnemonics
-     * @param Request value to send as params for calling api
-     * @param Delegate is used to implement async task after get response as api result
-     */
-    void AlgorandGenerateMnemonicsGet(const Vertices::VerticesGenerateMnemonicsGetRequest& Request,
-								   const FAlgorandGenerateMnemonicsGetDelegate& Delegate = FAlgorandGenerateMnemonicsGetDelegate()) const;
-
-	/**
-	 * @brief send api request for get balance of specific address
+	 * @brief send api request for getting balance of any address
 	 * @param Request value to send as params for calling api
 	 * @param Delegate is used to implement async task after get response as api result
 	 */
-    void AlgorandGetaddressbalanceGet(const Vertices::VerticesGetaddressbalanceGetRequest& Request, const FAlgorandGetaddressbalanceGetDelegate& Delegate = FAlgorandGetaddressbalanceGetDelegate()) const;
+    void AlgorandAPIGetAddrBalance(const Vertices::VerticesGetAddrBalanceRequest& Request, const FAlgorandAPIGetAddrBalanceDelegate& Delegate = FAlgorandAPIGetAddrBalanceDelegate()) const;
 
 	/**
-	 * @brief send api request for send payment tx
+	 * @brief send api request for sending payment tx
 	 * @param Request value to send as params for calling api
 	 * @param Delegate is used to implement async task after get response as api result
 	 */
-    void AlgorandPaymentTransactionGet(const Vertices::VerticesPaymentTransactionGetRequest& Request, const FAlgorandPaymentTransactionGetDelegate& Delegate = FAlgorandPaymentTransactionGetDelegate()) const;
+    void AlgorandAPISendPayTx(const Vertices::VerticesSendPayTxRequest& Request, const FAlgorandAPISendPayTxDelegate& Delegate = FAlgorandAPISendPayTxDelegate()) const;
 
 	/**
-	 * @brief send api request for send asset config tx
+	 * @brief send api request for sending asset config tx
 	 * @param Request value to send as params for calling api
 	 * @param Delegate is used to implement async task after get response as api result
 	 */
-	void AlgorandAssetConfigTransactionGet(const Vertices::VerticesAssetConfigTransactionGetRequest& Request, const FAlgorandAssetConfigTransactionGetDelegate& Delegate = FAlgorandAssetConfigTransactionGetDelegate()) const;
+	void AlgorandAPISendAcfgTx(const Vertices::VerticesSendAcfgTxRequest& Request, const FAlgorandAPISendAcfgTxDelegate& Delegate = FAlgorandAPISendAcfgTxDelegate()) const;
 
 	/**
-	 * @brief send api request for send asset transfer tx
+	 * @brief send api request for sending asset transfer tx
 	 * @param Request value to send as params for calling api
 	 * @param Delegate is used to implement async task after get response as api result
 	 */
-	void AlgorandAssetTransferTransactionGet(const Vertices::VerticesAssetTransferTransactionGetRequest& Request, const FAlgorandAssetTransferTransactionGetDelegate& Delegate = FAlgorandAssetTransferTransactionGetDelegate()) const;
+	void AlgorandAPISendAxferTx(const Vertices::VerticesSendAxferTxRequest& Request, const FAlgorandAPISendAxferTxDelegate& Delegate = FAlgorandAPISendAxferTxDelegate()) const;
 
 	/**
-	 * @brief send api request for send application call tx
+	 * @brief send api request for sending application call tx
 	 * @param Request value to send as params for calling api
 	 * @param Delegate is used to implement async task after get response as api result
 	 */
-    void AlgorandApplicationCallTransactionGet(const Vertices::VerticesApplicationCallTransactionGetRequest& Request, const FAlgorandApplicationCallTransactionGetDelegate& Delegate = FAlgorandApplicationCallTransactionGetDelegate()) const;
+    void AlgorandAPISendApplCallTx(const Vertices::VerticesSendApplCallTxRequest& Request, const FAlgorandAPISendApplCallTxDelegate& Delegate = FAlgorandAPISendApplCallTxDelegate()) const;
 
 	/**
 	 * @brief send api request for send arc asset details
 	 * @param Request value to send as params for calling api
 	 * @param Delegate is used to implement async task after get response as api result
 	 */
-	void AlgorandArcAssetDetailsGet(const Vertices::VerticesArcAssetDetailsGetRequest& Request, const FAlgorandArcAssetDetailsGetDelegate& Delegate = FAlgorandArcAssetDetailsGetDelegate()) const;
+	void AlgorandAPIArcAssetDetails(const Vertices::VerticesArcAssetDetailsRequest& Request, const FAlgorandAPIArcAssetDetailsDelegate& Delegate = FAlgorandAPIArcAssetDetailsDelegate()) const;
 
 	/**
 	 * @brief send api request for send account information
 	 * @param Request value to send as params for calling api
 	 * @param Delegate is used to implement async task after get response as api result
 	 */
-	void AlgorandAccountInformationGet(const Vertices::VerticesAccountInformationGetRequest& Request, const FAlgorandAccountInformationGetDelegate& Delegate = FAlgorandAccountInformationGetDelegate()) const;
+	void AlgorandAPIAccountInformation(const Vertices::VerticesAccountInformationRequest& Request, const FAlgorandAPIAccountInformationDelegate& Delegate = FAlgorandAPIAccountInformationDelegate()) const;
 
 private:
-	
-    /**
-     * @brief callback function to be run after api request of restoring wallet
-     * @param response is used to send as Vertices Response type to Algorand module 
-     * @param Delegate is used to execute binded callback from Algorand module
-     */
-    void OnAlgorandRestoreWalletGetResponse(const Vertices::VerticesRestoreWalletGetResponse& response, const FAlgorandRestoreWalletGetDelegate& Delegate) const;
 
 	/**
-     * @brief callback function to be run after api request of initializing new wallet
-     * @param response is used to send as Vertices Response type to Algorand module 
-     * @param Delegate is used to execute binded callback from Algorand module
-     */
-    void OnAlgorandInitializeNewWalletGetResponse(const Vertices::VerticesInitializeNewWalletGetResponse& response, const FAlgorandInitializeNewWalletGetDelegate& Delegate) const;
-
-	/**
-     * @brief callback function to be run after api request of getting backup mnemonic phrase
-     * @param response is used to send as Vertices Response type to Algorand module 
-     * @param Delegate is used to execute binded callback from Algorand module
-     */
-    void OnAlgorandGetBackupMnemonicPhraseGetResponse(const Vertices::VerticesGetBackupMnemonicPhraseGetResponse& response, const FAlgorandGetBackupMnemonicPhraseGetDelegate& Delegate) const;
-
-	/**
-     * @brief callback function to be run after api request of generating mnemonics
-     * @param response is used to send as Vertices Response type to Algorand module 
-     * @param Delegate is used to execute binded callback from Algorand module
-     */
-    void OnAlgorandGenerateMnemonicsGetResponse(const Vertices::VerticesGenerateMnemonicsGetResponse& response, const FAlgorandGenerateMnemonicsGetDelegate& Delegate) const;
-
-	/**
-	 * @brief callback function to be run after api request of getting balance
+	 * @brief callback function to be run after api request of initializing algorand wallet
 	 * @param response is used to send as Vertices Response type to Algorand module 
 	 * @param Delegate is used to execute binded callback from Algorand module
 	 */
-    void OnAlgorandGetaddressbalanceGetResponse(const Vertices::VerticesGetaddressbalanceGetResponse& response, const FAlgorandGetaddressbalanceGetDelegate& Delegate) const;
+	void OnAlgorandAPIInitWalletResponse(const Vertices::VerticesInitWalletResponse& response, const FAlgorandAPIInitWalletDelegate& Delegate) const;
+	
+    /**
+     * @brief callback function to be run after api request of loading algorand wallet
+     * @param response is used to send as Vertices Response type to Algorand module 
+     * @param Delegate is used to execute binded callback from Algorand module
+     */
+    void OnAlgorandAPILoadWalletResponse(const Vertices::VerticesLoadWalletResponse& response, const FAlgorandAPILoadWalletDelegate& Delegate) const;
+
+	/**
+	 * @brief callback function to be run after api request of savging algorand wallet
+	 * @param response is used to send as Vertices Response type to Algorand module 
+	 * @param Delegate is used to execute binded callback from Algorand module
+	 */
+	void OnAlgorandAPISaveWalletResponse(const Vertices::VerticesSaveWalletResponse& response, const FAlgorandAPISaveWalletDelegate& Delegate) const;
+
+	/**
+     * @brief callback function to be run after api request of getting mnemonics by account name
+     * @param response is used to send as Vertices Response type to Algorand module 
+     * @param Delegate is used to execute binded callback from Algorand module
+     */
+    void OnAlgorandAPIGetMnemonicsByAccountNameResponse(const Vertices::VerticesGetMnemonicsByAccountNameResponse& response, const FAlgorandAPIGetMnemonicsByAccountNameDelegate& Delegate) const;
+
+	/**
+     * @brief callback function to be run after api request of generating account from mnemonics
+     * @param response is used to send as Vertices Response type to Algorand module 
+     * @param Delegate is used to execute binded callback from Algorand module
+     */
+    void OnAlgorandAPIGenerateAccountFromMnemonicsGetResponse(const Vertices::VerticesGenerateAccountFromMnemonicsResponse& response, const FAlgorandAPIGenerateAccountFromMnemonicsDelegate& Delegate) const;
+
+	/**
+	 * @brief callback function to be run after api request of getting balance of any address
+	 * @param response is used to send as Vertices Response type to Algorand module 
+	 * @param Delegate is used to execute binded callback from Algorand module
+	 */
+    void OnAlgorandAPIGetAddrBalanceResponse(const Vertices::VerticesGetAddrBalanceResponse& response, const FAlgorandAPIGetAddrBalanceDelegate& Delegate) const;
 
 	/**
 	 * @brief callback function to be run after api request of sending payment tx
 	 * @param response is used to send as Vertices Response type to Algorand module 
 	 * @param Delegate is used to execute binded callback from Algorand module
 	 */
-    void OnAlgorandPaymentTransactionGetResponse(const Vertices::VerticesPaymentTransactionGetResponse& response, const FAlgorandPaymentTransactionGetDelegate& Delegate) const;
+    void OnAlgorandAPISendPayTxResponse(const Vertices::VerticesSendPayTxResponse& response, const FAlgorandAPISendPayTxDelegate& Delegate) const;
 
 	/**
 	 * @brief callback function to be run after api request of sending asset config tx
 	 * @param response is used to send as Vertices Response type to Algorand module 
 	 * @param Delegate is used to execute binded callback from Algorand module
 	 */
-	void OnAlgorandAssetConfigTransactionGetResponse(const Vertices::VerticesAssetConfigTransactionGetResponse& response, const FAlgorandAssetConfigTransactionGetDelegate& Delegate) const;
+	void OnAlgorandAPISendAcfgTxResponse(const Vertices::VerticesSendAcfgTxResponse& response, const FAlgorandAPISendAcfgTxDelegate& Delegate) const;
 
 	/**
 	 * @brief callback function to be run after api request of sending asset transfer tx
 	 * @param response is used to send as Vertices Response type to Algorand module 
 	 * @param Delegate is used to execute binded callback from Algorand module
 	 */
-	void OnAlgorandAssetTransferTransactionGetResponse(const Vertices::VerticesAssetTransferTransactionGetResponse& response, const FAlgorandAssetTransferTransactionGetDelegate& Delegate) const;
+	void OnAlgorandAPISendAxferTxResponse(const Vertices::VerticesSendAxferTxResponse& response, const FAlgorandAPISendAxferTxDelegate& Delegate) const;
 
 	/**
 	 * @brief callback function to be run after api request of sending application call tx
 	 * @param response is used to send as Vertices Response type to Algorand module 
 	 * @param Delegate is used to execute binded callback from Algorand module
 	 */
-    void OnAlgorandApplicationCallTransactionGetResponse(const Vertices::VerticesApplicationCallTransactionGetResponse& response, const FAlgorandApplicationCallTransactionGetDelegate& Delegate) const;
+    void OnAlgorandAPISendApplCallTxResponse(const Vertices::VerticesSendApplCallTxResponse& response, const FAlgorandAPISendApplCallTxDelegate& Delegate) const;
 
 	/**
 	 * @brief callback function to be run after api request of sending arc asset details
 	 * @param response is used to send as Vertices Response type to Algorand module 
 	 * @param Delegate is used to execute binded callback from Algorand module
 	 */
-	void OnAlgorandArcAssetDetailsGetResponse(const Vertices::VerticesArcAssetDetailsGetResponse& response, const FAlgorandArcAssetDetailsGetDelegate& Delegate) const;
+	void OnAlgorandAPIArcAssetDetailsResponse(const Vertices::VerticesArcAssetDetailsResponse& response, const FAlgorandAPIArcAssetDetailsDelegate& Delegate) const;
 
 	/**
 	 * @brief callback function to be run after api request of sending account information
 	 * @param response is used to send as Vertices Response type to Algorand module 
 	 * @param Delegate is used to execute binded callback from Algorand module
 	 */
-	void OnAlgorandAccountInformationGetResponse(const Vertices::VerticesAccountInformationGetResponse& response, const FAlgorandAccountInformationGetDelegate& Delegate) const;
+	void OnAlgorandAPIAccountInformationGetResponse(const Vertices::VerticesAccountInformationResponse& response, const FAlgorandAPIAccountInformationDelegate& Delegate) const;
 
 	// Algorand modules
     TSharedPtr<algorand::vertices::VerticesSDK> vertices_;

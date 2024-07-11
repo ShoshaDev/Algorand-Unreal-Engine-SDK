@@ -19,17 +19,18 @@
 
 /// declaring templates of Api Delegate as TVariant
 using ApiDelegate = TVariant<
-	algorand::api::UnrealApi::FAlgorandRestoreWalletGetDelegate,
-	algorand::api::UnrealApi::FAlgorandInitializeNewWalletGetDelegate,
-	algorand::api::UnrealApi::FAlgorandGetBackupMnemonicPhraseGetDelegate,
-	algorand::api::UnrealApi::FAlgorandGenerateMnemonicsGetDelegate,
-	algorand::api::UnrealApi::FAlgorandGetaddressbalanceGetDelegate,
-	algorand::api::UnrealApi::FAlgorandPaymentTransactionGetDelegate,
-	algorand::api::UnrealApi::FAlgorandAssetConfigTransactionGetDelegate,
-	algorand::api::UnrealApi::FAlgorandAssetTransferTransactionGetDelegate,
-	algorand::api::UnrealApi::FAlgorandApplicationCallTransactionGetDelegate,
-	algorand::api::UnrealApi::FAlgorandArcAssetDetailsGetDelegate,
-	algorand::api::UnrealApi::FAlgorandAccountInformationGetDelegate
+	algorand::api::UnrealApi::FAlgorandAPIInitWalletDelegate,
+	algorand::api::UnrealApi::FAlgorandAPILoadWalletDelegate,
+	algorand::api::UnrealApi::FAlgorandAPISaveWalletDelegate,
+	algorand::api::UnrealApi::FAlgorandAPIGetMnemonicsByAccountNameDelegate,
+	algorand::api::UnrealApi::FAlgorandAPIGenerateAccountFromMnemonicsDelegate,
+	algorand::api::UnrealApi::FAlgorandAPIGetAddrBalanceDelegate,
+	algorand::api::UnrealApi::FAlgorandAPISendPayTxDelegate,
+	algorand::api::UnrealApi::FAlgorandAPISendAcfgTxDelegate,
+	algorand::api::UnrealApi::FAlgorandAPISendAxferTxDelegate,
+	algorand::api::UnrealApi::FAlgorandAPISendApplCallTxDelegate,
+	algorand::api::UnrealApi::FAlgorandAPIArcAssetDetailsDelegate,
+	algorand::api::UnrealApi::FAlgorandAPIAccountInformationDelegate
 >;
 
 /// Request Contxet info

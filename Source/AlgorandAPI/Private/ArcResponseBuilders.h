@@ -13,9 +13,9 @@ namespace {
 namespace ArcResponseBuilders {
 
 		/// arc asset details callback
-		DECLARE_DELEGATE_OneParam(FAPIArcAssetDetailsGetDelegate, const Vertices::VerticesArcAssetDetailsGetResponse&);
+		DECLARE_DELEGATE_OneParam(FAPIArcAssetDetailsGetDelegate, const Vertices::VerticesArcAssetDetailsResponse&);
 		/// account information callback
-		DECLARE_DELEGATE_OneParam(FAPIAccountInfoGetDelegate, const Vertices::VerticesAccountInformationGetResponse&);
+		DECLARE_DELEGATE_OneParam(FAPIAccountInfoGetDelegate, const Vertices::VerticesAccountInformationResponse&);
 
 		void buildArcAssetDetailsResponse(const Arc03&, const FAPIArcAssetDetailsGetDelegate&);
 		void buildArcAssetDetailsResponse(const Arc19&, const FAPIArcAssetDetailsGetDelegate&);

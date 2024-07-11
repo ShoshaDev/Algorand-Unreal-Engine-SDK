@@ -5,7 +5,7 @@ namespace ArcResponseBuilders {
 	
 	void ArcResponseBuilders::buildArcAssetDetailsResponse(const Arc03& arc_asset, const FAPIArcAssetDetailsGetDelegate& delegate)
 	{
-		Vertices::VerticesArcAssetDetailsGetResponse response;
+		Vertices::VerticesArcAssetDetailsResponse response;
 		
 		response.standard = 1;		// arc03 
 		
@@ -31,7 +31,7 @@ namespace ArcResponseBuilders {
 
 	void ArcResponseBuilders::buildArcAssetDetailsResponse(const Arc19& arc_asset, const FAPIArcAssetDetailsGetDelegate& delegate)
 	{
-		Vertices::VerticesArcAssetDetailsGetResponse response;
+		Vertices::VerticesArcAssetDetailsResponse response;
 		
 		response.standard = 2;			// arc19
 
@@ -55,7 +55,7 @@ namespace ArcResponseBuilders {
 
 	void ArcResponseBuilders::buildArcAssetDetailsResponse(const Arc69& arc_asset, const FAPIArcAssetDetailsGetDelegate& delegate)
 	{
-		Vertices::VerticesArcAssetDetailsGetResponse response;
+		Vertices::VerticesArcAssetDetailsResponse response;
 		
 		response.standard = 3;	// arc69
 
@@ -82,7 +82,7 @@ namespace ArcResponseBuilders {
 
 	void ArcResponseBuilders::buildAccountInformationResponse(const AccountAsset& arc_asset, const FAPIAccountInfoGetDelegate& delegate)
 	{
-		Vertices::VerticesAccountInformationGetResponse response;
+		Vertices::VerticesAccountInformationResponse response;
 
 		if(arc_asset.info.Num() != 0)
 		{

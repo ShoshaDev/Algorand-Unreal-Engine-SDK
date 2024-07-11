@@ -67,7 +67,7 @@ public:
 	TMap<FString, FString> properties;
 
 	FArcAssetDetails();
-	FArcAssetDetails(const algorand::vertices::VerticesSDK::VerticesArcAssetDetailsGetResponse& response);
+	FArcAssetDetails(const algorand::vertices::VerticesSDK::VerticesArcAssetDetailsResponse& response);
 	
 };
 

@@ -72,12 +72,12 @@ void UAlgorandHandler::OnInitializeNewWalletCallback(const FString& output) {
     algorandManager->sendPaymentTransaction(FString("NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE"), 100, FString("Sent 100 algo to NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE."));
 }
 
-void UAlgorandHandler::OnGetBackupMnemonicPhraseCallback(const FString& output) {
+void UAlgorandHandler::OngetMnemonicsByAccountNameCallback(const FString& output) {
     UE_LOG(LogTemp, Display, TEXT("Received mnemonics: %s"),
         *output);
 }
 
-void UAlgorandHandler::OnGenerateMnemonicsCallback(const FString& output) {
+void UAlgorandHandler::OngenerateAccountFromMnemonicsCallback(const FString& output) {
     UE_LOG(LogTemp, Display, TEXT("Generated mnemonics: %s"),
         *output);
 }
@@ -140,14 +140,14 @@ void UAlgorandHandler::RunSomeLogic() {
     // algorandManager->initializeNewWallet();
 
     // FScriptDelegate _delegate6;
-    // _delegate6.BindUFunction(this, FName("OnGetBackupMnemonicPhraseCallback"));
-    // algorandManager->GetBackupMnemonicPhraseCallback.Add(_delegate6);
-    // algorandManager->getBackupMnemonicPhrase();
+    // _delegate6.BindUFunction(this, FName("OngetMnemonicsByAccountNameCallback"));
+    // algorandManager->getMnemonicsByAccountNameCallback.Add(_delegate6);
+    // algorandManager->getMnemonicsByAccountName();
     
     /*FScriptDelegate _delegate7;
-    _delegate7.BindUFunction(this, FName("OnGenerateMnemonicsCallback"));
-    algorandManager->GenerateMnemonicsCallback.Add(_delegate7);
-    algorandManager->generateMnemonics();*/
+    _delegate7.BindUFunction(this, FName("OngenerateAccountFromMnemonicsCallback"));
+    algorandManager->generateAccountFromMnemonicsCallback.Add(_delegate7);
+    algorandManager->generateAccountFromMnemonics();*/
     
     // FScriptDelegate _delegate1;
     // _delegate1.BindUFunction(this, FName("OnGetBalanceCallback"));

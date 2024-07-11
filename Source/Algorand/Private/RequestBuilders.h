@@ -20,59 +20,31 @@
 
 namespace request_builders {
 	
-	/**
-	 * @brief build request for restore wallet 
-	 * @return request
-	 */
-	algorand::vertices::VerticesSDK::VerticesRestoreWalletGetRequest
-	buildRestoreWalletRequest(const FString& mnemonics);
-
-	/**
-	 * @brief build request for initialize new wallet 
-	 * @return request
-	 */
-	algorand::vertices::VerticesSDK::VerticesInitializeNewWalletGetRequest
-	buildInitializeNewWalletRequest();
-
-	/**
-	 * @brief build request for get backup mnemonic phrase
-	 * @return request
-	 */
-	algorand::vertices::VerticesSDK::VerticesGetBackupMnemonicPhraseGetRequest
-	buildGetBackupMnemonicPhraseRequest();
-
-	/**
-	 * @brief build request for generate mnemonics
-	 * @return request
-	 */
-	algorand::vertices::VerticesSDK::VerticesGenerateMnemonicsGetRequest
-	buildGenerateMnemonicsRequest();
-
-	/**
-	 * @brief build request for get balance with following params
-	 * like address
-	 * @return request
-	 */
-	algorand::vertices::VerticesSDK::VerticesGetaddressbalanceGetRequest
+	algorand::vertices::VerticesSDK::VerticesInitWalletRequest
+	buildInitWalletRequest();
+	
+	algorand::vertices::VerticesSDK::VerticesLoadWalletRequest
+	buildLoadWalletRequest(const FString& mnemonics);
+	
+	algorand::vertices::VerticesSDK::VerticesSaveWalletRequest
+	buildSaveWalletRequest(const FString& mnemonics);
+	
+	algorand::vertices::VerticesSDK::VerticesGetMnemonicsByAccountNameRequest
+	buildgetMnemonicsByAccountNameRequest();
+	
+	algorand::vertices::VerticesSDK::VerticesGenerateAccountFromMnemonicsRequest
+	buildgenerateAccountFromMnemonicsRequest();
+	
+	algorand::vertices::VerticesSDK::VerticesGetAddrBalanceRequest
 	buildGetBalanceRequest(const FString& address);
-
-	/**
-	 * @brief build request for payment tx with following params
-	 * like sender, receiver, amount and notes
-	 * @return request
-	 */
-	algorand::vertices::VerticesSDK::VerticesPaymentTransactionGetRequest
+	
+	algorand::vertices::VerticesSDK::VerticesSendPayTxRequest
 		buildPaymentTransactionRequest(const FString& sender,
 									   const FString& receiver,
 									   const FUInt64& amount,
 									   const FString& notes);
-
-	/**
-	 * @brief build request for asset config tx with following params
-	 * like creator, manager,reserve, freeze, clawback, asset_id, total, decimals, isFrozen, unit_name,asset_name, url, notes
-	 * @return request
-	 */
-	 algorand::vertices::VerticesSDK::VerticesAssetConfigTransactionGetRequest
+	
+	 algorand::vertices::VerticesSDK::VerticesSendAcfgTxRequest
 		buildAssetConfigTransactionRequest(const FString& creator, 
 									   const FString& manager,
 									   const FString& reserve,
@@ -86,43 +58,23 @@ namespace request_builders {
 									   const FString& asset_name,
 									   const FString& url,
 									   const FString& notes);
-
-	/**
-	 * @brief build request for asset transfer tx with following params
-	 * like sender, receiver, amount and notes
-	 * @return request
-	 */
-	algorand::vertices::VerticesSDK::VerticesAssetTransferTransactionGetRequest
+	
+	algorand::vertices::VerticesSDK::VerticesSendAxferTxRequest
 		buildAssetTransferTransactionRequest(const FString& sender,
 									   const FString& receiver,
 									   const FUInt64& asset_id,
 									   const FString& amount,
 									   const FString& notes);
-
-	/**
-	 * @brief build request for application call tx with following params
-	 * like application ID
-	 * @return request
-	 */
-	algorand::vertices::VerticesSDK::VerticesApplicationCallTransactionGetRequest
+	
+	algorand::vertices::VerticesSDK::VerticesSendApplCallTxRequest
 		buildApplicationCallTransactionRequest(const FString& sender,
 											   const FUInt64& app_ID, 
 											   const TArray<FAppArg>& app_args,
 											   const EAppOnCompleteTX& app_complete_tx);
-
-	/**
-	 * @brief build request for arc asset details with following params
-	 * like asset ID
-	 * @return request
-	 */
-	algorand::vertices::VerticesSDK::VerticesArcAssetDetailsGetRequest
+	
+	algorand::vertices::VerticesSDK::VerticesArcAssetDetailsRequest
 		buildArcAssetDetailsRequest(const FUInt64& asset_ID);
 
-	/**
-	 * @brief build request for account information with following params
-	 * like wallet address
-	 * @return request
-	 */
-	algorand::vertices::VerticesSDK::VerticesAccountInformationGetRequest
+	algorand::vertices::VerticesSDK::VerticesAccountInformationRequest
 		buildAccountInformationRequest(const FString& address);
 }

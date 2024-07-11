@@ -142,28 +142,28 @@ void UAlgorandUnrealManager::setAddress(const FString& address)
 }
 
 /**
- * @brief create its context to send the request to unreal api for restore wallet
+ * @brief create its context to send the request to unreal api for initialize new wallet
  */
- void UAlgorandUnrealManager::restoreWallet(const FString& mnemonics)
+ void UAlgorandUnrealManager::initWallet()
 {
     this->requestContextManager_
-        .createContext<API::FAlgorandRestoreWalletGetDelegate,
-        Vertices::VerticesRestoreWalletGetRequest>(
-            request_builders::buildRestoreWalletRequest(mnemonics),
-            std::bind(&API::AlgorandRestoreWalletGet, unrealApi_.Get(),
+        .createContext<API::FAlgorandAPIInitWalletDelegate,
+        Vertices::VerticesInitWalletRequest>(
+            request_builders::buildInitWalletRequest(),
+            std::bind(&API::AlgorandAPIInitWallet, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
-            std::bind(&UAlgorandUnrealManager::OnRestoreWalletCompleteCallback, this , std::placeholders::_1)
+            std::bind(&UAlgorandUnrealManager::OnInitWalletCompleteCallback, this , std::placeholders::_1)
         );
 }
 
 /**
- * @brief get response from unreal api after restore wallet and broadcast the result to binded functions
+ * @brief get response from unreal api after initialize new wallet and broadcast the result to binded functions
  */
-void UAlgorandUnrealManager::OnRestoreWalletCompleteCallback(const Vertices::VerticesRestoreWalletGetResponse& response) {
+void UAlgorandUnrealManager::OnInitWalletCompleteCallback(const Vertices::VerticesInitWalletResponse& response) {
     if (response.IsSuccessful()) {
         FString output = response.output;
         setAddress(output);
-        RestoreWalletCallback.Broadcast(output);
+        InitWalletCallback.Broadcast(output);
     }
     else {
         if (!ErrorDelegateCallback.IsBound()) {
@@ -173,28 +173,59 @@ void UAlgorandUnrealManager::OnRestoreWalletCompleteCallback(const Vertices::Ver
 }
 
 /**
- * @brief create its context to send the request to unreal api for initialize new wallet
+ * @brief create its context to send the request to unreal api for loading wallet
  */
- void UAlgorandUnrealManager::initializeNewWallet()
+void UAlgorandUnrealManager::loadWallet(const FString& mnemonics)
 {
     this->requestContextManager_
-        .createContext<API::FAlgorandInitializeNewWalletGetDelegate,
-        Vertices::VerticesInitializeNewWalletGetRequest>(
-            request_builders::buildInitializeNewWalletRequest(),
-            std::bind(&API::AlgorandInitializeNewWalletGet, unrealApi_.Get(),
+        .createContext<API::FAlgorandAPILoadWalletDelegate,
+        Vertices::VerticesLoadWalletRequest>(
+            request_builders::buildLoadWalletRequest(mnemonics),
+            std::bind(&API::AlgorandAPILoadWallet, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
-            std::bind(&UAlgorandUnrealManager::OnInitializeNewWalletCompleteCallback, this , std::placeholders::_1)
+            std::bind(&UAlgorandUnrealManager::OnLoadWalletCompleteCallback, this , std::placeholders::_1)
         );
 }
 
 /**
- * @brief get response from unreal api after initialize new wallet and broadcast the result to binded functions
+ * @brief get response from unreal api after restore wallet and broadcast the result to binded functions
  */
-void UAlgorandUnrealManager::OnInitializeNewWalletCompleteCallback(const Vertices::VerticesInitializeNewWalletGetResponse& response) {
+void UAlgorandUnrealManager::OnLoadWalletCompleteCallback(const Vertices::VerticesLoadWalletResponse& response) {
     if (response.IsSuccessful()) {
         FString output = response.output;
         setAddress(output);
-        InitializeNewWalletCallback.Broadcast(output);
+        LoadWalletCallback.Broadcast(output);
+    }
+    else {
+        if (!ErrorDelegateCallback.IsBound()) {
+            ErrorDelegateCallback.Broadcast(FError("ErrorDelegateCallback is not bound"));
+        }
+    }
+}
+
+/**
+ * @brief create its context to send the request to unreal api for saving wallet
+ */
+void UAlgorandUnrealManager::saveWallet(const FString& mnemonics)
+{
+    this->requestContextManager_
+        .createContext<API::FAlgorandAPISaveWalletDelegate,
+        Vertices::VerticesSaveWalletRequest>(
+            request_builders::buildSaveWalletRequest(mnemonics),
+            std::bind(&API::AlgorandAPISaveWallet, unrealApi_.Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            std::bind(&UAlgorandUnrealManager::OnSaveWalletCompleteCallback, this , std::placeholders::_1)
+        );
+}
+
+/**
+ * @brief get response from unreal api after restore wallet and broadcast the result to binded functions
+ */
+void UAlgorandUnrealManager::OnSaveWalletCompleteCallback(const Vertices::VerticesSaveWalletResponse& response) {
+    if (response.IsSuccessful()) {
+        FString output = response.output;
+        setAddress(output);
+        SaveWalletCallback.Broadcast(output);
     }
     else {
         if (!ErrorDelegateCallback.IsBound()) {
@@ -206,25 +237,25 @@ void UAlgorandUnrealManager::OnInitializeNewWalletCompleteCallback(const Vertice
 /**
  * @brief create its context to send the request to unreal api for get backup mnemonic phrase
  */
- void UAlgorandUnrealManager::getBackupMnemonicPhrase()
+ void UAlgorandUnrealManager::getMnemonicsByAccountName()
 {
     this->requestContextManager_
-        .createContext<API::FAlgorandGetBackupMnemonicPhraseGetDelegate,
-        Vertices::VerticesGetBackupMnemonicPhraseGetRequest>(
-            request_builders::buildGetBackupMnemonicPhraseRequest(),
-            std::bind(&API::AlgorandGetBackupMnemonicPhraseGet, unrealApi_.Get(),
+        .createContext<API::FAlgorandAPIGetMnemonicsByAccountNameDelegate,
+        Vertices::VerticesGetMnemonicsByAccountNameRequest>(
+            request_builders::buildgetMnemonicsByAccountNameRequest(),
+            std::bind(&API::AlgorandAPIGetMnemonicsByAccountName, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
-            std::bind(&UAlgorandUnrealManager::OnGetBackupMnemonicPhraseCompleteCallback, this , std::placeholders::_1)
+            std::bind(&UAlgorandUnrealManager::OnGetMnemonicsByAccountNameCompleteCallback, this , std::placeholders::_1)
         );
 }
 
 /**
  * @brief get response from unreal api after get backup mnemonic phrase and broadcast the result to binded functions
  */
-void UAlgorandUnrealManager::OnGetBackupMnemonicPhraseCompleteCallback(const Vertices::VerticesGetBackupMnemonicPhraseGetResponse& response) {
+void UAlgorandUnrealManager::OnGetMnemonicsByAccountNameCompleteCallback(const Vertices::VerticesGetMnemonicsByAccountNameResponse& response) {
     if (response.IsSuccessful()) {
         FString output = response.output;
-        GetBackupMnemonicPhraseCallback.Broadcast(output);
+        GetMnemonicsByAccountNameCallback.Broadcast(output);
     }
     else {
         if (!ErrorDelegateCallback.IsBound()) {
@@ -236,25 +267,25 @@ void UAlgorandUnrealManager::OnGetBackupMnemonicPhraseCompleteCallback(const Ver
 /**
  * @brief create its context to send the request to unreal api for generate mnemonics
  */
- void UAlgorandUnrealManager::generateMnemonics()
+ void UAlgorandUnrealManager::generateAccountFromMnemonics()
 {
     this->requestContextManager_
-        .createContext<API::FAlgorandGenerateMnemonicsGetDelegate,
-        Vertices::VerticesGenerateMnemonicsGetRequest>(
-            request_builders::buildGenerateMnemonicsRequest(),
-            std::bind(&API::AlgorandGenerateMnemonicsGet, unrealApi_.Get(),
+        .createContext<API::FAlgorandAPIGenerateAccountFromMnemonicsDelegate,
+        Vertices::VerticesGenerateAccountFromMnemonicsRequest>(
+            request_builders::buildgenerateAccountFromMnemonicsRequest(),
+            std::bind(&API::AlgorandAPIGenerateAccountFromMnemonics, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
-            std::bind(&UAlgorandUnrealManager::OnGenerateMnemonicsCompleteCallback, this , std::placeholders::_1)
+            std::bind(&UAlgorandUnrealManager::OngenerateAccountFromMnemonicsCompleteCallback, this , std::placeholders::_1)
         );
 }
 
 /**
  * @brief get response from unreal api after generate mnemonics and broadcast the result to binded functions
  */
-void UAlgorandUnrealManager::OnGenerateMnemonicsCompleteCallback(const Vertices::VerticesGenerateMnemonicsGetResponse& response) {
+void UAlgorandUnrealManager::OngenerateAccountFromMnemonicsCompleteCallback(const Vertices::VerticesGenerateAccountFromMnemonicsResponse& response) {
     if (response.IsSuccessful()) {
         FString output = response.output;
-        GenerateMnemonicsCallback.Broadcast(output);
+        GenerateAccountFromMnemonicsCallback.Broadcast(output);
     }
     else {
         if (!ErrorDelegateCallback.IsBound()) {
@@ -266,26 +297,26 @@ void UAlgorandUnrealManager::OnGenerateMnemonicsCompleteCallback(const Vertices:
 /**
  * @brief create its context to send the request to unreal api for get balance
  */
-void UAlgorandUnrealManager::getBalance(const FString& address)
+void UAlgorandUnrealManager::getAddressBalance(const FString& address)
 {
     this->requestContextManager_
-        .createContext<API::FAlgorandGetaddressbalanceGetDelegate,
-        Vertices::VerticesGetaddressbalanceGetRequest>(
+        .createContext<API::FAlgorandAPIGetAddrBalanceDelegate,
+        Vertices::VerticesGetAddrBalanceRequest>(
             request_builders::buildGetBalanceRequest(address),
-            std::bind(&API::AlgorandGetaddressbalanceGet, unrealApi_.Get(),
+            std::bind(&API::AlgorandAPIGetAddrBalance, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
-            std::bind(&UAlgorandUnrealManager::OnGetBalanceCompleteCallback, this , std::placeholders::_1)
+            std::bind(&UAlgorandUnrealManager::OnGetAddressBalanceCompleteCallback, this , std::placeholders::_1)
         );
 }
 
 /**
  * @brief get response from unreal api after get balance and broadcast the result to binded functions
  */
-void UAlgorandUnrealManager::OnGetBalanceCompleteCallback(const Vertices::VerticesGetaddressbalanceGetResponse& response) {
+void UAlgorandUnrealManager::OnGetAddressBalanceCompleteCallback(const Vertices::VerticesGetAddrBalanceResponse& response) {
     if (response.IsSuccessful()) {
         uint64 balance = response.Amount;
         
-        GetBalanceCallback.Broadcast(FUInt64(balance));
+        GetAddressBalanceCallback.Broadcast(FUInt64(balance));
         FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Get Balance Action", "Got Balance successfully."));
 
         if(balance < 1000)
@@ -314,13 +345,13 @@ void UAlgorandUnrealManager::sendPaymentTransaction(const FString& receiverAddre
                                                     const FString& notes)
 {
     this->requestContextManager_
-        .createContext<API::FAlgorandPaymentTransactionGetDelegate,
-        Vertices::VerticesPaymentTransactionGetRequest>(
+        .createContext<API::FAlgorandAPISendPayTxDelegate,
+        Vertices::VerticesSendPayTxRequest>(
             request_builders::buildPaymentTransactionRequest(this->getAddress(),
                                                              receiverAddress,
                                                              amount,
                                                              notes),
-            std::bind(&API::AlgorandPaymentTransactionGet, unrealApi_.Get(),
+            std::bind(&API::AlgorandAPISendPayTx, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             std::bind(&UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback, this, std::placeholders::_1)
             );
@@ -329,10 +360,10 @@ void UAlgorandUnrealManager::sendPaymentTransaction(const FString& receiverAddre
 /**
  * @brief get response from unreal api after payment TX and broadcast the result to binded functions
  */
-void UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback(const Vertices::VerticesPaymentTransactionGetResponse& response) {
+void UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback(const Vertices::VerticesSendPayTxResponse& response) {
     if (response.IsSuccessful()) {
         FString txID = response.txID;
-        SendPaymentTransactionCallback.Broadcast(txID);
+        SendPaymentTxCallback.Broadcast(txID);
         FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Payment Transaction", "sent payment tx successfully."));
     }
     else {
@@ -363,8 +394,8 @@ void UAlgorandUnrealManager::sendAssetConfigTransaction(const FString& manager,
                                                         const FString& notes)
 {
     this->requestContextManager_
-        .createContext<API::FAlgorandAssetConfigTransactionGetDelegate,
-        Vertices::VerticesAssetConfigTransactionGetRequest>(
+        .createContext<API::FAlgorandAPISendAcfgTxDelegate,
+        Vertices::VerticesSendAcfgTxRequest>(
             request_builders::buildAssetConfigTransactionRequest(this->getAddress(),
                                                                  manager,
                                                                  reserve,
@@ -378,7 +409,7 @@ void UAlgorandUnrealManager::sendAssetConfigTransaction(const FString& manager,
                                                                  asset_name,
                                                                  url,
                                                                  notes),
-            std::bind(&API::AlgorandAssetConfigTransactionGet, unrealApi_.Get(),
+            std::bind(&API::AlgorandAPISendAcfgTx, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             std::bind(&UAlgorandUnrealManager::OnSendAssetConfigTransactionCompleteCallback, this, std::placeholders::_1)
             );
@@ -394,14 +425,14 @@ void UAlgorandUnrealManager::sendAssetTransferTransaction(const FString& senderA
                                                         const FString& notes)
 {
     this->requestContextManager_
-        .createContext<API::FAlgorandAssetTransferTransactionGetDelegate,
-        Vertices::VerticesAssetTransferTransactionGetRequest>(
+        .createContext<API::FAlgorandAPISendAxferTxDelegate,
+        Vertices::VerticesSendAxferTxRequest>(
             request_builders::buildAssetTransferTransactionRequest(senderAddress,
                                                              receiverAddress,
                                                              asset_ID,
                                                              amount,
                                                              notes),
-            std::bind(&API::AlgorandAssetTransferTransactionGet, unrealApi_.Get(),
+            std::bind(&API::AlgorandAPISendAxferTx, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             std::bind(&UAlgorandUnrealManager::OnSendAssetTransferTransactionCompleteCallback, this, std::placeholders::_1)
             );
@@ -410,7 +441,7 @@ void UAlgorandUnrealManager::sendAssetTransferTransaction(const FString& senderA
 /**
  * @brief get response from unreal api after asset config TX and broadcast the result to binded functions
  */
-void UAlgorandUnrealManager::OnSendAssetConfigTransactionCompleteCallback(const Vertices::VerticesAssetConfigTransactionGetResponse& response) {
+void UAlgorandUnrealManager::OnSendAssetConfigTransactionCompleteCallback(const Vertices::VerticesSendAcfgTxResponse& response) {
     if (response.IsSuccessful()) {
         FString TxId = response.txID;
         uint64 AssetId = response.assetID;
@@ -431,7 +462,7 @@ void UAlgorandUnrealManager::OnSendAssetConfigTransactionCompleteCallback(const 
 /**
  * @brief get response from unreal api after asset config TX and broadcast the result to binded functions
  */
-void UAlgorandUnrealManager::OnSendAssetTransferTransactionCompleteCallback(const Vertices::VerticesAssetTransferTransactionGetResponse& response) {
+void UAlgorandUnrealManager::OnSendAssetTransferTransactionCompleteCallback(const Vertices::VerticesSendAxferTxResponse& response) {
     if (response.IsSuccessful()) {
         FString txID = response.txID;
         SendAssetTransferTransactionCallback.Broadcast(txID);
@@ -454,13 +485,13 @@ void UAlgorandUnrealManager::OnSendAssetTransferTransactionCompleteCallback(cons
 void UAlgorandUnrealManager::sendApplicationCallTransaction(const FUInt64& app_ID, const TArray<FAppArg>& app_args, const EAppOnCompleteTX& app_complete_tx)
 {
     this->requestContextManager_
-        .createContext<API::FAlgorandApplicationCallTransactionGetDelegate,
-        Vertices::VerticesApplicationCallTransactionGetRequest>(
+        .createContext<API::FAlgorandAPISendApplCallTxDelegate,
+        Vertices::VerticesSendApplCallTxRequest>(
             request_builders::buildApplicationCallTransactionRequest(this->getAddress(),
                                                                      app_ID,
                                                                      app_args,
                                                                      app_complete_tx),
-            std::bind(&API::AlgorandApplicationCallTransactionGet, unrealApi_.Get(),
+            std::bind(&API::AlgorandAPISendApplCallTx, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             std::bind(&UAlgorandUnrealManager::OnSendApplicationCallTransactionCompleteCallback, this, std::placeholders::_1)
             );
@@ -469,7 +500,7 @@ void UAlgorandUnrealManager::sendApplicationCallTransaction(const FUInt64& app_I
 /**
  * @brief get response from unreal api after application call TX and broadcast the result to binded functions
  */
-void UAlgorandUnrealManager::OnSendApplicationCallTransactionCompleteCallback(const Vertices::VerticesApplicationCallTransactionGetResponse& response) {
+void UAlgorandUnrealManager::OnSendApplicationCallTransactionCompleteCallback(const Vertices::VerticesSendApplCallTxResponse& response) {
     if (response.IsSuccessful()) {
         FString txID = response.txID;
         FString logs = response.logs;
@@ -493,10 +524,10 @@ void UAlgorandUnrealManager::OnSendApplicationCallTransactionCompleteCallback(co
 void UAlgorandUnrealManager::fetchArcAssetDetails(const FUInt64& asset_ID)
 {
     this->requestContextManager_
-        .createContext<API::FAlgorandArcAssetDetailsGetDelegate,
-        Vertices::VerticesArcAssetDetailsGetRequest>(
+        .createContext<API::FAlgorandAPIArcAssetDetailsDelegate,
+        Vertices::VerticesArcAssetDetailsRequest>(
             request_builders::buildArcAssetDetailsRequest(asset_ID),
-            std::bind(&API::AlgorandArcAssetDetailsGet, unrealApi_.Get(),
+            std::bind(&API::AlgorandAPIArcAssetDetails, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             std::bind(&UAlgorandUnrealManager::OnFetchArcAssetDetailsCompleteCallback, this, std::placeholders::_1)
             );
@@ -505,7 +536,7 @@ void UAlgorandUnrealManager::fetchArcAssetDetails(const FUInt64& asset_ID)
 /**
  * @brief get response from unreal api after fetching arc asset details and broadcast the result to binded functions
  */
-void UAlgorandUnrealManager::OnFetchArcAssetDetailsCompleteCallback(const Vertices::VerticesArcAssetDetailsGetResponse& response) {
+void UAlgorandUnrealManager::OnFetchArcAssetDetailsCompleteCallback(const Vertices::VerticesArcAssetDetailsResponse& response) {
     if (response.IsSuccessful()) {
         FArcAssetDetails arcNft(response);
         FetchArcAssetDetailsCallback.Broadcast(arcNft);
@@ -528,10 +559,10 @@ void UAlgorandUnrealManager::OnFetchArcAssetDetailsCompleteCallback(const Vertic
 void UAlgorandUnrealManager::fetchAccountInformation(const FString& address)
 {
     this->requestContextManager_
-        .createContext<API::FAlgorandAccountInformationGetDelegate,
-        Vertices::VerticesAccountInformationGetRequest>(
+        .createContext<API::FAlgorandAPIAccountInformationDelegate,
+        Vertices::VerticesAccountInformationRequest>(
             request_builders::buildAccountInformationRequest(address),
-            std::bind(&API::AlgorandAccountInformationGet, unrealApi_.Get(),
+            std::bind(&API::AlgorandAPIAccountInformation, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             std::bind(&UAlgorandUnrealManager::OnFetchAccountInformationCompleteCallback, this, std::placeholders::_1)
             );
@@ -540,7 +571,7 @@ void UAlgorandUnrealManager::fetchAccountInformation(const FString& address)
 /**
  * @brief get response from unreal api after fetching arc asset details and broadcast the result to binded functions
  */
-void UAlgorandUnrealManager::OnFetchAccountInformationCompleteCallback(const Vertices::VerticesAccountInformationGetResponse& response) {
+void UAlgorandUnrealManager::OnFetchAccountInformationCompleteCallback(const Vertices::VerticesAccountInformationResponse& response) {
     if (response.IsSuccessful()) {
         FetchAccountInformationCallback.Broadcast(response.assetIDs, response.assetNames);
         FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Account Information", "sent request to fetch account info successfully."));

@@ -3,112 +3,126 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "BaseModel.h"
+#include "VerticesSDK.h"
+
+namespace {
+    using VerticesSDK = algorand::vertices::VerticesSDK;
+}
 
 namespace algorand {
     namespace vertices {
-        // Request for Restore wallet
-        class VerticesSDK::VerticesRestoreWalletGetRequest : public Request
+        // for Initializing algorand wallet
+        class VerticesSDK::VerticesInitWalletRequest : public Request
         {
         public:
-            virtual ~VerticesRestoreWalletGetRequest() {}
+            virtual ~VerticesInitWalletRequest() {}
+        };
+        
+        class VerticesSDK::VerticesInitWalletResponse : public Response
+        {
+        public:
+            ~VerticesInitWalletResponse() {}
+            FString output;
+        };
+        
+        // for Loading algorand wallet
+        class VerticesSDK::VerticesLoadWalletRequest : public Request
+        {
+        public:
+            virtual ~VerticesLoadWalletRequest() {}
             TOptional<FString> Mnemonics;
         };
-
-        // Response for Restore wallet
-        class VerticesSDK::VerticesRestoreWalletGetResponse : public Response
+        
+        class VerticesSDK::VerticesLoadWalletResponse : public Response
         {
         public:
-            ~VerticesRestoreWalletGetResponse() {}
+            ~VerticesLoadWalletResponse() {}
             FString output;
         };
 
-        // Request for Initialize New wallet
-        class VerticesSDK::VerticesInitializeNewWalletGetRequest : public Request
+        // for Saving algorand wallet
+        class VerticesSDK::VerticesSaveWalletRequest : public Request
         {
         public:
-            virtual ~VerticesInitializeNewWalletGetRequest() {}
+            virtual ~VerticesSaveWalletRequest() {}
+            TOptional<FString> Mnemonics;
         };
-
-        // Response for Initialize New wallet
-        class VerticesSDK::VerticesInitializeNewWalletGetResponse : public Response
+        
+        class VerticesSDK::VerticesSaveWalletResponse : public Response
         {
         public:
-            ~VerticesInitializeNewWalletGetResponse() {}
+            ~VerticesSaveWalletResponse() {}
             FString output;
         };
 
-        // Request for Get Backup Mnemonic Phrase
-        class VerticesSDK::VerticesGetBackupMnemonicPhraseGetRequest : public Request
+        // for Generating Account From Mnemonics
+        class VerticesSDK::VerticesGenerateAccountFromMnemonicsRequest : public Request
         {
         public:
-            virtual ~VerticesGetBackupMnemonicPhraseGetRequest() {}
+            virtual ~VerticesGenerateAccountFromMnemonicsRequest() {}
         };
-
-        // Response for Get Backup Mnemonic Phrase
-        class VerticesSDK::VerticesGetBackupMnemonicPhraseGetResponse : public Response
+        
+        class VerticesSDK::VerticesGenerateAccountFromMnemonicsResponse : public Response
         {
         public:
-            ~VerticesGetBackupMnemonicPhraseGetResponse() {}
+            ~VerticesGenerateAccountFromMnemonicsResponse() {}
             FString output;
         };
 
-        // Request for Generate Mnemonics
-        class VerticesSDK::VerticesGenerateMnemonicsGetRequest : public Request
+        // for Getting Mnemonics by account name
+        class VerticesSDK::VerticesGetMnemonicsByAccountNameRequest : public Request
         {
         public:
-            virtual ~VerticesGenerateMnemonicsGetRequest() {}
+            virtual ~VerticesGetMnemonicsByAccountNameRequest() {}
         };
-
-        // Response for Generate Mnemonics
-        class VerticesSDK::VerticesGenerateMnemonicsGetResponse : public Response
+        
+        class VerticesSDK::VerticesGetMnemonicsByAccountNameResponse : public Response
         {
         public:
-            ~VerticesGenerateMnemonicsGetResponse() {}
+            ~VerticesGetMnemonicsByAccountNameResponse() {}
             FString output;
         };
 
-        // Request for Get Address
-        class VerticesSDK::VerticesGetaddressbalanceGetRequest : public Request
+        // for Getting balance by any address
+        class VerticesSDK::VerticesGetAddrBalanceRequest : public Request
         {
         public:
-            virtual ~VerticesGetaddressbalanceGetRequest() {}
+            virtual ~VerticesGetAddrBalanceRequest() {}
 
             TOptional<FString> Address;
         };
-
-        // Response for Get Address
-        class VerticesSDK::VerticesGetaddressbalanceGetResponse : public Response
+        
+        class VerticesSDK::VerticesGetAddrBalanceResponse : public Response
         {
         public:
-            ~VerticesGetaddressbalanceGetResponse() {}
+            ~VerticesGetAddrBalanceResponse() {}
             uint64 Amount;
         };
 
-        // Request for Payment TX
-        class VerticesSDK::VerticesPaymentTransactionGetRequest : public Request
+        // for sending Payment TX
+        class VerticesSDK::VerticesSendPayTxRequest : public Request
         {
         public:
-            virtual ~VerticesPaymentTransactionGetRequest() {}
+            virtual ~VerticesSendPayTxRequest() {}
 
             TOptional<FString> senderAddress;
             TOptional<FString> receiverAddress;
             TOptional<uint64_t> amount;
             TOptional<FString> notes;
         };
-
-        // Response for Payment TX
-        class VerticesSDK::VerticesPaymentTransactionGetResponse : public Response
+        
+        class VerticesSDK::VerticesSendPayTxResponse : public Response
         {
         public:
-            ~VerticesPaymentTransactionGetResponse() {}
+            ~VerticesSendPayTxResponse() {}
             FString txID;
         };
 
-        // Request for Asset Config TX
-        class VerticesSDK::VerticesAssetConfigTransactionGetRequest : public Request
+        // for sending Asset Config TX
+        class VerticesSDK::VerticesSendAcfgTxRequest : public Request
         {
         public:
-            virtual ~VerticesAssetConfigTransactionGetRequest() {}
+            virtual ~VerticesSendAcfgTxRequest() {}
 
             TOptional<FString>  Creator; 
             TOptional<FString>  Manager;
@@ -125,20 +139,20 @@ namespace algorand {
             TOptional<FString>  Notes;
         };
 
-        // Response for Asset Config TX
-        class VerticesSDK::VerticesAssetConfigTransactionGetResponse : public Response
+        // for sending Asset Config TX
+        class VerticesSDK::VerticesSendAcfgTxResponse : public Response
         {
         public:
-            ~VerticesAssetConfigTransactionGetResponse() {}
+            ~VerticesSendAcfgTxResponse() {}
             FString txID;
             uint64 assetID;
         };
 
-        // Request for Asset Transfer TX
-        class VerticesSDK::VerticesAssetTransferTransactionGetRequest : public Request
+        // for sending Asset Transfer TX
+        class VerticesSDK::VerticesSendAxferTxRequest : public Request
         {
         public:
-            virtual ~VerticesAssetTransferTransactionGetRequest() {}
+            virtual ~VerticesSendAxferTxRequest() {}
 
             TOptional<FString> senderAddress;
             TOptional<FString> receiverAddress;
@@ -146,50 +160,48 @@ namespace algorand {
             TOptional<double> amount;
             TOptional<FString> notes;
         };
-
-        // Response for Asset Transfer TX
-        class VerticesSDK::VerticesAssetTransferTransactionGetResponse : public Response
+        
+        class VerticesSDK::VerticesSendAxferTxResponse : public Response
         {
         public:
-            ~VerticesAssetTransferTransactionGetResponse() {}
+            ~VerticesSendAxferTxResponse() {}
             FString txID;
         };
 
-        // Request for Application Call TX
-        class VerticesSDK::VerticesApplicationCallTransactionGetRequest : public Request
+        // for sending Application Call TX
+        class VerticesSDK::VerticesSendApplCallTxRequest : public Request
         {
         public:
-            virtual ~VerticesApplicationCallTransactionGetRequest() {}
+            virtual ~VerticesSendApplCallTxRequest() {}
 
             TOptional<FString> senderAddress;
             TOptional<uint64_t> app_ID;
             TArray<TArray<uint8_t>> app_args;
             EAppCompleteTX app_complete_tx; 
         };
-
-        // Response for Application Call TX
-        class VerticesSDK::VerticesApplicationCallTransactionGetResponse : public Response
+        
+        class VerticesSDK::VerticesSendApplCallTxResponse : public Response
         {
         public:
-            ~VerticesApplicationCallTransactionGetResponse() {}
+            ~VerticesSendApplCallTxResponse() {}
             FString txID;
             FString logs;
         };
 
-        // Request for Arc Asset Details
-        class VerticesSDK::VerticesArcAssetDetailsGetRequest : public Request
+        // for Arc Asset Details
+        class VerticesSDK::VerticesArcAssetDetailsRequest : public Request
         {
         public:
-            virtual ~VerticesArcAssetDetailsGetRequest() {}
+            virtual ~VerticesArcAssetDetailsRequest() {}
             
             TOptional<uint64_t> asset_ID;
         };
 
         // Response for Arc Asset Details
-        class VerticesSDK::VerticesArcAssetDetailsGetResponse : public Response
+        class VerticesSDK::VerticesArcAssetDetailsResponse : public Response
         {
         public:
-            ~VerticesArcAssetDetailsGetResponse() {}
+            ~VerticesArcAssetDetailsResponse() {}
             
             uint8 standard;
             FString unit_name;
@@ -208,19 +220,19 @@ namespace algorand {
         };
 
         // Request for Account Information
-        class VerticesSDK::VerticesAccountInformationGetRequest : public Request
+        class VerticesSDK::VerticesAccountInformationRequest : public Request
         {
         public:
-            virtual ~VerticesAccountInformationGetRequest() {}
+            virtual ~VerticesAccountInformationRequest() {}
             
             TOptional<FString> address;
         };
 
         // Response for Account Information
-        class VerticesSDK::VerticesAccountInformationGetResponse : public Response
+        class VerticesSDK::VerticesAccountInformationResponse : public Response
         {
         public:
-            ~VerticesAccountInformationGetResponse() {}
+            ~VerticesAccountInformationResponse() {}
             
             TArray<FString> assetIDs;
             TArray<FString> assetNames;

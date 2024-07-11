@@ -50,8 +50,8 @@ public:
 		void OnInitializeNewWalletCallback(const FString& output);
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OnGetBackupMnemonicPhraseCallback(const FString& output);
+		void OngetMnemonicsByAccountNameCallback(const FString& output);
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OnGenerateMnemonicsCallback(const FString& output);
+		void OngenerateAccountFromMnemonicsCallback(const FString& output);
 };

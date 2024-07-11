@@ -112,65 +112,71 @@ namespace vertices {
         /**
          * @brief set Request and Response for building api request and its result
          */
-        class VerticesRestoreWalletGetRequest;
-        class VerticesRestoreWalletGetResponse;
-        class VerticesInitializeNewWalletGetRequest;
-        class VerticesInitializeNewWalletGetResponse;
-        class VerticesGetBackupMnemonicPhraseGetRequest;
-        class VerticesGetBackupMnemonicPhraseGetResponse;
-        class VerticesGenerateMnemonicsGetRequest;
-        class VerticesGenerateMnemonicsGetResponse;
-        class VerticesGetaddressbalanceGetRequest;
-        class VerticesGetaddressbalanceGetResponse;
-        class VerticesPaymentTransactionGetRequest;
-        class VerticesPaymentTransactionGetResponse;
-        class VerticesAssetConfigTransactionGetRequest;
-        class VerticesAssetConfigTransactionGetResponse;
-        class VerticesAssetTransferTransactionGetRequest;
-        class VerticesAssetTransferTransactionGetResponse;
-        class VerticesApplicationCallTransactionGetRequest;
-        class VerticesApplicationCallTransactionGetResponse;
-        class VerticesArcAssetDetailsGetRequest;
-        class VerticesArcAssetDetailsGetResponse;
-        class VerticesAccountInformationGetRequest;
-        class VerticesAccountInformationGetResponse;
+        class VerticesInitWalletRequest;
+        class VerticesInitWalletResponse;
+        class VerticesLoadWalletRequest;
+        class VerticesLoadWalletResponse;
+        class VerticesSaveWalletRequest;
+        class VerticesSaveWalletResponse;
+        class VerticesGenerateAccountFromMnemonicsRequest;
+        class VerticesGenerateAccountFromMnemonicsResponse;
+        class VerticesGetMnemonicsByAccountNameRequest;
+        class VerticesGetMnemonicsByAccountNameResponse;
+        class VerticesGetAddrBalanceRequest;
+        class VerticesGetAddrBalanceResponse;
+        class VerticesSendPayTxRequest;
+        class VerticesSendPayTxResponse;
+        class VerticesSendAcfgTxRequest;
+        class VerticesSendAcfgTxResponse;
+        class VerticesSendAxferTxRequest;
+        class VerticesSendAxferTxResponse;
+        class VerticesSendApplCallTxRequest;
+        class VerticesSendApplCallTxResponse;
+        class VerticesArcAssetDetailsRequest;
+        class VerticesArcAssetDetailsResponse;
+        class VerticesAccountInformationRequest;
+        class VerticesAccountInformationResponse;
 
-        /// restore wallet callback
-        DECLARE_DELEGATE_OneParam(FVerticesRestoreWalletGetDelegate, const VerticesRestoreWalletGetResponse&);
+        /// callback, which initialize the algorand wallet
+        DECLARE_DELEGATE_OneParam(FVerticesInitWalletDelegate, const VerticesInitWalletResponse&);
+     
+        /// callback ,which loads a stored wallet
+        DECLARE_DELEGATE_OneParam(FVerticesLoadWalletDelegate, const VerticesLoadWalletResponse&);
 
-        /// initialize new wallet callback
-        DECLARE_DELEGATE_OneParam(FVerticesInitializeNewWalletGetDelegate, const VerticesInitializeNewWalletGetResponse&);
+        /// callback ,which saves the algorand wallet
+        DECLARE_DELEGATE_OneParam(FVerticesSaveWalletDelegate, const VerticesSaveWalletResponse&);
 
-        /// get backup mnemonic phrase callback
-        DECLARE_DELEGATE_OneParam(FVerticesGetBackupMnemonicPhraseGetDelegate, const VerticesGetBackupMnemonicPhraseGetResponse&);
+        /// callback, which generate a new account on wallet if the wallet is empty 
+        DECLARE_DELEGATE_OneParam(FVerticesGenerateAccountFromMnemonicsDelegate, const VerticesGenerateAccountFromMnemonicsResponse&);
 
-        /// generate mnemonics callback
-        DECLARE_DELEGATE_OneParam(FVerticesGenerateMnemonicsGetDelegate, const VerticesGenerateMnemonicsGetResponse&);
+        /// callback, which backups mnemonic phrase by account name on a wallet
+        DECLARE_DELEGATE_OneParam(FVerticesGetMnemonicsByAccountNameDelegate, const VerticesGetMnemonicsByAccountNameResponse&);
 
-        /// get balance callabck
-        DECLARE_DELEGATE_OneParam(FVerticesGetaddressbalanceGetDelegate, const VerticesGetaddressbalanceGetResponse&);
+        /// callabck , which get balance by any algorand address
+        DECLARE_DELEGATE_OneParam(FVerticesGetAddrBalanceDelegate, const VerticesGetAddrBalanceResponse&);
 
-        /// payment tx callabck
-        DECLARE_DELEGATE_OneParam(FVerticesPaymentTransactionGetDelegate, const VerticesPaymentTransactionGetResponse&);
+        /// callback , which enables sending pay tx
+        DECLARE_DELEGATE_OneParam(FVerticesSendPayTxDelegate, const VerticesSendPayTxResponse&);
 
-        /// asset config tx callabck
-        DECLARE_DELEGATE_OneParam(FVerticesAssetConfigTransactionGetDelegate, const VerticesAssetConfigTransactionGetResponse&);
+        /// callabck , which enables sending acfg tx 
+        DECLARE_DELEGATE_OneParam(FVerticesSendAcfgTxDelegate, const VerticesSendAcfgTxResponse&);
 
-        /// asset transfer tx callabck
-        DECLARE_DELEGATE_OneParam(FVerticesAssetTransferTransactionGetDelegate, const VerticesAssetTransferTransactionGetResponse&);
+        /// callabck , which enables sending axfer tx 
+        DECLARE_DELEGATE_OneParam(FVerticesSendAxferTxDelegate, const VerticesSendAxferTxResponse&);
 
-        /// application call tx callback
-        DECLARE_DELEGATE_OneParam(FVerticesApplicationCallTransactionGetDelegate, const VerticesApplicationCallTransactionGetResponse&);
+        /// callback , which enables sending appl call tx
+        DECLARE_DELEGATE_OneParam(FVerticesSendApplCallTxDelegate, const VerticesSendApplCallTxResponse&);
 
-        void VerticesRestoreWalletGet(const VerticesRestoreWalletGetRequest&, const FVerticesRestoreWalletGetDelegate&);
-        void VerticesInitializeNewWalletGet(const VerticesInitializeNewWalletGetRequest&, const FVerticesInitializeNewWalletGetDelegate&);
-        void VerticesGetBackupMnemonicPhraseGet(const VerticesGetBackupMnemonicPhraseGetRequest&, const FVerticesGetBackupMnemonicPhraseGetDelegate&);
-        void VerticesGenerateMnemonicsGet(const VerticesGenerateMnemonicsGetRequest&, const FVerticesGenerateMnemonicsGetDelegate&);
-        void VerticesGetaddressbalanceGet(const VerticesGetaddressbalanceGetRequest&, const FVerticesGetaddressbalanceGetDelegate&);
-        void VerticesPaymentTransactionGet(const VerticesPaymentTransactionGetRequest&, const FVerticesPaymentTransactionGetDelegate&);
-        void VerticesAssetConfigTransactionGet(const VerticesAssetConfigTransactionGetRequest&, const FVerticesAssetConfigTransactionGetDelegate&);
-        void VerticesAssetTransferTransactionGet(const VerticesAssetTransferTransactionGetRequest&, const FVerticesAssetTransferTransactionGetDelegate&);
-        void VerticesApplicationCallTransactionGet(const VerticesApplicationCallTransactionGetRequest&, const FVerticesApplicationCallTransactionGetDelegate&);
+        void VerticesInitWallet(const VerticesInitWalletRequest&, const FVerticesInitWalletDelegate&);
+        void VerticesLoadWallet(const VerticesLoadWalletRequest&, const FVerticesLoadWalletDelegate&);
+        void VerticesSaveWallet(const VerticesSaveWalletRequest&, const FVerticesSaveWalletDelegate&);
+        void VerticesGenerateAccountFromMnemonics(const VerticesGenerateAccountFromMnemonicsRequest&, const FVerticesGenerateAccountFromMnemonicsDelegate&);
+        void VerticesGetMnemonicsByAccountName(const VerticesGetMnemonicsByAccountNameRequest&, const FVerticesGetMnemonicsByAccountNameDelegate&);
+        void VerticesGetAddrBalance(const VerticesGetAddrBalanceRequest&, const FVerticesGetAddrBalanceDelegate&);
+        void VerticesSendPayTx(const VerticesSendPayTxRequest&, const FVerticesSendPayTxDelegate&);
+        void VerticesSendAcfgTx(const VerticesSendAcfgTxRequest&, const FVerticesSendAcfgTxDelegate&);
+        void VerticesSendAxferTx(const VerticesSendAxferTxRequest&, const FVerticesSendAxferTxDelegate&);
+        void VerticesSendApplCallTx(const VerticesSendApplCallTxRequest&, const FVerticesSendApplCallTxDelegate&);
     
     private:
         // algorand rpc info for creating vertices
