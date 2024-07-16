@@ -3,38 +3,38 @@
 
 FArcAssetDetails::FArcAssetDetails()
 {
-	standard = EArcType::Arc00;
-	unit_name = "";
-	total = 0;
-	decimals = 0;
-	description = "";
-	clawback = "";
-	creator = "";
-	freeze = "";
-	manager = "";
-	reserve = "";
-	media_url = "";
-	external_url = "";
-	animation_url = "";
-	properties = TMap<FString, FString>();
+	Standard = EArcType::Arc00;
+	Unit_Name = "";
+	Total = 0;
+	Decimals = 0;
+	Description = "";
+	Clawback = "";
+	Creator = "";
+	Freeze = "";
+	Manager = "";
+	Reserve = "";
+	Media_Url = "";
+	External_Url = "";
+	Animation_Url = "";
+	Properties = TMap<FString, FString>();
 }
 
 FArcAssetDetails::FArcAssetDetails(const algorand::vertices::VerticesSDK::VerticesArcAssetDetailsResponse& response)
 {
-	standard = EArcType(response.standard);
-	unit_name = response.unit_name;
-	total = response.total;
-	decimals = response.decimals;
-	description = response.description;
-	clawback = response.clawback;
-	creator = response.creator;
-	freeze = response.freeze;
-	manager = response.manager;
-	reserve = response.reserve;
-	media_url = response.media_url;
-	external_url = response.external_url;
-	animation_url = response.animation_url;
-	properties = response.properties;
+	Standard = EArcType(response.Standard);
+	Unit_Name = response.Unit_Name;
+	Total = response.Total;
+	Decimals = response.Decimals;
+	Description = response.Description;
+	Clawback = response.Clawback;
+	Creator = response.Creator;
+	Freeze = response.Freeze;
+	Manager = response.Manager;
+	Reserve = response.Reserve;
+	Media_Url = response.Media_Url;
+	External_Url = response.External_Url;
+	Animation_Url = response.Animation_Url;
+	Properties = response.Properties;
 }
 
 

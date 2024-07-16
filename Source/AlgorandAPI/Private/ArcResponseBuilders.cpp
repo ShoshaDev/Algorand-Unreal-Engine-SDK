@@ -7,21 +7,21 @@ namespace ArcResponseBuilders {
 	{
 		Vertices::VerticesArcAssetDetailsResponse response;
 		
-		response.standard = 1;		// arc03 
+		response.Standard = 1;		// arc03 
 		
-		response.unit_name = arc_asset.asset.params.unit_name;
-		response.total = arc_asset.asset.params.total;
-		response.decimals = arc_asset.asset.params.decimals;
-		response.description = arc_asset.metadata.description;
-		response.clawback = arc_asset.asset.params.clawback;
-		response.creator = arc_asset.asset.params.creator;
-		response.freeze = arc_asset.asset.params.freeze;
-		response.manager = arc_asset.asset.params.manager;
-		response.reserve = arc_asset.asset.params.reserve;
-		response.media_url = arc_asset.metadata.image;
-		response.external_url = arc_asset.metadata.external_url;
-		response.animation_url = arc_asset.metadata.animation_url;
-		response.properties = arc_asset.metadata.properties; 
+		response.Unit_Name = arc_asset.asset.params.unit_name;
+		response.Total = arc_asset.asset.params.total;
+		response.Decimals = arc_asset.asset.params.decimals;
+		response.Description = arc_asset.metadata.description;
+		response.Clawback = arc_asset.asset.params.clawback;
+		response.Creator = arc_asset.asset.params.creator;
+		response.Freeze = arc_asset.asset.params.freeze;
+		response.Manager = arc_asset.asset.params.manager;
+		response.Reserve = arc_asset.asset.params.reserve;
+		response.Media_Url = arc_asset.metadata.image;
+		response.External_Url = arc_asset.metadata.external_url;
+		response.Animation_Url = arc_asset.metadata.animation_url;
+		response.Properties = arc_asset.metadata.properties; 
 		
 		AsyncTask(ENamedThreads::GameThread, [delegate, response]()
 		{
@@ -33,19 +33,19 @@ namespace ArcResponseBuilders {
 	{
 		Vertices::VerticesArcAssetDetailsResponse response;
 		
-		response.standard = 2;			// arc19
+		response.Standard = 2;			// arc19
 
-		response.unit_name = arc_asset.asset.params.unit_name;
-		response.total = arc_asset.asset.params.total;
-		response.decimals = arc_asset.asset.params.decimals;
-		response.description = arc_asset.metadata.description;
-		response.clawback = arc_asset.asset.params.clawback;
-		response.creator = arc_asset.asset.params.creator;
-		response.freeze = arc_asset.asset.params.freeze;
-		response.manager = arc_asset.asset.params.manager;
-		response.reserve = arc_asset.asset.params.reserve;
-		response.media_url = arc_asset.metadata.image;
-		response.properties = arc_asset.metadata.properties; 
+		response.Unit_Name = arc_asset.asset.params.unit_name;
+		response.Total = arc_asset.asset.params.total;
+		response.Decimals = arc_asset.asset.params.decimals;
+		response.Description = arc_asset.metadata.description;
+		response.Clawback = arc_asset.asset.params.clawback;
+		response.Creator = arc_asset.asset.params.creator;
+		response.Freeze = arc_asset.asset.params.freeze;
+		response.Manager = arc_asset.asset.params.manager;
+		response.Reserve = arc_asset.asset.params.reserve;
+		response.Media_Url = arc_asset.metadata.image;
+		response.Properties = arc_asset.metadata.properties; 
 		
 		AsyncTask(ENamedThreads::GameThread, [delegate, response]()
 		{
@@ -57,20 +57,20 @@ namespace ArcResponseBuilders {
 	{
 		Vertices::VerticesArcAssetDetailsResponse response;
 		
-		response.standard = 3;	// arc69
+		response.Standard = 3;	// arc69
 
-		response.unit_name = arc_asset.asset.params.unit_name;
-		response.total = arc_asset.asset.params.total;
-		response.decimals = arc_asset.asset.params.decimals;
-		response.description = arc_asset.metadata.description;
-		response.clawback = arc_asset.asset.params.clawback;
-		response.creator = arc_asset.asset.params.creator;
-		response.freeze = arc_asset.asset.params.freeze;
-		response.manager = arc_asset.asset.params.manager;
-		response.reserve = arc_asset.asset.params.reserve;
-		response.media_url = arc_asset.metadata.media_url;
-		response.external_url = arc_asset.metadata.external_url;
-		response.properties = arc_asset.metadata.properties;
+		response.Unit_Name = arc_asset.asset.params.unit_name;
+		response.Total = arc_asset.asset.params.total;
+		response.Decimals = arc_asset.asset.params.decimals;
+		response.Description = arc_asset.metadata.description;
+		response.Clawback = arc_asset.asset.params.clawback;
+		response.Creator = arc_asset.asset.params.creator;
+		response.Freeze = arc_asset.asset.params.freeze;
+		response.Manager = arc_asset.asset.params.manager;
+		response.Reserve = arc_asset.asset.params.reserve;
+		response.Media_Url = arc_asset.metadata.media_url;
+		response.External_Url = arc_asset.metadata.external_url;
+		response.Properties = arc_asset.metadata.properties;
 
 		response.SetSuccessful(true);
 		
@@ -88,8 +88,8 @@ namespace ArcResponseBuilders {
 		{
 			for(int i = 0; i < arc_asset.info.Num(); i++)
 			{
-				response.assetIDs.Add(FString::Printf(TEXT("%llu"), arc_asset.info[i].id));
-				response.assetNames.Add(arc_asset.info[i].name);
+				response.AssetIDs.Add(FString::Printf(TEXT("%llu"), arc_asset.info[i].id));
+				response.AssetNames.Add(arc_asset.info[i].name);
 			}
 				
 			response.SetSuccessful(true);		

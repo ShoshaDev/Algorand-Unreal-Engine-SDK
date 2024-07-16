@@ -25,46 +25,46 @@ struct ALGORAND_API FArcAssetDetails
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	EArcType standard;
+	EArcType Standard;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString unit_name;
+	FString Unit_Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FUInt64 total;
+	FUInt64 Total;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FUInt64 decimals;
+	FUInt64 Decimals;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString description;
+	FString Description;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString clawback;
+	FString Clawback;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString creator;
+	FString Creator;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString freeze;
+	FString Freeze;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString manager;
+	FString Manager;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString reserve;
+	FString Reserve;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString media_url;
+	FString Media_Url;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString external_url;
+	FString External_Url;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	FString animation_url;
+	FString Animation_Url;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ArcAsset")
-	TMap<FString, FString> properties;
+	TMap<FString, FString> Properties;
 
 	FArcAssetDetails();
 	FArcAssetDetails(const algorand::vertices::VerticesSDK::VerticesArcAssetDetailsResponse& response);
