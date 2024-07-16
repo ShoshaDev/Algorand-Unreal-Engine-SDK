@@ -5,23 +5,23 @@
 
 namespace response_builders {
 	algorand::vertices::VerticesSDK::VerticesInitWalletResponse
-		buildInitWalletResponse(const FString& output);
+		buildInitWalletResponse();
 	algorand::vertices::VerticesSDK::VerticesLoadWalletResponse
-		buildLoadWalletResponse(const FString& output);
+		buildLoadWalletResponse();
 	algorand::vertices::VerticesSDK::VerticesSaveWalletResponse
-		buildSaveWalletResponse(const FString& output);
+		buildSaveWalletResponse();
 	algorand::vertices::VerticesSDK::VerticesGenerateAccountFromMnemonicsResponse
-		buildGenerateAccountFromMnemonicsResponse(const FString& output);
+		buildGenerateAccountFromMnemonicsResponse(const FString& Address, const FString& Name);
 	algorand::vertices::VerticesSDK::VerticesGetMnemonicsByAccountNameResponse
-		buildGetMnemonicsByAccountNameResponse(const FString& output);
+		buildGetMnemonicsByAccountNameResponse(const FString& Mnemonics, const FString& Name);
 	algorand::vertices::VerticesSDK::VerticesGetAddrBalanceResponse
-		buildGetAddrBalanceResponse(const uint64& amount);
+		buildGetAddrBalanceResponse(const FString& Address, const uint64& Amount);
 	algorand::vertices::VerticesSDK::VerticesSendPayTxResponse
-		buildSendPayTxResponse(const FString& txID);
+		buildSendPayTxResponse(const FString& TxID);
 	algorand::vertices::VerticesSDK::VerticesSendAcfgTxResponse
-		buildAcfgTxResponse(const FString& txID, const uint64& assetID);
+		buildAcfgTxResponse(const FString& TxID, const uint64& AssetID);
 	algorand::vertices::VerticesSDK::VerticesSendAxferTxResponse
-		buildAxferTxResponse(const FString& txID);
+		buildAxferTxResponse(const FString& TxID);
 	algorand::vertices::VerticesSDK::VerticesSendApplCallTxResponse
-		buildSendApplCallTxResponse(const FString& txID, const FString& logs);
+		buildSendApplCallTxResponse(const FString& TxID, const FString& Logs);
 }

@@ -5,6 +5,7 @@
 #include "Engine/World.h"
 #include "RequestContextManager.h"
 #include "Models/FArcAssetDetails.h"
+#include "Models/FResultType.h"
 #include "Models/FUInt64.h"
 #include "Models/FError.h"
 #include "UnrealApi.h"
@@ -34,75 +35,76 @@ namespace {
 
 /**
  * initialize algorand wallet callback 
- * @param output generated address
+ * @param ResultType generated address
+ * @param Result generated address
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInitWalletDelegate, const FString&, output);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FInitWalletDelegate, const EResultType&, ResultType, const FResultBoolean&, Result);
 
 /**
  * load wallet callback 
  * @param output generated address
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLoadWalletDelegate, const FString&, output);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLoadWalletDelegate, const EResultType&, ResultType, const FResultBoolean&, Result);
 
 /**
  * save wallet callback 
  * @param output generated address
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSaveWalletDelegate, const FString&, output);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSaveWalletDelegate, const EResultType&, ResultType, const FResultBoolean&, Result);
 
 /**
  * get mnemonics by account name callback 
  * @param output backup mnemonics
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetMnemonicsByAccountNameDelegate, const FString&, output);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGetMnemonicsByAccountNameDelegate, const EResultType&, ResultType, const FResultString&, MnemonicByName);
 
 /**
  * generate account from mnemonics callback 
  * @param output generated address
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGenerateAccountFromMnemonicsDelegate, const FString&, output);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGenerateAccountFromMnemonicsDelegate, const EResultType&, ResultType, const FResultAccount&, GeneratedAccount);
 
 /**
  * get balance by any address callback
  * @param money account balance
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGetAddressBalanceDelegate, const FUInt64&, money);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGetAddressBalanceDelegate, const EResultType&, ResultType, const FResultUInt64&, BalanceByAddress);
 
 /**
  * send payment tx callback
  * @param txID transaction hash
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSendPaymentTxDelegate, const FString&, txID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSendPaymentTxDelegate, const EResultType&, ResultType, const FResultString&, TxID);
 
 /**
  * send asset config tx callback
  * @param txID transaction hash
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSendAssetConfigTxDelegate, const FString&, txID, const FUInt64&,  assetID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSendAssetConfigTxDelegate, const EResultType&, ResultType, const FResultAcfgTx&, AcfgTX);
 
 /**
  * send asset transfer tx callback
  * @param txID transaction hash
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSendAssetTransferTxDelegate, const FString&, txID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSendAssetTransferTxDelegate, const EResultType&, ResultType, const FResultString&, TxID);
 
 /**
  * send application call tx callback
  * @param txID transaction hash
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSendApplicationCallTxDelegate, const FString&, txID, const FString&, tx_result);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSendApplicationCallTxDelegate, const EResultType&, ResultType, const FResultApplTx&, ApplTx);
 
 /**
  * nft details callback
  * @param assetDetails Arc Asset details
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FArcAssetDetailsDelegate, const FArcAssetDetails&, assetDetails);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FArcAssetDetailsDelegate, const EResultType&, ResultType, const FArcAssetDetails&, AssetDetails);
 
 /**
  * account information callback
  * @param accountInfo Arc Asset details
 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAccountInfoDelegate, const TArray<FString>&, assetID, const TArray<FString>&, assetNames);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAccountInfoDelegate, const EResultType&, ResultType, const FResultAccAssets&, AccAssets);
 
 /**
  * error callback
@@ -329,7 +331,7 @@ public:
 	 * get response after generating account from mnemonics
 	 * @param response address got by generating account from given mnemonics
 	 */
-    void OngenerateAccountFromMnemonicsCompleteCallback(const Vertices::VerticesGenerateAccountFromMnemonicsResponse& response);
+    void OnGenerateAccountFromMnemonicsCompleteCallback(const Vertices::VerticesGenerateAccountFromMnemonicsResponse& response);
     
 	/**
 	 * get balance by specific address

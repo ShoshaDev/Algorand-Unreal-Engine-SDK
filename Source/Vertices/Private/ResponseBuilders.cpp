@@ -9,84 +9,62 @@ namespace {
 
 namespace response_builders {
 	Vertices::VerticesInitWalletResponse
-		buildInitWalletResponse(const FString& output)
+		buildInitWalletResponse()
 	{
-		Vertices::VerticesInitWalletResponse response;
-		response.output = output;
-		return response;
+		return Vertices::VerticesInitWalletResponse();
 	}
 	
 	Vertices::VerticesLoadWalletResponse
-		buildLoadWalletResponse(const FString& output)
+		buildLoadWalletResponse()
 	{
-		Vertices::VerticesLoadWalletResponse response;
-		response.output = output;
-		return response;
+		return Vertices::VerticesLoadWalletResponse();
 	}
 
 	Vertices::VerticesSaveWalletResponse
-		buildSaveWalletResponse(const FString& output)
+		buildSaveWalletResponse()
 	{
-		Vertices::VerticesSaveWalletResponse response;
-		response.output = output;
-		return response;
+		return Vertices::VerticesSaveWalletResponse();
 	}
 
 	Vertices::VerticesGenerateAccountFromMnemonicsResponse
-		buildGenerateAccountFromMnemonicsResponse(const FString& output)
+		buildGenerateAccountFromMnemonicsResponse(const FString& Address, const FString& Name)
 	{
-		Vertices::VerticesGenerateAccountFromMnemonicsResponse response;
-		response.output = output;
-		return response;
+		return Vertices::VerticesGenerateAccountFromMnemonicsResponse(Address, Name);
 	}
 	
 	Vertices::VerticesGetMnemonicsByAccountNameResponse
-		BuildGetMnemonicsByAccountNameResponse(const FString& output)
+		buildGetMnemonicsByAccountNameResponse(const FString& Mnemonics, const FString& Name)
 	{
-		Vertices::VerticesGetMnemonicsByAccountNameResponse response;
-		response.output = output;
-		return response;
+		return Vertices::VerticesGetMnemonicsByAccountNameResponse(Mnemonics, Name);
 	}
 
 	Vertices::VerticesGetAddrBalanceResponse
-		buildGetAddrBalanceResponse(const uint64& amount)
+		buildGetAddrBalanceResponse(const FString& Address, const uint64& Amount)
 	{
-		Vertices::VerticesGetAddrBalanceResponse response;
-		response.Amount = amount;
-		return response;
+		return Vertices::VerticesGetAddrBalanceResponse(Address, Amount);
 	}
 
 	Vertices::VerticesSendPayTxResponse
-		buildSendPayTxResponse(const FString& txID)
+		buildSendPayTxResponse(const FString& TxID)
 	{
-		Vertices::VerticesSendPayTxResponse response;
-		response.txID = txID;
-		return response;
+		return Vertices::VerticesSendPayTxResponse(TxID);
 	}
 
 	Vertices::VerticesSendAcfgTxResponse
-		buildSendAcfgTxResponse(const FString& txID, const uint64& assetID)
+		buildSendAcfgTxResponse(const FString& TxID, const uint64& AssetID)
 	{
-		Vertices::VerticesSendAcfgTxResponse response;
-		response.txID = txID;
-		response.assetID = assetID;
-		return response;
+		return Vertices::VerticesSendAcfgTxResponse(TxID, AssetID);
 	}
 
 	Vertices::VerticesSendAxferTxResponse
-		buildSendAxferTxResponse(const FString& txID)
+		buildSendAxferTxResponse(const FString& TxID)
 	{
-		Vertices::VerticesSendAxferTxResponse response;
-		response.txID = txID;
-		return response;
+		return Vertices::VerticesSendAxferTxResponse(TxID);
 	}
 
 	Vertices::VerticesSendApplCallTxResponse
-		buildSendApplCallTxResponse(const FString& txID, const FString& logs)
+		buildSendApplCallTxResponse(const FString& TxID, const FString& Logs)
 	{
-		Vertices::VerticesSendApplCallTxResponse response;
-		response.txID = txID;
-		response.logs = logs;
-		return response;
+		return Vertices::VerticesSendApplCallTxResponse(TxID, Logs);
 	}
 }
