@@ -16,30 +16,26 @@ namespace request_builders {
 	}
 	
 	Vertices::VerticesLoadWalletRequest
-	buildLoadWalletRequest(const FString& mnemonics)
+	buildLoadWalletRequest(const FString& Password)
 	{
-		Vertices::VerticesLoadWalletRequest request;
-		request.Mnemonics = mnemonics;
-		return request;
+		return Vertices::VerticesLoadWalletRequest(Password);
 	}
 
 	Vertices::VerticesSaveWalletRequest
-	buildSaveWalletRequest(const FString& mnemonics)
+	buildSaveWalletRequest(const FString& Password)
 	{
-		Vertices::VerticesSaveWalletRequest request;
-		request.Mnemonics = mnemonics;
-		return request;
+		return Vertices::VerticesSaveWalletRequest(Password);
 	}
 
 	Vertices::VerticesGetMnemonicsByAccountNameRequest
-	buildgetMnemonicsByAccountNameRequest()
+	buildGetMnemonicsByAccountNameRequest()
 	{
 		Vertices::VerticesGetMnemonicsByAccountNameRequest request;
 		return request;
 	}
 
 	Vertices::VerticesGenerateAccountFromMnemonicsRequest
-	buildgenerateAccountFromMnemonicsRequest()
+	buildGenerateAccountFromMnemonicsRequest()
 	{
 		Vertices::VerticesGenerateAccountFromMnemonicsRequest request;
 		return request;

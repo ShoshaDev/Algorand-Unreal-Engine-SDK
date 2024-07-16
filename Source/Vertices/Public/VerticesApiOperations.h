@@ -22,37 +22,36 @@ namespace algorand {
         {
         public:
             ~VerticesInitWalletResponse() {}
-            FString output;
         };
         
         // for Loading algorand wallet
         class VerticesSDK::VerticesLoadWalletRequest : public Request
         {
         public:
+            VerticesLoadWalletRequest(const FString& Password) : Password(Password) {}
             virtual ~VerticesLoadWalletRequest() {}
-            TOptional<FString> Mnemonics;
+            TOptional<FString> Password;
         };
         
         class VerticesSDK::VerticesLoadWalletResponse : public Response
         {
         public:
             ~VerticesLoadWalletResponse() {}
-            FString output;
         };
 
         // for Saving algorand wallet
         class VerticesSDK::VerticesSaveWalletRequest : public Request
         {
         public:
+            VerticesSaveWalletRequest(const FString& Password) : Password(Password) {}
             virtual ~VerticesSaveWalletRequest() {}
-            TOptional<FString> Mnemonics;
+            TOptional<FString> Password;
         };
         
         class VerticesSDK::VerticesSaveWalletResponse : public Response
         {
         public:
             ~VerticesSaveWalletResponse() {}
-            FString output;
         };
 
         // for Generating Account From Mnemonics
@@ -60,13 +59,18 @@ namespace algorand {
         {
         public:
             virtual ~VerticesGenerateAccountFromMnemonicsRequest() {}
+            TOptional<FString> Mnemonics;
+            TOptional<FString> Name;
         };
         
         class VerticesSDK::VerticesGenerateAccountFromMnemonicsResponse : public Response
         {
         public:
-            ~VerticesGenerateAccountFromMnemonicsResponse() {}
-            FString output;
+            VerticesGenerateAccountFromMnemonicsResponse() {}
+            VerticesGenerateAccountFromMnemonicsResponse(const FString& Address, const FString& Name) : Address(Address), Name(Name) {}
+            virtual ~VerticesGenerateAccountFromMnemonicsResponse() {}
+            FString Address;
+            FString Name;
         };
 
         // for Getting Mnemonics by account name
@@ -74,13 +78,17 @@ namespace algorand {
         {
         public:
             virtual ~VerticesGetMnemonicsByAccountNameRequest() {}
+            TOptional<FString> Name;
         };
         
         class VerticesSDK::VerticesGetMnemonicsByAccountNameResponse : public Response
         {
         public:
+            VerticesGetMnemonicsByAccountNameResponse() {}
+            VerticesGetMnemonicsByAccountNameResponse(const FString& Mnemonics, const FString& Address) : Mnemonics(Mnemonics), Name(Name) {}
             ~VerticesGetMnemonicsByAccountNameResponse() {}
-            FString output;
+            FString Mnemonics;
+            FString Name;
         };
 
         // for Getting balance by any address
@@ -95,7 +103,10 @@ namespace algorand {
         class VerticesSDK::VerticesGetAddrBalanceResponse : public Response
         {
         public:
+            VerticesGetAddrBalanceResponse(): Amount(0) {}
+            VerticesGetAddrBalanceResponse(const FString& Address, const uint64& Amount) : Address(Address), Amount(Amount) {}
             ~VerticesGetAddrBalanceResponse() {}
+            FString Address;
             uint64 Amount;
         };
 
@@ -114,8 +125,10 @@ namespace algorand {
         class VerticesSDK::VerticesSendPayTxResponse : public Response
         {
         public:
-            ~VerticesSendPayTxResponse() {}
-            FString txID;
+            VerticesSendPayTxResponse() {}
+            VerticesSendPayTxResponse(const FString& TxID) : TxID(TxID) {}
+            virtual ~VerticesSendPayTxResponse() override {}
+            FString TxID;
         };
 
         // for sending Asset Config TX
@@ -143,9 +156,11 @@ namespace algorand {
         class VerticesSDK::VerticesSendAcfgTxResponse : public Response
         {
         public:
+            VerticesSendAcfgTxResponse(): AssetID(0) {}
+            VerticesSendAcfgTxResponse(const FString& TxID, const uint64& AssetID) : TxID(TxID), AssetID(AssetID) {}
             ~VerticesSendAcfgTxResponse() {}
-            FString txID;
-            uint64 assetID;
+            FString TxID;
+            uint64 AssetID;
         };
 
         // for sending Asset Transfer TX
@@ -164,8 +179,10 @@ namespace algorand {
         class VerticesSDK::VerticesSendAxferTxResponse : public Response
         {
         public:
+            VerticesSendAxferTxResponse() {}
+            VerticesSendAxferTxResponse(const FString& TxID) : TxID(TxID) {}
             ~VerticesSendAxferTxResponse() {}
-            FString txID;
+            FString TxID;
         };
 
         // for sending Application Call TX
@@ -183,9 +200,11 @@ namespace algorand {
         class VerticesSDK::VerticesSendApplCallTxResponse : public Response
         {
         public:
+            VerticesSendApplCallTxResponse() {}
+            VerticesSendApplCallTxResponse(const FString& TxID, const FString& Logs) : TxID(TxID), Logs(Logs) {}
             ~VerticesSendApplCallTxResponse() {}
-            FString txID;
-            FString logs;
+            FString TxID;
+            FString Logs;
         };
 
         // for Arc Asset Details
@@ -203,20 +222,20 @@ namespace algorand {
         public:
             ~VerticesArcAssetDetailsResponse() {}
             
-            uint8 standard;
-            FString unit_name;
-            uint64_t total;
-            uint64_t decimals;
-            FString description;
-            FString clawback;
-            FString creator;
-            FString freeze;
-            FString manager;
-            FString reserve;
-            FString media_url;
-            FString external_url;
-            FString animation_url;
-            TMap<FString, FString> properties;
+            uint8 Standard;
+            FString Unit_Name;
+            uint64_t Total;
+            uint64_t Decimals;
+            FString Description;
+            FString Clawback;
+            FString Creator;
+            FString Freeze;
+            FString Manager;
+            FString Reserve;
+            FString Media_Url;
+            FString External_Url;
+            FString Animation_Url;
+            TMap<FString, FString> Properties;
         };
 
         // Request for Account Information
@@ -234,8 +253,8 @@ namespace algorand {
         public:
             ~VerticesAccountInformationResponse() {}
             
-            TArray<FString> assetIDs;
-            TArray<FString> assetNames;
+            TArray<FString> AssetIDs;
+            TArray<FString> AssetNames;
         };
     }
 }

@@ -26,15 +26,16 @@ DECLARE_LOG_CATEGORY_EXTERN(LogMyAwesomeGame, Log, All);
 #define PUBLIC_ADDRESS_LENGTH 58
 #define LOCTEXT_NAMESPACE "FVerticesModule"
 
-unsigned char user_password[] = "algorand-sdk";
+#define CHECK_DLL_LOAD(loaded) \
+    do { \
+    if (!(loaded)) { \
+        UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries.")); \
+        ret_code_t error_code = VTC_ERROR_ASSERT_FAILS; /* Define or ensure this is defined elsewhere */ \
+        checkVTCSuccess((char*)"Failed loading of dll libraries", error_code); \
+    } \
+} while(0)
 
-// algo account struct 
-typedef struct {
-    unsigned char private_key[ADDRESS_LENGTH];  //!< 32-bytes private key
-    account_info_t* vtc_account;               //!< pointer to Vertices account data
-} account_t;
-
-account_t sender_account;
+s_account_t sender_account;
 
 #ifdef __cplusplus
 extern "C++" {
@@ -296,22 +297,13 @@ namespace algorand {
                         
                         try
                         {
-                            if(!loaded_)
-                            {
-                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
-                                err_code = VTC_ERROR_ASSERT_FAILS;
-                                checkVTCSuccess((char *)"Failed loading of dll libraries.", err_code);
-                            }
-                            main_account = Account::initialize_new();
-
-                            // copy private key to vertices account
-                            if(main_account.secret_key.size() != ADDRESS_LENGTH)
-                                checkVTCSuccess(const_cast<char*>("Secret key length is not 32 byte"), err_code);
+                            CHECK_DLL_LOAD(loaded_);
                             
                             UE_LOG(LogTemp, Display, TEXT("💳 Created Core account: %s"), *FString(main_account.address.as_string.data()));
                             
-                            response = response_builders::buildInitWalletResponse(FString(main_account.address.as_string.data()));
+                            response = response_builders::buildInitWalletResponse();
                             response.SetSuccessful(true);
+                            response.SetResponseString(main_account.address.as_string.data());
                         }
                         catch(SDKException& e)
                         {
@@ -350,13 +342,9 @@ namespace algorand {
             
                     try
                     {
-                        if(!loaded_)
-                        {
-                            UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
-                            err_code = VTC_ERROR_ASSERT_FAILS;
-                            checkVTCSuccess(const_cast<char*>("Failed loading of dll libraries."), err_code);
-                        }
-                        auto mnemonics = StringCast<ANSICHAR>(*(Request.Mnemonics.GetValue()));
+                        CHECK_DLL_LOAD(loaded_);
+                        
+                        auto mnemonics = StringCast<ANSICHAR>(*(Request.Password.GetValue()));
                         auto s_mnemonics = mnemonics.Get();
                         main_account = Account::from_mnemonic(s_mnemonics);
                         
@@ -366,8 +354,9 @@ namespace algorand {
                         
                         UE_LOG(LogTemp, Display, TEXT("💳 Created Core account: %s"), *FString(main_account.address.as_string.data()));
                         
-                        response = response_builders::buildLoadWalletResponse(FString(main_account.address.as_string.data()));
+                        response = response_builders::buildLoadWalletResponse();
                         response.SetSuccessful(true);
+                        response.SetResponseString("💳 Initialized Algo Wallet");
                     }
                     catch(SDKException& e)
                     {
@@ -405,13 +394,9 @@ namespace algorand {
             
                     try
                     {
-                        if(!loaded_)
-                        {
-                            UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
-                            err_code = VTC_ERROR_ASSERT_FAILS;
-                            checkVTCSuccess(const_cast<char*>("Failed loading of dll libraries."), err_code);
-                        }
-                        auto mnemonics = StringCast<ANSICHAR>(*(Request.Mnemonics.GetValue()));
+                        CHECK_DLL_LOAD(loaded_);
+                        
+                        auto mnemonics = StringCast<ANSICHAR>(*(Request.Password.GetValue()));
                         auto s_mnemonics = mnemonics.Get();
                         main_account = Account::from_mnemonic(s_mnemonics);
                         
@@ -421,7 +406,8 @@ namespace algorand {
                         
                         UE_LOG(LogTemp, Display, TEXT("💳 Created Core account: %s"), *FString(main_account.address.as_string.data()));
                         
-                        response = response_builders::buildSaveWalletResponse(FString(main_account.address.as_string.data()));
+                        response = response_builders::buildSaveWalletResponse();
+                        response.SetResponseString("💳 Loaded Algo Wallet");
                         response.SetSuccessful(true);
                     }
                     catch(SDKException& e)
@@ -460,12 +446,8 @@ namespace algorand {
                         
                         try
                         {
-                            if(!loaded_)
-                            {
-                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
-                                err_code = VTC_ERROR_ASSERT_FAILS;
-                                checkVTCSuccess(const_cast<char*>("Failed loading of dll libraries."), err_code);
-                            }
+                            CHECK_DLL_LOAD(loaded_);
+                            
                             bytes secret_key, pub_key;
 
                             if(sender_account.vtc_account->public_key == nullptr || sender_account.private_key == nullptr)
@@ -482,7 +464,7 @@ namespace algorand {
                             std::string mnemonics = account.mnemonic();
                             UE_LOG(LogTemp, Warning, TEXT("VerticesGetMnemonicsByAccountName mnemonics of backup %s"), *FString(mnemonics.data()));
                             
-                            response = response_builders::buildGetMnemonicsByAccountNameResponse(FString(mnemonics.data()));
+                            response = response_builders::buildGetMnemonicsByAccountNameResponse("", Request.Name.GetValue());
                             response.SetSuccessful(true);
                         }
                         catch(SDKException& e)
@@ -522,18 +504,14 @@ namespace algorand {
                         
                         try
                         {
-                            if(!loaded_)
-                            {
-                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
-                                err_code = VTC_ERROR_ASSERT_FAILS;
-                                checkVTCSuccess(const_cast<char*>("Failed loading of dll libraries."), err_code);
-                            }
+                            CHECK_DLL_LOAD(loaded_);
+                            
                             Account account = Account::initialize_new();
                             
                             std::string mnemonics = account.mnemonic();
                             UE_LOG(LogTemp, Warning, TEXT("VerticesGetMnemonicsByAccountName mnemonics of backup %s"), *FString(mnemonics.data()));
                             
-                            response = response_builders::buildGenerateAccountFromMnemonicsResponse(FString(mnemonics.data()));
+                            response = response_builders::buildGenerateAccountFromMnemonicsResponse("",Request.Name.GetValue());
                             response.SetSuccessful(true);
                         }
                         catch(SDKException& e)
@@ -564,7 +542,7 @@ namespace algorand {
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
                 ret_code_t err_code = VTC_SUCCESS;
-                account_t test_account;
+                account_info_t *test_account;
                 while (1) {
                     FScopeLock lock(&m_Mutex);
                     
@@ -574,12 +552,8 @@ namespace algorand {
 
                         try
                         {
-                            if(!loaded_)
-                            {
-                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
-                                err_code = VTC_ERROR_ASSERT_FAILS;
-                                checkVTCSuccess((char *)"Failed loading of dll libraries.", err_code);
-                            }
+                            CHECK_DLL_LOAD(loaded_);
+                            
                             // validation Request
                             auto auto_address = StringCast<ANSICHAR>(*(Request.Address.GetValue()));
                             if ( auto_address.Length() == 0 )
@@ -590,20 +564,19 @@ namespace algorand {
                             
                             InitVertices(err_code);
                             checkVTCSuccess(const_cast<char*>("When initing vertices network, an error occured"), err_code);
-
-                            memset(test_account.private_key, 0, 32);
-                            test_account.vtc_account = nullptr;
+                            
+                            test_account = nullptr;
                             
                             const FString& address = Request.Address.GetValue();
                             
-                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*address), &test_account.vtc_account);
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*address), &test_account);
                             checkVTCSuccess(const_cast<char*>("vertices_account_new_from_b32 error occured."), err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("Amount of account on AlgorandGetAddrBalance %d"), test_account.vtc_account->amount);
+                            UE_LOG(LogTemp, Warning, TEXT("Amount of account on AlgorandGetAddrBalance %d"), test_account->amount);
                             
-                            response = response_builders::buildGetAddrBalanceResponse(test_account.vtc_account->amount);
+                            response = response_builders::buildGetAddrBalanceResponse(Request.Address.GetValue(), test_account->amount);
                             response.SetSuccessful(true);
                             
-                            err_code = vertices_account_free(test_account.vtc_account);
+                            err_code = vertices_account_free(test_account);
                             checkVTCSuccess(const_cast<char*>("vertices_account_free error occured."), err_code);
                         }
                         catch (SDKException& e)
@@ -641,22 +614,18 @@ namespace algorand {
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
                 ret_code_t err_code = VTC_SUCCESS;
-                account_t receiver_account;
+                VerticesSDK::VerticesSendPayTxResponse response;
+                account_info_t *receiver_account;
                 while (1) {
                     FScopeLock lock(&m_Mutex);
 
                     if (vertices_usable) {
-                        VerticesSDK::VerticesSendPayTxResponse response;
                         vertices_usable = false;
 
                         try
                         {
-                            if(!loaded_)
-                            {
-                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
-                                err_code = VTC_ERROR_ASSERT_FAILS;
-                                checkVTCSuccess((char *)"Failed loading of dll libraries.", err_code);
-                            }
+                            CHECK_DLL_LOAD(loaded_);
+                            
                             // validation Request
                             auto auto_notes = StringCast<ANSICHAR>(*(Request.notes.GetValue()));
                             char* notes = const_cast<char*>(auto_notes.Get());
@@ -702,13 +671,13 @@ namespace algorand {
                             }
                             const FString& address = Request.receiverAddress.GetValue();
                             
-                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*address), &receiver_account.vtc_account);
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*address), &receiver_account);
                             checkVTCSuccess((char *)"vertices_account_new_from_b32 error occured.", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("Amount of receiver_account on Payment TX %d"), receiver_account.vtc_account->amount);
+                            UE_LOG(LogTemp, Warning, TEXT("Amount of receiver_account on Payment TX %d"), receiver_account->amount);
                             
                             err_code =
                                 vertices_transaction_pay_new(sender_account.vtc_account,
-                                    (char *)receiver_account.vtc_account->public_key /* or ACCOUNT_RECEIVER */,
+                                    (char *)receiver_account->public_key /* or ACCOUNT_RECEIVER */,
                                     (uint64_t)Request.amount.GetValue(),
                                     notes);
                             checkVTCSuccess((char *)"vertices_transaction_pay_new error occured", err_code);
@@ -766,7 +735,7 @@ namespace algorand {
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
                 ret_code_t err_code = VTC_SUCCESS;
-                account_t M_Account = {0}, R_Account = {0}, F_Account = {0}, C_Account = {0};  // 5 accounts for acfg
+                account_info_t *M_Account = {0}, *R_Account = {0}, *F_Account = {0}, *C_Account = {0};  // 5 accounts for acfg
                 while (1) {
                     FScopeLock lock(&m_Mutex);
 
@@ -776,12 +745,8 @@ namespace algorand {
 
                         try
                         {
-                            if(!loaded_)
-                            {
-                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
-                                err_code = VTC_ERROR_ASSERT_FAILS;
-                                checkVTCSuccess((char *)"Failed loading of dll libraries.", err_code);
-                            }
+                            CHECK_DLL_LOAD(loaded_);
+                            
                             // validation Request
                             auto auto_notes = StringCast<ANSICHAR>(*(Request.Notes.GetValue()));        // notes
                             char* notes = (char *)auto_notes.Get();
@@ -861,34 +826,34 @@ namespace algorand {
                             if ( manager.IsEmpty() )
                                 manager = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
                             
-                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*manager), &M_Account.vtc_account);
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*manager), &M_Account);
                             checkVTCSuccess(const_cast<char*>("vertices_account_new_from_b32 error occured."), err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("manager account on Asset Config TX %d"), M_Account.vtc_account->amount);
+                            UE_LOG(LogTemp, Warning, TEXT("manager account on Asset Config TX %d"), M_Account->amount);
                             
                             FString reserve = Request.Reserve.GetValue();
                             if ( reserve.IsEmpty())
                                 reserve = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
                             
-                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*reserve), &R_Account.vtc_account);
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*reserve), &R_Account);
                             checkVTCSuccess((char *)"vertices_account_new_from_b32 error occured.", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("reserve account on Asset Config TX %d"), R_Account.vtc_account->amount);
+                            UE_LOG(LogTemp, Warning, TEXT("reserve account on Asset Config TX %d"), R_Account->amount);
                             
                             
                             FString freeze = Request.Freeze.GetValue();
                             if ( freeze.IsEmpty() )
                                 freeze = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
                                 
-                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*freeze), &F_Account.vtc_account);
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*freeze), &F_Account);
                             checkVTCSuccess((char *)"vertices_account_new_from_b32 error occured.", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("freeze account on Asset Config TX %d"), F_Account.vtc_account->amount);   
+                            UE_LOG(LogTemp, Warning, TEXT("freeze account on Asset Config TX %d"), F_Account->amount);   
                             
                             FString clawback = Request.Clawback.GetValue();
                             if ( clawback.IsEmpty() )
                                 clawback = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
                                 
-                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*clawback), &C_Account.vtc_account);
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*clawback), &C_Account);
                             checkVTCSuccess((char *)"vertices_account_new_from_b32 error occured.", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("clawback account on Asset Config TX %d"), C_Account.vtc_account->amount);   
+                            UE_LOG(LogTemp, Warning, TEXT("clawback account on Asset Config TX %d"), C_Account->amount);   
 
                             err_code = VTC_ERROR_INVALID_STATE;
                             throw SDKException(const_cast<char*>("tx_acfg are not registered"), err_code);
@@ -979,7 +944,7 @@ namespace algorand {
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
             {
                 ret_code_t err_code = VTC_SUCCESS;
-                account_t asnd_account, arcv_account;
+                account_info_t *asnd_account, *arcv_account;
                 while (1) {
                     FScopeLock lock(&m_Mutex);
                 
@@ -989,12 +954,8 @@ namespace algorand {
                 
                         try
                         {
-                            if(!loaded_)
-                            {
-                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
-                                err_code = VTC_ERROR_ASSERT_FAILS;
-                                checkVTCSuccess((char *)"Failed loading of dll libraries.", err_code);
-                            }
+                            CHECK_DLL_LOAD(loaded_);
+                            
                             // validation Request
                             auto auto_notes = StringCast<ANSICHAR>(*(Request.notes.GetValue()));
                             char* notes = (char *)auto_notes.Get();
@@ -1040,13 +1001,13 @@ namespace algorand {
                             const FString& asnd = Request.senderAddress.GetValue();
                             const FString& arcv = Request.receiverAddress.GetValue();
                             
-                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*asnd), &asnd_account.vtc_account);
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*asnd), &asnd_account);
                             checkVTCSuccess((char *)"vertices_account_new_from_b32 error occured.", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("Amount of sender_account on Asset Transfer TX %d"), asnd_account.vtc_account->amount);
+                            UE_LOG(LogTemp, Warning, TEXT("Amount of sender_account on Asset Transfer TX %d"), asnd_account->amount);
                 
-                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*arcv), &arcv_account.vtc_account);
+                            err_code = vertices_account_new_from_b32((char*)TCHAR_TO_ANSI(*arcv), &arcv_account);
                             checkVTCSuccess((char *)"vertices_account_new_from_b32 error occured.", err_code);
-                            UE_LOG(LogTemp, Warning, TEXT("Amount of receiver_account on Asset Transfer TX %d"), arcv_account.vtc_account->amount);
+                            UE_LOG(LogTemp, Warning, TEXT("Amount of receiver_account on Asset Transfer TX %d"), arcv_account->amount);
                 
                             err_code = VTC_ERROR_INVALID_STATE;
                             throw SDKException(const_cast<char*>("tx_axfer are not registered"), err_code);
@@ -1126,12 +1087,8 @@ namespace algorand {
 
                         try
                         {
-                            if(!loaded_)
-                            {
-                                UE_LOG(LogTemp, Warning, TEXT("Failed loading of dll libraries."));
-                                err_code = VTC_ERROR_ASSERT_FAILS;
-                                checkVTCSuccess((char *)"Failed loading of dll libraries.", err_code);
-                            }
+                            CHECK_DLL_LOAD(loaded_);
+                            
                             // validation request   
                             if ( Request.app_ID.GetValue() == 0 )
                             {
