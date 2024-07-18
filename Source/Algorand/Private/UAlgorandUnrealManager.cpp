@@ -161,19 +161,11 @@ void UAlgorandUnrealManager::setAddress(const FString& address)
  */
 void UAlgorandUnrealManager::OnInitWalletCompleteCallback(const Vertices::VerticesInitWalletResponse& response) {
     if (response.IsSuccessful()) {
-        UE_LOG(LogTemp, Display, TEXT("Wallet was inited correctly.  Output : %s"), *response.GetResponseString());
+        UE_LOG(LogTemp, Display, TEXT("🚩 Initialized Wallet Success!"));
         InitWalletCallback.Broadcast(EResultType::InitWallet, FResultBoolean::ToResultBoolean(true));
     }
     else {
-        if (ErrorDelegateCallback.IsBound())
-        {
-            UE_LOG(LogTemp, Error, TEXT("Wallet wasn't initialized.  Error : %s"), *response.GetResponseString());
-            ErrorDelegateCallback.Broadcast(FError("Wallet wasn't initialized"));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("ErrorDelegateCallback is not bound."));
-        }
+        processErrorCallback("Algorand Wallet wasn't initialized.", response.GetResponseString());
     }
 }
 
@@ -197,19 +189,11 @@ void UAlgorandUnrealManager::loadWallet(const FString& Password)
  */
 void UAlgorandUnrealManager::OnLoadWalletCompleteCallback(const Vertices::VerticesLoadWalletResponse& response) {
     if (response.IsSuccessful()) {
-        UE_LOG(LogTemp, Display, TEXT("Wallet was loaded.  Output : %s"), *response.GetResponseString());
+        UE_LOG(LogTemp, Display, TEXT("🚩 Loaded Wallet Success!"));
         LoadWalletCallback.Broadcast(EResultType::LoadWallet, FResultBoolean::ToResultBoolean(true));
     }
     else {
-        if (ErrorDelegateCallback.IsBound())
-        {
-            UE_LOG(LogTemp, Error, TEXT("Wallet wasn't loaded.  Error : %s"), *response.GetResponseString());
-            ErrorDelegateCallback.Broadcast(FError("Wallet wasn't loaded"));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("ErrorDelegateCallback is not bound."));
-        }
+        processErrorCallback("Algorand Wallet wasn't loaded.", response.GetResponseString());
     }
 }
 
@@ -233,19 +217,11 @@ void UAlgorandUnrealManager::saveWallet(const FString& mnemonics)
  */
 void UAlgorandUnrealManager::OnSaveWalletCompleteCallback(const Vertices::VerticesSaveWalletResponse& response) {
     if (response.IsSuccessful()) {
-        UE_LOG(LogTemp, Display, TEXT("Wallet was saved.  Output : %s"), *response.GetResponseString());
+        UE_LOG(LogTemp, Display, TEXT("🚩 Saved Wallet Success!"));
         SaveWalletCallback.Broadcast(EResultType::SaveWallet, FResultBoolean::ToResultBoolean(true));
     }
     else {
-        if (ErrorDelegateCallback.IsBound())
-        {
-            UE_LOG(LogTemp, Error, TEXT("Wallet wasn't saved.  Error : %s"), *response.GetResponseString());
-            ErrorDelegateCallback.Broadcast(FError("Wallet wasn't saved"));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("ErrorDelegateCallback is not bound."));
-        }
+        processErrorCallback("Algorand Wallet wasn't saved.", response.GetResponseString());
     }
 }
 
@@ -269,19 +245,11 @@ void UAlgorandUnrealManager::OnSaveWalletCompleteCallback(const Vertices::Vertic
  */
 void UAlgorandUnrealManager::OnGetMnemonicsByAccountNameCompleteCallback(const Vertices::VerticesGetMnemonicsByAccountNameResponse& response) {
     if (response.IsSuccessful()) {
-        UE_LOG(LogTemp, Display, TEXT("Mnemonics were fetched.  Mnemonics : %s, Output : %s"), *response.Mnemonics, *response.GetResponseString());
+        UE_LOG(LogTemp, Display, TEXT("🚩 Got Mnemonic phrase by Account Name."));
         GetMnemonicsByAccountNameCallback.Broadcast(EResultType::GetMnemonics, FResultString::ToResultString(response.Mnemonics));
     }
     else {
-        if (ErrorDelegateCallback.IsBound())
-        {
-            UE_LOG(LogTemp, Error, TEXT("Mnemonics weren't fetched.  Error : %s"), *response.GetResponseString());
-            ErrorDelegateCallback.Broadcast(FError("Mnemonics weren't fetched"));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("ErrorDelegateCallback is not bound"));
-        }
+        processErrorCallback("Mnemonic phrase wasn't fetched.", response.GetResponseString());
     }
 }
 
@@ -305,19 +273,11 @@ void UAlgorandUnrealManager::OnGetMnemonicsByAccountNameCompleteCallback(const V
  */
 void UAlgorandUnrealManager::OnGenerateAccountFromMnemonicsCompleteCallback(const Vertices::VerticesGenerateAccountFromMnemonicsResponse& response) {
     if (response.IsSuccessful()) {
-        UE_LOG(LogTemp, Display, TEXT("Account was generated.  Address : %s, Output : %s"), *response.Address, *response.GetResponseString());
+        UE_LOG(LogTemp, Display, TEXT("🚩 Generated a new account!"));
         GenerateAccountFromMnemonicsCallback.Broadcast(EResultType::GenAccount, FResultAccount::ToResultAccount(response.Address, response.Name));
     }
     else {
-        if (ErrorDelegateCallback.IsBound())
-        {
-            UE_LOG(LogTemp, Error, TEXT("Account wasn't generated.  Error : %s"), *response.GetResponseString());
-            ErrorDelegateCallback.Broadcast(FError("Account wasn't generated."));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("ErrorDelegateCallback is not bound."));
-        }
+        processErrorCallback("Account wasn't generated.", response.GetResponseString());
     }
 }
 
@@ -341,7 +301,7 @@ void UAlgorandUnrealManager::getAddressBalance(const FString& address)
  */
 void UAlgorandUnrealManager::OnGetAddressBalanceCompleteCallback(const Vertices::VerticesGetAddrBalanceResponse& response) {
     if (response.IsSuccessful()) {
-        UE_LOG(LogTemp, Display, TEXT("Algo Balance was fetched.  Address : %llu, Output : %s"), response.Amount, *response.GetResponseString());
+        UE_LOG(LogTemp, Display, TEXT("🚩 Account Balance Got!"));
         GetAddressBalanceCallback.Broadcast(EResultType::AddrBalance, FResultUInt64::ToResultUInt64(response.Amount));
         FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Get Balance Action", "Got Balance successfully."));
 
@@ -353,29 +313,22 @@ void UAlgorandUnrealManager::OnGetAddressBalanceCompleteCallback(const Vertices:
         }
     }
     else {
-        if (ErrorDelegateCallback.IsBound())
-        {
-            UE_LOG(LogTemp, Error, TEXT("Algo Balance can't be got.  Error : %s"), *response.GetResponseString());
-            ErrorDelegateCallback.Broadcast(FError("Algo Balance can't be got"));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("ErrorDelegateCallback is not bound"));
-        }
+        processErrorCallback("Algo Balance can't be got.", response.GetResponseString());
     }
 }
 
 /**
  * @brief create its context to send the request to unreal api for payment tx
  */
-void UAlgorandUnrealManager::sendPaymentTransaction(const FString& receiverAddress,
+void UAlgorandUnrealManager::sendPaymentTransaction(const FString& mainAccountName,
+                                                    const FString& receiverAddress,
                                                     const FUInt64& amount,
                                                     const FString& notes)
 {
     this->requestContextManager_
         .createContext<API::FAlgorandAPISendPayTxDelegate,
         Vertices::VerticesSendPayTxRequest>(
-            request_builders::buildPaymentTransactionRequest(this->getAddress(),
+            request_builders::buildPaymentTransactionRequest(mainAccountName,
                                                              receiverAddress,
                                                              amount,
                                                              notes),
@@ -390,27 +343,20 @@ void UAlgorandUnrealManager::sendPaymentTransaction(const FString& receiverAddre
  */
 void UAlgorandUnrealManager::OnSendPaymentTransactionCompleteCallback(const Vertices::VerticesSendPayTxResponse& response) {
     if (response.IsSuccessful()) {
-        UE_LOG(LogTemp, Display, TEXT("PaymentTx was completed.  Transaction ID : %s, Output : %s"), *response.TxID, *response.GetResponseString());
+        UE_LOG(LogTemp, Display, TEXT("🚩 Payment TX Success!"));
         SendPaymentTxCallback.Broadcast(EResultType::PayTx, FResultString::ToResultString(response.TxID));
         FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Payment Transaction", "Sent payment tx successfully."));
     }
     else {
-        if (ErrorDelegateCallback.IsBound())
-        {
-            UE_LOG(LogTemp, Error, TEXT("PaymentTx was failed.  Error : %s"), *response.GetResponseString());
-            ErrorDelegateCallback.Broadcast(FError("PaymentTx was failed"));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("ErrorDelegateCallback is not bound."));
-        }
+        processErrorCallback("PaymentTx was failed.", response.GetResponseString());
     }
 }
 
 /**
  * @brief create its context to send the request to unreal api for asset config tx
  */
-void UAlgorandUnrealManager::sendAssetConfigTransaction(const FString& manager,
+void UAlgorandUnrealManager::sendAssetConfigTransaction(const FString& mainAccountName,
+                                                        const FString& manager,
                                                         const FString& reserve,
                                                         const FString& freeze,
                                                         const FString& clawback,
@@ -426,7 +372,7 @@ void UAlgorandUnrealManager::sendAssetConfigTransaction(const FString& manager,
     this->requestContextManager_
         .createContext<API::FAlgorandAPISendAcfgTxDelegate,
         Vertices::VerticesSendAcfgTxRequest>(
-            request_builders::buildAssetConfigTransactionRequest(this->getAddress(),
+            request_builders::buildAssetConfigTransactionRequest(mainAccountName,
                                                                  manager,
                                                                  reserve,
                                                                  freeze,
@@ -450,27 +396,20 @@ void UAlgorandUnrealManager::sendAssetConfigTransaction(const FString& manager,
  */
 void UAlgorandUnrealManager::OnSendAssetConfigTransactionCompleteCallback(const Vertices::VerticesSendAcfgTxResponse& response) {
     if (response.IsSuccessful()) {
-        UE_LOG(LogTemp, Display, TEXT("AcfgTx was completed.  Transaction ID : %s, Output : %s"), *response.TxID, *response.GetResponseString());
+        UE_LOG(LogTemp, Display, TEXT("🚩 Asset Config TX Success!"));
         SendAssetConfigTransactionCallback.Broadcast(EResultType::AcfgTx, FResultAcfgTx::ToResultAcfgTx(response.TxID, response.AssetID));
         FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Asset Config Transaction", "Sent asset config tx successfully."));
     }
     else {
-        if (ErrorDelegateCallback.IsBound())
-        {
-            UE_LOG(LogTemp, Error, TEXT("AcfgTx was failed.  Error : %s"), *response.GetResponseString());
-            ErrorDelegateCallback.Broadcast(FError("AcfgTx was failed."));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("ErrorDelegateCallback is not bound"));
-        }
+        processErrorCallback("AcfgTx was failed.", response.GetResponseString());
     }
 }
 
 /**
  * @brief create its context to send the request to unreal api for asset transfer tx
  */
-void UAlgorandUnrealManager::sendAssetTransferTransaction(const FString& senderAddress,
+void UAlgorandUnrealManager::sendAssetTransferTransaction(const FString& mainAccountName,
+                                                        const FString& senderAddress,
                                                         const FString& receiverAddress,
                                                         const FUInt64& asset_ID,
                                                         const FString& amount,
@@ -479,7 +418,8 @@ void UAlgorandUnrealManager::sendAssetTransferTransaction(const FString& senderA
     this->requestContextManager_
         .createContext<API::FAlgorandAPISendAxferTxDelegate,
         Vertices::VerticesSendAxferTxRequest>(
-            request_builders::buildAssetTransferTransactionRequest(senderAddress,
+            request_builders::buildAssetTransferTransactionRequest(mainAccountName,
+                                                             senderAddress,
                                                              receiverAddress,
                                                              asset_ID,
                                                              amount,
@@ -495,32 +435,27 @@ void UAlgorandUnrealManager::sendAssetTransferTransaction(const FString& senderA
  */
 void UAlgorandUnrealManager::OnSendAssetTransferTransactionCompleteCallback(const Vertices::VerticesSendAxferTxResponse& response) {
     if (response.IsSuccessful()) {
-        UE_LOG(LogTemp, Display, TEXT("AxferTx was completed.  Transaction ID : %s, Output : %s"), *response.TxID, *response.GetResponseString());
+        UE_LOG(LogTemp, Display, TEXT("🚩 Asset Transfer TX Success!"));
         SendAssetTransferTransactionCallback.Broadcast(EResultType::AxferTx, FResultString::ToResultString(response.TxID));
         FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Asset Transfer Transaction", "Sent asset transfer tx successfully."));
     }
     else {
-        if (ErrorDelegateCallback.IsBound())
-        {
-            UE_LOG(LogTemp, Error, TEXT("AxferTx was failed.  Error : %s"), *response.GetResponseString());
-            ErrorDelegateCallback.Broadcast(FError("Axfer was failed"));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("ErrorDelegateCallback is not bound."));
-        }
+        processErrorCallback("AxferTx was failed.", response.GetResponseString());
     }
 }
 
 /**
  * @brief create its context to send the request to unreal api for application call TX
  */
-void UAlgorandUnrealManager::sendApplicationCallTransaction(const FUInt64& app_ID, const TArray<FAppArg>& app_args, const EAppOnCompleteTX& app_complete_tx)
+void UAlgorandUnrealManager::sendApplicationCallTransaction(const FString& mainAccountName,
+                                                            const FUInt64& app_ID,
+                                                            const TArray<FAppArg>& app_args,
+                                                            const EAppOnCompleteTX& app_complete_tx)
 {
     this->requestContextManager_
         .createContext<API::FAlgorandAPISendApplCallTxDelegate,
         Vertices::VerticesSendApplCallTxRequest>(
-            request_builders::buildApplicationCallTransactionRequest(this->getAddress(),
+            request_builders::buildApplicationCallTransactionRequest(mainAccountName,
                                                                      app_ID,
                                                                      app_args,
                                                                      app_complete_tx),
@@ -535,20 +470,12 @@ void UAlgorandUnrealManager::sendApplicationCallTransaction(const FUInt64& app_I
  */
 void UAlgorandUnrealManager::OnSendApplicationCallTransactionCompleteCallback(const Vertices::VerticesSendApplCallTxResponse& response) {
     if (response.IsSuccessful()) {
-        UE_LOG(LogTemp, Display, TEXT("ApplTx was completed.  Transaction ID : %s, Output : %s"), *response.TxID, *response.GetResponseString());
+        UE_LOG(LogTemp, Display, TEXT("🚩 Application TX Success!"));
         SendApplicationCallTransactionCallback.Broadcast(EResultType::ApplTx, FResultApplTx::ToResultApplTx(response.TxID, response.Logs));
         FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Application Transaction", "Sent application tx successfully."));
     }
     else {
-        if (ErrorDelegateCallback.IsBound())
-        {
-            UE_LOG(LogTemp, Error, TEXT("ApplTx was failed.  Error : %s"), *response.GetResponseString());
-            ErrorDelegateCallback.Broadcast(FError("ApplTx was failed"));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("ErrorDelegateCallback is not bound."));
-        }
+        processErrorCallback("ApplTx was failed.", response.GetResponseString());
     }
 }
 
@@ -573,20 +500,12 @@ void UAlgorandUnrealManager::fetchArcAssetDetails(const FUInt64& asset_ID)
 void UAlgorandUnrealManager::OnFetchArcAssetDetailsCompleteCallback(const Vertices::VerticesArcAssetDetailsResponse& response) {
     if (response.IsSuccessful()) {
         FArcAssetDetails arcNft(response);
+        UE_LOG(LogTemp, Display, TEXT("🚩 Fetched details of arc asset"));
         FetchArcAssetDetailsCallback.Broadcast(EResultType::ArcAsset, arcNft);
-        UE_LOG(LogTemp, Display, TEXT("ArcAsset was fetched.  Output : %s"), *response.GetResponseString());
         FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Arc Asset Details", "Sent request to fetch details of arc asset successfully."));
     }
     else {
-        if (ErrorDelegateCallback.IsBound())
-        {
-            UE_LOG(LogTemp, Error, TEXT("ArcAsset wasn't fetched.  Error : %s"), *response.GetResponseString());
-            ErrorDelegateCallback.Broadcast(FError("ArcAsset wasn't fetched"));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("ErrorDelegateCallback is not bound."));
-        }
+        processErrorCallback("ArcAsset wasn't fetched.", response.GetResponseString());
     }
 }
 
@@ -610,6 +529,7 @@ void UAlgorandUnrealManager::fetchAccountInformation(const FString& address)
  */
 void UAlgorandUnrealManager::OnFetchAccountInformationCompleteCallback(const Vertices::VerticesAccountInformationResponse& response) {
     if (response.IsSuccessful()) {
+        UE_LOG(LogTemp, Display, TEXT("🚩 Fetched Account Information"));
         FetchAccountInformationCallback.Broadcast(EResultType::AccAssets, FResultAccAssets::ToResultAccAssets(response.AssetIDs, response.AssetNames));
         FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Account Information", "sent request to fetch account info successfully."));
     }
@@ -618,15 +538,20 @@ void UAlgorandUnrealManager::OnFetchAccountInformationCompleteCallback(const Ver
         Arguments.Add(TEXT("MSG"), FText::FromString(response.GetResponseString()));
         FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "{MSG}"), Arguments));
         
-        if (ErrorDelegateCallback.IsBound())
-        {
-            UE_LOG(LogTemp, Error, TEXT("Account wasn't fetched.  Error : %s"), *response.GetResponseString());
-            ErrorDelegateCallback.Broadcast(FError("Account wasn't fetched"));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("ErrorDelegateCallback is not bound.  Warning : %s"), *response.GetResponseString());
-        }
+        processErrorCallback("Account Information wasn't fetched.", response.GetResponseString());
+    }
+}
+
+void UAlgorandUnrealManager::processErrorCallback(const FString& Description, const FString& Msg)
+{
+    if (ErrorDelegateCallback.IsBound())
+    {
+        UE_LOG(LogTemp, Error, TEXT("🔴 AlgorandManager: %s ☠️ Error: %s"), *Description, *Msg);
+        ErrorDelegateCallback.Broadcast(FError(Msg));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("🔔 AlgorandManager: ErrorDelegateCallback is not bound. ⚠️ Warning : %s"), *Msg);
     }
 }
 
