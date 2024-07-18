@@ -118,10 +118,10 @@ namespace algorand {
         public:
             virtual ~VerticesSendPayTxRequest() {}
 
-            TOptional<FString> senderAddress;
-            TOptional<FString> receiverAddress;
-            TOptional<uint64_t> amount;
-            TOptional<FString> notes;
+            TOptional<FString> MainAccountName;
+            TOptional<FString> ReceiverAddress;
+            TOptional<uint64_t> Amount;
+            TOptional<FString> Notes;
         };
         
         class VerticesSDK::VerticesSendPayTxResponse : public Response
@@ -139,19 +139,19 @@ namespace algorand {
         public:
             virtual ~VerticesSendAcfgTxRequest() {}
 
-            TOptional<FString>  Creator; 
-            TOptional<FString>  Manager;
-            TOptional<FString>  Reserve;
-            TOptional<FString>  Freeze;
-            TOptional<FString>  Clawback;
-            TOptional<uint64_t>  AssetId;
-            TOptional<uint64_t>  Total;
-            TOptional<uint64_t>  Decimals;
-            TOptional<uint8_t>  IsFrozen;
-            TOptional<FString>  UnitName;
-            TOptional<FString>  AssetName;
-            TOptional<FString>  Url;
-            TOptional<FString>  Notes;
+            TOptional<FString> MainAccountName;
+            TOptional<FString> Manager;
+            TOptional<FString> Reserve;
+            TOptional<FString> Freeze;
+            TOptional<FString> Clawback;
+            TOptional<uint64_t> AssetId;
+            TOptional<uint64_t> Total;
+            TOptional<uint64_t> Decimals;
+            TOptional<uint8_t> IsFrozen;
+            TOptional<FString> UnitName;
+            TOptional<FString> AssetName;
+            TOptional<FString> Url;
+            TOptional<FString> Notes;
         };
 
         // for sending Asset Config TX
@@ -171,11 +171,12 @@ namespace algorand {
         public:
             virtual ~VerticesSendAxferTxRequest() {}
 
-            TOptional<FString> senderAddress;
-            TOptional<FString> receiverAddress;
-            TOptional<uint64_t> asset_id;
-            TOptional<double> amount;
-            TOptional<FString> notes;
+            TOptional<FString> MainAccountName;
+            TOptional<FString> SenderAddress;
+            TOptional<FString> ReceiverAddress;
+            TOptional<uint64_t> Asset_ID;
+            TOptional<double> Amount;
+            TOptional<FString> Notes;
         };
         
         class VerticesSDK::VerticesSendAxferTxResponse : public Response
@@ -193,10 +194,10 @@ namespace algorand {
         public:
             virtual ~VerticesSendApplCallTxRequest() {}
 
-            TOptional<FString> senderAddress;
-            TOptional<uint64_t> app_ID;
-            TArray<TArray<uint8_t>> app_args;
-            EAppCompleteTX app_complete_tx; 
+            TOptional<FString> MainAccountName;
+            TOptional<uint64_t> App_ID;
+            TArray<TArray<uint8_t>> App_Args;
+            EAppCompleteTX App_Complete_TX; 
         };
         
         class VerticesSDK::VerticesSendApplCallTxResponse : public Response

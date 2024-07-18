@@ -12,14 +12,15 @@ SDKException::SDKException(ret_code_t& err_code) {
 	switch(err_code)
 	{
 		case VTC_ERROR_INTERNAL: msg = "ERROR: INTERNAL"; break;
-		case VTC_ERROR_NO_MEM: msg = "ERROR: NO_MEM"; break;
-		case VTC_ERROR_NOT_FOUND: msg = "ERROR: NOT_FOUND"; break;
-		case VTC_ERROR_INVALID_PARAM: msg = "ERROR: INVALID_PARAM"; break;
-		case VTC_ERROR_INVALID_STATE: msg = "ERROR: INVALID_STATE"; break;
-		case VTC_ERROR_INVALID_ADDR: msg = "ERROR: INVALID_ADDR"; break;
+		case VTC_ERROR_NO_MEM: msg = "ERROR: NO MEMBER"; break;
+		case VTC_ERROR_NOT_FOUND: msg = "ERROR: NOT FOUND"; break;
+		case VTC_ERROR_INVALID_PARAM: msg = "ERROR: INVALID PARAM"; break;
+		case VTC_ERROR_INVALID_STATE: msg = "ERROR: INVALID STATE"; break;
+		case VTC_ERROR_INVALID_ADDR: msg = "ERROR: INVALID ADDR"; break;
 		case VTC_ERROR_OFFLINE: msg = "ERROR: OFFLINE"; break;
-		case VTC_ERROR_ASSERT_FAILS: msg = "ERROR: ASSERT_FAILS"; break;
+		case VTC_ERROR_ASSERT_FAILS: msg = "ERROR: ASSERT FAILS"; break;
 		case VTC_ERROR_HTTP_BASE: msg = "ERROR: HTTP_BASE"; break;
+		case VTC_SAME_MEM_EXIST: msg = "ERROR: SAME MEMBER EXISTS"; break;
 		default: msg = "ERROR: OCCURED"; break;
 	}
 }

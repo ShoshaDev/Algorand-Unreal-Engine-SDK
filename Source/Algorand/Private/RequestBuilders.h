@@ -39,13 +39,13 @@ namespace request_builders {
 	buildGetBalanceRequest(const FString& address);
 	
 	algorand::vertices::VerticesSDK::VerticesSendPayTxRequest
-		buildPaymentTransactionRequest(const FString& sender,
+		buildPaymentTransactionRequest(const FString& mainAccountName,
 									   const FString& receiver,
 									   const FUInt64& amount,
 									   const FString& notes);
 	
 	 algorand::vertices::VerticesSDK::VerticesSendAcfgTxRequest
-		buildAssetConfigTransactionRequest(const FString& creator, 
+		buildAssetConfigTransactionRequest(const FString& mainAccountName, 
 									   const FString& manager,
 									   const FString& reserve,
 									   const FString& freeze,
@@ -60,17 +60,18 @@ namespace request_builders {
 									   const FString& notes);
 	
 	algorand::vertices::VerticesSDK::VerticesSendAxferTxRequest
-		buildAssetTransferTransactionRequest(const FString& sender,
-									   const FString& receiver,
-									   const FUInt64& asset_id,
-									   const FString& amount,
-									   const FString& notes);
+		buildAssetTransferTransactionRequest(const FString& mainAccountName,
+		                                     const FString& sender,
+		                                     const FString& receiver,
+		                                     const FUInt64& asset_id,
+		                                     const FString& amount,
+		                                     const FString& notes);
 	
 	algorand::vertices::VerticesSDK::VerticesSendApplCallTxRequest
-		buildApplicationCallTransactionRequest(const FString& sender,
-											   const FUInt64& app_ID, 
-											   const TArray<FAppArg>& app_args,
-											   const EAppOnCompleteTX& app_complete_tx);
+	buildApplicationCallTransactionRequest(const FString& mainAccountName,
+	                                       const FUInt64& app_ID,
+	                                       const TArray<FAppArg>& app_args,
+	                                       const EAppOnCompleteTX& app_complete_tx);
 	
 	algorand::vertices::VerticesSDK::VerticesArcAssetDetailsRequest
 		buildArcAssetDetailsRequest(const FUInt64& asset_ID);

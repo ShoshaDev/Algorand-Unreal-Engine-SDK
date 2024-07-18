@@ -48,36 +48,36 @@ namespace request_builders {
 	}
 	
 	Vertices::VerticesSendPayTxRequest
-		buildPaymentTransactionRequest(const FString& sender, 
+		buildPaymentTransactionRequest(const FString& mainAccountName, 
 									   const FString& receiver,
 									   const FUInt64& amount,
 									   const FString& notes)
 	{
 		Vertices::VerticesSendPayTxRequest request;
-		request.senderAddress = sender;
-		request.receiverAddress = receiver;
-		request.amount = amount;
-		request.notes = notes;
+		request.MainAccountName = mainAccountName;
+		request.ReceiverAddress = receiver;
+		request.Amount = amount;
+		request.Notes = notes;
 		return request;
 	}
 
 	Vertices::VerticesSendAcfgTxRequest
-		buildAssetConfigTransactionRequest(const FString& creator, 
-									   const FString& manager,
-									   const FString& reserve,
-									   const FString& freeze,
-									   const FString& clawback,
-									   const FUInt64& asset_id,
-									   const FUInt64& total,
-									   const FUInt64& decimals,
-									   const FString& isFrozen,
-									   const FString& unit_name,
-									   const FString& asset_name,
-									   const FString& url,
-									   const FString& notes)
+		buildAssetConfigTransactionRequest(const FString& mainAccountName,
+										   const FString& manager,
+										   const FString& reserve,
+										   const FString& freeze,
+										   const FString& clawback,
+										   const FUInt64& asset_id,
+										   const FUInt64& total,
+										   const FUInt64& decimals,
+										   const FString& isFrozen,
+										   const FString& unit_name,
+										   const FString& asset_name,
+										   const FString& url,
+										   const FString& notes)
 	{
 		Vertices::VerticesSendAcfgTxRequest request;
-		request.Creator = creator;
+		request.MainAccountName = mainAccountName;
 		request.Manager = manager;
 		request.Reserve = reserve;
 		request.Freeze = freeze;
@@ -97,49 +97,51 @@ namespace request_builders {
 	}
 
 	Vertices::VerticesSendAxferTxRequest
-		buildAssetTransferTransactionRequest(const FString& sender, 
-									   const FString& receiver,
-									   const FUInt64& asset_id,
-									   const FString& amount,
-									   const FString& notes)
+		buildAssetTransferTransactionRequest(const FString& mainAccountName,
+		                                     const FString& sender,
+		                                     const FString& receiver,
+		                                     const FUInt64& asset_id,
+		                                     const FString& amount,
+		                                     const FString& notes)
 	{
 		Vertices::VerticesSendAxferTxRequest request;
-		request.senderAddress = sender;
-		request.receiverAddress = receiver;
-		request.asset_id = asset_id;
-		request.amount = atof(TCHAR_TO_ANSI(*amount)); 
-		request.notes = notes;
+		request.MainAccountName = mainAccountName;
+		request.SenderAddress = sender;
+		request.ReceiverAddress = receiver;
+		request.Asset_ID = asset_id;
+		request.Amount = atof(TCHAR_TO_ANSI(*amount)); 
+		request.Notes = notes;
 		return request;
 	}
 
 	Vertices::VerticesSendApplCallTxRequest
-		buildApplicationCallTransactionRequest(const FString& sender, 
-									   const FUInt64& app_ID,
-									   const TArray<FAppArg>& app_args,
-									   const EAppOnCompleteTX& app_complete_tx)
+		buildApplicationCallTransactionRequest(const FString& mainAccountName,
+		                                       const FUInt64& app_ID,
+		                                       const TArray<FAppArg>& app_args,
+		                                       const EAppOnCompleteTX& app_complete_tx)
 	{
 		Vertices::VerticesSendApplCallTxRequest request;
 		uint8_t index;
-		request.senderAddress = sender;
-		request.app_ID = app_ID;
-		request.app_args.Empty();
+		request.MainAccountName = mainAccountName;
+		request.App_ID = app_ID;
+		request.App_Args.Empty();
 		for(index = 0; index < app_args.Num(); index++)
-			request.app_args.Add(app_args[index].Value_Bytes);
+			request.App_Args.Add(app_args[index].Value_Bytes);
 		
-		request.app_complete_tx = NOOP;			// set initial value
+		request.App_Complete_TX = NOOP;			// set initial value
 		switch (app_complete_tx)
 		{
-		case EAppOnCompleteTX::NOOP: request.app_complete_tx = NOOP;
+		case EAppOnCompleteTX::NOOP: request.App_Complete_TX = NOOP;
 			break;
-		case EAppOnCompleteTX::OPT_IN: request.app_complete_tx = OPT_IN;
+		case EAppOnCompleteTX::OPT_IN: request.App_Complete_TX = OPT_IN;
 			break;
-		case EAppOnCompleteTX::CLOSE_OUT: request.app_complete_tx = CLOSE_OUT;
+		case EAppOnCompleteTX::CLOSE_OUT: request.App_Complete_TX = CLOSE_OUT;
 			break;
-		case EAppOnCompleteTX::CLEAR_STATE: request.app_complete_tx = CLEAR_STATE;
+		case EAppOnCompleteTX::CLEAR_STATE: request.App_Complete_TX = CLEAR_STATE;
 			break;
-		case EAppOnCompleteTX::UPDATE_APP: request.app_complete_tx = UPDATE_APP;
+		case EAppOnCompleteTX::UPDATE_APP: request.App_Complete_TX = UPDATE_APP;
 			break;
-		case EAppOnCompleteTX::DELETE_APP: request.app_complete_tx = DELETE_APP;
+		case EAppOnCompleteTX::DELETE_APP: request.App_Complete_TX = DELETE_APP;
 			break;
 		}
 		return request;

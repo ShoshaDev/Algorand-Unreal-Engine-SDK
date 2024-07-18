@@ -360,7 +360,8 @@ public:
     UFUNCTION(BlueprintCallable,
 			  meta = (DisplayName = "Send Payment TX", Keywords = "pay"),
     		  Category = "AlgorandUnrealManager")
-    void sendPaymentTransaction(const FString& receiverAddress,
+    void sendPaymentTransaction(const FString& mainAccountName,
+    							const FString& receiverAddress,
                                 const FUInt64& amount,
                                 const FString& notes);   
 	
@@ -391,7 +392,8 @@ public:
 	UFUNCTION(BlueprintCallable,
 			  meta = (DisplayName = "Send Asset Config TX", Keywords = "acfg"),
 			  Category = "AlgorandUnrealManager")
-	void sendAssetConfigTransaction(const FString& manager,
+	void sendAssetConfigTransaction(const FString& mainAccountName,
+									const FString& manager,
 									const FString& reserve,
 									const FString& freeze,
 									const FString& clawback,
@@ -427,7 +429,8 @@ public:
 	UFUNCTION(BlueprintCallable,
 			  meta = (DisplayName = "Send Asset Transfer TX", Keywords = "axfer"),
 			  Category = "AlgorandUnrealManager")
-	void sendAssetTransferTransaction(const FString& senderAddress,
+	void sendAssetTransferTransaction(const FString& mainAccountName,
+								const FString& senderAddress,
 								const FString& receiverAddress,
 								const FUInt64& asset_ID,
 								const FString& amount,
@@ -449,7 +452,10 @@ public:
     UFUNCTION(BlueprintCallable,
 			  meta = (DisplayName = "Send Application Call TX", Keywords = "applcall"),	
     		  Category = "AlgorandUnrealManager")
-    void sendApplicationCallTransaction(const FUInt64& app_ID, const TArray<FAppArg>& app_Args, const EAppOnCompleteTX& app_complete_tx);
+    void sendApplicationCallTransaction(const FString& mainAccountName,
+    									const FUInt64& app_ID,
+    									const TArray<FAppArg>& app_Args,
+    									const EAppOnCompleteTX& app_complete_tx);
 	
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
         FSendApplicationCallTxDelegate SendApplicationCallTransactionCallback;
@@ -495,6 +501,13 @@ public:
 	 * @param response after account information
 	 */ 
 	void OnFetchAccountInformationCompleteCallback(const Vertices::VerticesAccountInformationResponse& response);
+
+	/**
+	 * broadcast @link ErrorDelegateCallback and leave logs
+	 * @par Description explains error msg
+	 * @param Msg is an error msg
+	 **/
+	void processErrorCallback(const FString& Description, const FString& Msg);
 	
 	/**
 	 * return world of outer
