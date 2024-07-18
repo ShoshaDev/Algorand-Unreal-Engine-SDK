@@ -282,6 +282,34 @@ void UAlgorandUnrealManager::OnGenerateAccountFromMnemonicsCompleteCallback(cons
 }
 
 /**
+ * @brief create its context to send the request to unreal api for generate mnemonics
+ */
+void UAlgorandUnrealManager::generateRandomAccount(const FString& Name)
+{
+    this->requestContextManager_
+        .createContext<API::FAlgorandAPIGenerateRandomAccountDelegate,
+        Vertices::VerticesGenerateRandomAccountRequest>(
+            request_builders::buildGenerateRandomAccountRequest(Name),
+            std::bind(&API::AlgorandAPIGenerateRandomAccount, unrealApi_.Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            std::bind(&UAlgorandUnrealManager::OnGenerateRandomAccountCompleteCallback, this , std::placeholders::_1)
+        );
+}
+
+/**
+ * @brief get response from unreal api after generate random account and broadcast the result to binded functions
+ */
+void UAlgorandUnrealManager::OnGenerateRandomAccountCompleteCallback(const Vertices::VerticesGenerateRandomAccountResponse& response) {
+    if (response.IsSuccessful()) {
+        UE_LOG(LogTemp, Display, TEXT("🚩 Generated a new account randomly!"));
+        GenerateRandomAccountCallback.Broadcast(EResultType::GenAccount, FResultAccount::ToResultAccount(response.Address, response.Name));
+    }
+    else {
+        processErrorCallback("Account wasn't generated.", response.GetResponseString());
+    }
+}
+
+/**
  * @brief create its context to send the request to unreal api for get balance
  */
 void UAlgorandUnrealManager::getAddressBalance(const FString& address)

@@ -49,6 +49,8 @@ public:
     DECLARE_DELEGATE_OneParam(FAlgorandAPIGetMnemonicsByAccountNameDelegate, const Vertices::VerticesGetMnemonicsByAccountNameResponse&);
 	
     DECLARE_DELEGATE_OneParam(FAlgorandAPIGenerateAccountFromMnemonicsDelegate, const Vertices::VerticesGenerateAccountFromMnemonicsResponse&);
+
+	DECLARE_DELEGATE_OneParam(FAlgorandAPIGenerateRandomAccountDelegate, const Vertices::VerticesGenerateRandomAccountResponse&);
 	
     DECLARE_DELEGATE_OneParam(FAlgorandAPIGetAddrBalanceDelegate, const Vertices::VerticesGetAddrBalanceResponse&);
 	
@@ -119,6 +121,14 @@ public:
      */
     void AlgorandAPIGenerateAccountFromMnemonics(const Vertices::VerticesGenerateAccountFromMnemonicsRequest& Request,
 								   const FAlgorandAPIGenerateAccountFromMnemonicsDelegate& Delegate = FAlgorandAPIGenerateAccountFromMnemonicsDelegate()) const;
+
+	/**
+	 * @brief send api request for Generating new random account
+	 * @param Request value to send as params for calling api
+	 * @param Delegate is used to implement async task after get response as api result
+	 */
+	void AlgorandAPIGenerateRandomAccount(const Vertices::VerticesGenerateRandomAccountRequest& Request,
+								   const FAlgorandAPIGenerateRandomAccountDelegate& Delegate = FAlgorandAPIGenerateRandomAccountDelegate()) const;
 
 	/**
 	 * @brief send api request for getting balance of any address
@@ -205,6 +215,13 @@ private:
      * @param Delegate is used to execute binded callback from Algorand module
      */
     void OnAlgorandAPIGenerateAccountFromMnemonicsGetResponse(const Vertices::VerticesGenerateAccountFromMnemonicsResponse& response, const FAlgorandAPIGenerateAccountFromMnemonicsDelegate& Delegate) const;
+
+	/**
+	 * @brief callback function to be run after api request of generating random account
+	 * @param response is used to send as Vertices Response type to Algorand module 
+	 * @param Delegate is used to execute binded callback from Algorand module
+	 */
+	void OnAlgorandAPIGenerateRandomAccountGetResponse(const Vertices::VerticesGenerateRandomAccountResponse& response, const FAlgorandAPIGenerateRandomAccountDelegate& Delegate) const;
 
 	/**
 	 * @brief callback function to be run after api request of getting balance of any address

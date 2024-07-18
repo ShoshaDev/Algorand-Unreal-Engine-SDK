@@ -12,6 +12,8 @@ namespace response_builders {
 		buildSaveWalletResponse();
 	algorand::vertices::VerticesSDK::VerticesGenerateAccountFromMnemonicsResponse
 		buildGenerateAccountFromMnemonicsResponse(const FString& Address, const FString& Name);
+	algorand::vertices::VerticesSDK::VerticesGenerateRandomAccountResponse
+		buildGenerateRandomAccountResponse(const FString& Address, const FString& Name);
 	algorand::vertices::VerticesSDK::VerticesGetMnemonicsByAccountNameResponse
 		buildGetMnemonicsByAccountNameResponse(const FString& Mnemonics, const FString& Name);
 	algorand::vertices::VerticesSDK::VerticesGetAddrBalanceResponse

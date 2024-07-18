@@ -127,6 +127,24 @@ void UnrealApi::OnAlgorandAPIGenerateAccountFromMnemonicsGetResponse(const Verti
     Delegate.ExecuteIfBound(response);
 }
 
+void UnrealApi::AlgorandAPIGenerateRandomAccount(const Vertices::VerticesGenerateRandomAccountRequest& Request, const FAlgorandAPIGenerateRandomAccountDelegate& Delegate) const
+{
+    TSharedRef<Vertices::FVerticesGenerateRandomAccountDelegate> delegatePtr(MakeShared<Vertices::FVerticesGenerateRandomAccountDelegate>());
+    
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesGenerateRandomAccountResponse& response) {
+        OnAlgorandAPIGenerateRandomAccountGetResponse(response, Delegate);
+    });
+    vertices_->VerticesGenerateRandomAccount( Request, delegatePtr.Get());
+}
+
+/**
+ * @brief callback after generate new account
+ */
+void UnrealApi::OnAlgorandAPIGenerateRandomAccountGetResponse(const Vertices::VerticesGenerateRandomAccountResponse& response, const FAlgorandAPIGenerateRandomAccountDelegate& Delegate) const
+{
+    Delegate.ExecuteIfBound(response);
+}
+
 void UnrealApi::AlgorandAPIGetAddrBalance(const Vertices::VerticesGetAddrBalanceRequest& Request, const FAlgorandAPIGetAddrBalanceDelegate& Delegate) const
 {
     TSharedRef<Vertices::FVerticesGetAddrBalanceDelegate> delegatePtr(MakeShared<Vertices::FVerticesGetAddrBalanceDelegate>());

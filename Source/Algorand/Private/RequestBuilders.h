@@ -34,6 +34,9 @@ namespace request_builders {
 	
 	algorand::vertices::VerticesSDK::VerticesGenerateAccountFromMnemonicsRequest
 	buildGenerateAccountFromMnemonicsRequest(const FString& Mnemonics, const FString& Name);
+
+	algorand::vertices::VerticesSDK::VerticesGenerateRandomAccountRequest
+	buildGenerateRandomAccountRequest(const FString& Name);
 	
 	algorand::vertices::VerticesSDK::VerticesGetAddrBalanceRequest
 	buildGetBalanceRequest(const FString& address);

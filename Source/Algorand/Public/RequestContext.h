@@ -23,6 +23,7 @@ using ApiDelegate = TVariant<
 	algorand::api::UnrealApi::FAlgorandAPILoadWalletDelegate,
 	algorand::api::UnrealApi::FAlgorandAPISaveWalletDelegate,
 	algorand::api::UnrealApi::FAlgorandAPIGetMnemonicsByAccountNameDelegate,
+	algorand::api::UnrealApi::FAlgorandAPIGenerateRandomAccountDelegate,
 	algorand::api::UnrealApi::FAlgorandAPIGenerateAccountFromMnemonicsDelegate,
 	algorand::api::UnrealApi::FAlgorandAPIGetAddrBalanceDelegate,
 	algorand::api::UnrealApi::FAlgorandAPISendPayTxDelegate,

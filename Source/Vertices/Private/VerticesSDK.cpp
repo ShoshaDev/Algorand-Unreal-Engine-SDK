@@ -532,6 +532,55 @@ namespace algorand {
             });
         }
 
+        void VerticesSDK::VerticesGenerateRandomAccount(const VerticesGenerateRandomAccountRequest& Request, const FVerticesGenerateRandomAccountDelegate& delegate)
+        {           
+            AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
+            {
+                ret_code_t err_code = VTC_SUCCESS;
+                while (1) {
+                    FScopeLock lock(&m_Mutex);
+
+                    if (vertices_usable) {
+                        VerticesSDK::VerticesGenerateRandomAccountResponse response;
+                        vertices_usable = false;
+                        
+                        try
+                        {
+                            CHECK_DLL_LOAD(loaded_);
+                            INIT_VERTICES(m_vertex, err_code);
+        
+                            err_code = vertices_s_account_new_random(&sender_account, StringCast<ANSICHAR>(*(Request.Name)).Get());
+                            checkVTCSuccess(err_code);
+                            
+                            UE_LOG(LogTemp, Display, TEXT("✔️ Vertices: new secure account was created randomly, %hs"), sender_account.vtc_account->public_b32);
+                            
+                            response = response_builders::buildGenerateRandomAccountResponse(sender_account.vtc_account->public_b32,sender_account.name);
+                            response.SetResponseString("New account was created randomly in Algo Wallet.");
+                            response.SetSuccessful(true);
+                        }
+                        catch(SDKException& e)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(e.what()));   
+                        }
+                        catch(std::exception& ex)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(ex.what()));
+                        }
+
+                        AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+                        {
+                            delegate.ExecuteIfBound(response);
+                        });
+
+                        vertices_usable = true;
+                        break;
+                    }
+                }
+            });
+        }
+
         void VerticesSDK::VerticesGetAddrBalance(const VerticesGetAddrBalanceRequest& Request, const FVerticesGetAddrBalanceDelegate& delegate)
         {            
             AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()

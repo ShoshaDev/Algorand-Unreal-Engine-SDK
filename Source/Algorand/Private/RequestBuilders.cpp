@@ -38,6 +38,12 @@ namespace request_builders {
 	{
 		return Vertices::VerticesGenerateAccountFromMnemonicsRequest(Mnemonics, Name);
 	}
+	
+	Vertices::VerticesGenerateRandomAccountRequest
+	buildGenerateRandomAccountRequest(const FString& Name)
+	{
+		return Vertices::VerticesGenerateRandomAccountRequest(Name);
+	}
 
 	Vertices::VerticesGetAddrBalanceRequest
 	buildGetBalanceRequest(const FString& address)

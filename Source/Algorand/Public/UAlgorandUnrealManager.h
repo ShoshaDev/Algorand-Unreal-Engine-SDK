@@ -36,33 +36,39 @@ namespace {
 /**
  * initialize algorand wallet callback 
  * @param ResultType generated address
- * @param Result generated address
+ * @param Result boolean value which displays wallet state
 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FInitWalletDelegate, const EResultType&, ResultType, const FResultBoolean&, Result);
 
 /**
  * load wallet callback 
- * @param output generated address
+ * @param Result boolean value which displays state of loading wallet
 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLoadWalletDelegate, const EResultType&, ResultType, const FResultBoolean&, Result);
 
 /**
  * save wallet callback 
- * @param output generated address
+ * @param Result boolean value which displays state of saving wallet
 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSaveWalletDelegate, const EResultType&, ResultType, const FResultBoolean&, Result);
 
 /**
  * get mnemonics by account name callback 
- * @param output backup mnemonics
+ * @param MnemonicByName backup mnemonics
 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGetMnemonicsByAccountNameDelegate, const EResultType&, ResultType, const FResultString&, MnemonicByName);
 
 /**
  * generate account from mnemonics callback 
- * @param output generated address
+ * @param GeneratedAccount generated account
 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGenerateAccountFromMnemonicsDelegate, const EResultType&, ResultType, const FResultAccount&, GeneratedAccount);
+
+/**
+ * generate random account callback 
+ * @param GeneratedAccount generated account
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGenerateRandomAccountDelegate, const EResultType&, ResultType, const FResultAccount&, GeneratedAccount);
 
 /**
  * get balance by any address callback
@@ -102,7 +108,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FArcAssetDetailsDelegate, const ERe
 
 /**
  * account information callback
- * @param accountInfo Arc Asset details
+ * @param accountInfo Account Asset details
 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAccountInfoDelegate, const EResultType&, ResultType, const FResultAccAssets&, AccAssets);
 
@@ -332,6 +338,23 @@ public:
 	 * @param response address got by generating account from given mnemonics
 	 */
     void OnGenerateAccountFromMnemonicsCompleteCallback(const Vertices::VerticesGenerateAccountFromMnemonicsResponse& response);
+
+	/**
+	 * Generate a random Account
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "Generate Random Account ", Keywords = "wallet"),
+			  Category = "AlgorandUnrealManager")
+	void generateRandomAccount(const FString& Name);
+	
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+	FGenerateRandomAccountDelegate GenerateRandomAccountCallback;
+
+	/**
+	 * get response after generating random account 
+	 * @param response account got by generating random account
+	 */
+	void OnGenerateRandomAccountCompleteCallback(const Vertices::VerticesGenerateRandomAccountResponse& response);
     
 	/**
 	 * get balance by specific address

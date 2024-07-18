@@ -43,6 +43,9 @@ VERTICES_IMPORT ret_code_t
 vertices_s_account_new_from_mnemonic(char *mnemonic_str, s_account_t *account, const char *account_name);
 
 VERTICES_IMPORT ret_code_t
+vertices_s_account_new_random(s_account_t *account, const char *account_name);
+
+VERTICES_IMPORT ret_code_t
 vertices_mnemonic_from_account(const char *account_name, char **mnemonic_str);
 
 VERTICES_IMPORT ret_code_t

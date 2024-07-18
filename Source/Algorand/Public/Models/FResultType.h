@@ -16,14 +16,15 @@ enum class EResultType : uint8 {
 	LoadWallet = 2 UMETA(DisplayName = "LoadWallet"),
 	SaveWallet = 3 UMETA(DisplayName = "SaveWallet"),
 	GetMnemonics = 4 UMETA(DisplayName = "GetMneominicsByAccountName"),
-	GenAccount = 5 UMETA(DisplayName = "GenerateAccountFromMnemonics"),
-	AddrBalance = 6 UMETA(DisplayName = "GetAddressBalance"),
-	PayTx = 7 UMETA(DisplayName = "SendPaymentTx"),
-	AcfgTx = 8 UMETA(DisplayName = "SendAssetConfigTx"),
-	AxferTx = 9 UMETA(DisplayName = "SendAssetTransferTx"),
-	ApplTx = 10 UMETA(DisplayName = "SendApplicationTx"),
-	ArcAsset = 11 UMETA(DisplayName = "ArcAsset"),
-	AccAssets = 12 UMETA(DisplayName = "AccountAssets")
+	GenRandomAccount = 5 UMETA(DisplayName = "GenerateRandomAccount"),
+	GenAccount = 6 UMETA(DisplayName = "GenerateAccountFromMnemonics"),
+	AddrBalance = 7 UMETA(DisplayName = "GetAddressBalance"),
+	PayTx = 8 UMETA(DisplayName = "SendPaymentTx"),
+	AcfgTx = 9 UMETA(DisplayName = "SendAssetConfigTx"),
+	AxferTx = 10 UMETA(DisplayName = "SendAssetTransferTx"),
+	ApplTx = 11 UMETA(DisplayName = "SendApplicationTx"),
+	ArcAsset = 12 UMETA(DisplayName = "ArcAsset"),
+	AccAssets = 13 UMETA(DisplayName = "AccountAssets")
 };
 
 USTRUCT(BlueprintType)

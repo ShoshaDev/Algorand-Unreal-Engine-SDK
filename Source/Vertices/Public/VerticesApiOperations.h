@@ -74,6 +74,25 @@ namespace algorand {
             FString Name;
         };
 
+        // for Generating Random Account
+        class VerticesSDK::VerticesGenerateRandomAccountRequest : public Request
+        {
+        public:
+            VerticesGenerateRandomAccountRequest(const FString& Name) : Name(Name) {}
+            virtual ~VerticesGenerateRandomAccountRequest() {}
+            FString Name;
+        };
+        
+        class VerticesSDK::VerticesGenerateRandomAccountResponse : public Response
+        {
+        public:
+            VerticesGenerateRandomAccountResponse() {}
+            VerticesGenerateRandomAccountResponse(const FString& Address, const FString& Name) : Address(Address), Name(Name) {}
+            virtual ~VerticesGenerateRandomAccountResponse() {}
+            FString Address;
+            FString Name;
+        };
+
         // for Getting Mnemonics by account name
         class VerticesSDK::VerticesGetMnemonicsByAccountNameRequest : public Request
         {

@@ -31,6 +31,12 @@ namespace response_builders {
 	{
 		return Vertices::VerticesGenerateAccountFromMnemonicsResponse(Address, Name);
 	}
+
+	Vertices::VerticesGenerateRandomAccountResponse
+		buildGenerateRandomAccountResponse(const FString& Address, const FString& Name)
+	{
+		return Vertices::VerticesGenerateRandomAccountResponse(Address, Name);
+	}
 	
 	Vertices::VerticesGetMnemonicsByAccountNameResponse
 		buildGetMnemonicsByAccountNameResponse(const FString& Mnemonics, const FString& Name)
