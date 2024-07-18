@@ -21,7 +21,7 @@ namespace {
 // create vertices_ , transactionBuilder_ , unrealApi_ and load payment address 
 // Sets default values
 UAlgorandUnrealManager::UAlgorandUnrealManager()
-    :myAlgodRpc("https://testnet-algorand.api.purestake.io/ps2") , myAlgodPort(0) , myAlgodTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1"), myIndexerRpc("https://testnet-algorand.api.purestake.io/idx2"), myIndexerPort(0), myIndexerTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1")
+    :myAlgodRpc("https://testnet-api.algonode.cloud") , myAlgodPort(443) , myAlgodTokenHeader(""), myIndexerRpc("https://testnet-idx.algonode.network"), myIndexerPort(443), myIndexerTokenHeader("")
 {
     FString address;
     // create instance of Vertices library
@@ -180,12 +180,12 @@ void UAlgorandUnrealManager::OnInitWalletCompleteCallback(const Vertices::Vertic
 /**
  * @brief create its context to send the request to unreal api for loading wallet
  */
-void UAlgorandUnrealManager::loadWallet(const FString& mnemonics)
+void UAlgorandUnrealManager::loadWallet(const FString& Password)
 {
     this->requestContextManager_
         .createContext<API::FAlgorandAPILoadWalletDelegate,
         Vertices::VerticesLoadWalletRequest>(
-            request_builders::buildLoadWalletRequest(mnemonics),
+            request_builders::buildLoadWalletRequest(Password),
             std::bind(&API::AlgorandAPILoadWallet, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             std::bind(&UAlgorandUnrealManager::OnLoadWalletCompleteCallback, this , std::placeholders::_1)
@@ -252,12 +252,12 @@ void UAlgorandUnrealManager::OnSaveWalletCompleteCallback(const Vertices::Vertic
 /**
  * @brief create its context to send the request to unreal api for get backup mnemonic phrase
  */
- void UAlgorandUnrealManager::getMnemonicsByAccountName()
+ void UAlgorandUnrealManager::getMnemonicsByAccountName(const FString& Name)
 {
     this->requestContextManager_
         .createContext<API::FAlgorandAPIGetMnemonicsByAccountNameDelegate,
         Vertices::VerticesGetMnemonicsByAccountNameRequest>(
-            request_builders::buildGetMnemonicsByAccountNameRequest(),
+            request_builders::buildGetMnemonicsByAccountNameRequest(Name),
             std::bind(&API::AlgorandAPIGetMnemonicsByAccountName, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             std::bind(&UAlgorandUnrealManager::OnGetMnemonicsByAccountNameCompleteCallback, this , std::placeholders::_1)
@@ -275,8 +275,8 @@ void UAlgorandUnrealManager::OnGetMnemonicsByAccountNameCompleteCallback(const V
     else {
         if (ErrorDelegateCallback.IsBound())
         {
-            UE_LOG(LogTemp, Error, TEXT("Wallet wasn't initialized.  Error : %s"), *response.GetResponseString());
-            ErrorDelegateCallback.Broadcast(FError("Wallet wasn't initialized"));
+            UE_LOG(LogTemp, Error, TEXT("Mnemonics weren't fetched.  Error : %s"), *response.GetResponseString());
+            ErrorDelegateCallback.Broadcast(FError("Mnemonics weren't fetched"));
         }
         else
         {
@@ -288,12 +288,12 @@ void UAlgorandUnrealManager::OnGetMnemonicsByAccountNameCompleteCallback(const V
 /**
  * @brief create its context to send the request to unreal api for generate mnemonics
  */
- void UAlgorandUnrealManager::generateAccountFromMnemonics()
+ void UAlgorandUnrealManager::generateAccountFromMnemonics(const FString& Mnemonics, const FString& Name)
 {
     this->requestContextManager_
         .createContext<API::FAlgorandAPIGenerateAccountFromMnemonicsDelegate,
         Vertices::VerticesGenerateAccountFromMnemonicsRequest>(
-            request_builders::buildGenerateAccountFromMnemonicsRequest(),
+            request_builders::buildGenerateAccountFromMnemonicsRequest(Mnemonics, Name),
             std::bind(&API::AlgorandAPIGenerateAccountFromMnemonics, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             std::bind(&UAlgorandUnrealManager::OnGenerateAccountFromMnemonicsCompleteCallback, this , std::placeholders::_1)
@@ -312,7 +312,7 @@ void UAlgorandUnrealManager::OnGenerateAccountFromMnemonicsCompleteCallback(cons
         if (ErrorDelegateCallback.IsBound())
         {
             UE_LOG(LogTemp, Error, TEXT("Account wasn't generated.  Error : %s"), *response.GetResponseString());
-            ErrorDelegateCallback.Broadcast(FError("Wallet wasn't initialized"));
+            ErrorDelegateCallback.Broadcast(FError("Account wasn't generated."));
         }
         else
         {
@@ -620,8 +620,8 @@ void UAlgorandUnrealManager::OnFetchAccountInformationCompleteCallback(const Ver
         
         if (ErrorDelegateCallback.IsBound())
         {
-            UE_LOG(LogTemp, Error, TEXT("Wallet wasn't initialized.  Error : %s"), *response.GetResponseString());
-            ErrorDelegateCallback.Broadcast(FError("Wallet wasn't initialized"));
+            UE_LOG(LogTemp, Error, TEXT("Account wasn't fetched.  Error : %s"), *response.GetResponseString());
+            ErrorDelegateCallback.Broadcast(FError("Account wasn't fetched"));
         }
         else
         {

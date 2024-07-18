@@ -58,9 +58,10 @@ namespace algorand {
         class VerticesSDK::VerticesGenerateAccountFromMnemonicsRequest : public Request
         {
         public:
+            VerticesGenerateAccountFromMnemonicsRequest(const FString& Mnemonics, const FString& Name) : Mnemonics(Mnemonics), Name(Name) {}
             virtual ~VerticesGenerateAccountFromMnemonicsRequest() {}
-            TOptional<FString> Mnemonics;
-            TOptional<FString> Name;
+            FString Mnemonics;
+            FString Name;
         };
         
         class VerticesSDK::VerticesGenerateAccountFromMnemonicsResponse : public Response
@@ -77,6 +78,7 @@ namespace algorand {
         class VerticesSDK::VerticesGetMnemonicsByAccountNameRequest : public Request
         {
         public:
+            VerticesGetMnemonicsByAccountNameRequest(const FString& Name) : Name(Name) {}
             virtual ~VerticesGetMnemonicsByAccountNameRequest() {}
             TOptional<FString> Name;
         };
@@ -85,7 +87,7 @@ namespace algorand {
         {
         public:
             VerticesGetMnemonicsByAccountNameResponse() {}
-            VerticesGetMnemonicsByAccountNameResponse(const FString& Mnemonics, const FString& Address) : Mnemonics(Mnemonics), Name(Name) {}
+            VerticesGetMnemonicsByAccountNameResponse(const FString& Mnemonics, const FString& Name) : Mnemonics(Mnemonics), Name(Name) {}
             ~VerticesGetMnemonicsByAccountNameResponse() {}
             FString Mnemonics;
             FString Name;

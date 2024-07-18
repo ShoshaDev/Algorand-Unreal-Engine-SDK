@@ -30,10 +30,10 @@ namespace request_builders {
 	buildSaveWalletRequest(const FString& mnemonics);
 	
 	algorand::vertices::VerticesSDK::VerticesGetMnemonicsByAccountNameRequest
-	buildGetMnemonicsByAccountNameRequest();
+	buildGetMnemonicsByAccountNameRequest(const FString& Name);
 	
 	algorand::vertices::VerticesSDK::VerticesGenerateAccountFromMnemonicsRequest
-	buildGenerateAccountFromMnemonicsRequest();
+	buildGenerateAccountFromMnemonicsRequest(const FString& Mnemonics, const FString& Name);
 	
 	algorand::vertices::VerticesSDK::VerticesGetAddrBalanceRequest
 	buildGetBalanceRequest(const FString& address);

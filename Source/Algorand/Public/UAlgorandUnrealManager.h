@@ -271,7 +271,7 @@ public:
 	UFUNCTION(BlueprintCallable,
 			  meta = (DisplayName = "Load Wallet", Keywords = "Wallet"),
 			  Category = "AlgorandUnrealManager")
-	void loadWallet(const FString& mnemonics);
+	void loadWallet(const FString& Password);
 	
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
 	FLoadWalletDelegate LoadWalletCallback;
@@ -305,7 +305,7 @@ public:
     UFUNCTION(BlueprintCallable,
 			  meta = (DisplayName = "Get Mnemonics By Account Name", Keywords = "wallet"),
     		  Category = "AlgorandUnrealManager")
-    void getMnemonicsByAccountName();
+    void getMnemonicsByAccountName(const FString& Name);
 
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
         FGetMnemonicsByAccountNameDelegate GetMnemonicsByAccountNameCallback;
@@ -322,7 +322,7 @@ public:
     UFUNCTION(BlueprintCallable,
 			  meta = (DisplayName = "Generate Account From Mnemonics", Keywords = "wallet"),
     		  Category = "AlgorandUnrealManager")
-    void generateAccountFromMnemonics();
+    void generateAccountFromMnemonics(const FString& Mnemonics, const FString& Name);
 	
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
         FGenerateAccountFromMnemonicsDelegate GenerateAccountFromMnemonicsCallback;

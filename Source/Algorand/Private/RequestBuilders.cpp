@@ -28,17 +28,15 @@ namespace request_builders {
 	}
 
 	Vertices::VerticesGetMnemonicsByAccountNameRequest
-	buildGetMnemonicsByAccountNameRequest()
+	buildGetMnemonicsByAccountNameRequest(const FString& Name)
 	{
-		Vertices::VerticesGetMnemonicsByAccountNameRequest request;
-		return request;
+		return Vertices::VerticesGetMnemonicsByAccountNameRequest(Name);
 	}
 
 	Vertices::VerticesGenerateAccountFromMnemonicsRequest
-	buildGenerateAccountFromMnemonicsRequest()
+	buildGenerateAccountFromMnemonicsRequest(const FString& Mnemonics, const FString& Name)
 	{
-		Vertices::VerticesGenerateAccountFromMnemonicsRequest request;
-		return request;
+		return Vertices::VerticesGenerateAccountFromMnemonicsRequest(Mnemonics, Name);
 	}
 
 	Vertices::VerticesGetAddrBalanceRequest

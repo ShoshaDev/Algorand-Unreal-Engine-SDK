@@ -83,10 +83,10 @@ struct ALGORAND_API FResultApplTx {
 	GENERATED_USTRUCT_BODY()
 	
 	FString TxID;
-	FString Result;
+	FString Logs;
 	FResultApplTx();
-	FResultApplTx(const FString& TxID, const FString& Result);
-	static FResultApplTx ToResultApplTx(const FString& TxID, const FString& Result);
+	FResultApplTx(const FString& TxID, const FString& Logs);
+	static FResultApplTx ToResultApplTx(const FString& TxID, const FString& Logs);
 };
 
 USTRUCT(BlueprintType)

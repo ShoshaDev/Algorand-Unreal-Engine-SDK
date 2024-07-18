@@ -237,14 +237,14 @@ namespace algorand {
             providers.header = server_token_header;
             
             int ret = sodium_init();
-            UE_LOG(LogTemp, Warning, TEXT("Vertices sodium_init err_code %d"), ret);
+            UE_LOG(LogTemp, Display, TEXT("Vertices sodium_init err_code %d"), ret);
             
             m_vertex.provider = &providers;
             m_vertex.vertices_evt_handler = &vertices_evt_handler;
             
             // create new vertex
             err_code = vertices_new(&m_vertex);
-            UE_LOG(LogTemp, Warning, TEXT("Vertices new err_code %d"), err_code);
+            UE_LOG(LogTemp, Display, TEXT("Vertices new err_code %d"), err_code);
             checkVTCSuccess(const_cast<char*>("Vertices vertices_new"), err_code);
         }
 
@@ -265,11 +265,11 @@ namespace algorand {
                 UE_LOG(LogTemp, Warning, TEXT("Version might not be accurate : old value is being used %d"), err_code);
             }
             else {
-                UE_LOG(LogTemp, Warning, TEXT("err_code vertices_version %d"), err_code);
+                UE_LOG(LogTemp, Display, TEXT("err_code vertices_version %d"), err_code);
             }
             
             checkVTCSuccess(const_cast<char*>("Vertices version"),err_code);
-            UE_LOG(LogTemp, Warning, TEXT("🏎 Running on %hs v.%u.%u.%u"),
+            UE_LOG(LogTemp, Display, TEXT("🏎 Running on %hs v.%u.%u.%u"),
                 version.network,
                 version.major,
                 version.minor,
@@ -509,8 +509,8 @@ namespace algorand {
                         {
                             CHECK_DLL_LOAD(loaded_);
                             INIT_VERTICES(m_vertex, err_code);
-                            
-                            err_code = vertices_s_account_new_from_mnemonic((char *)StringCast<ANSICHAR>(*(Request.Mnemonics.GetValue())).Get(), &sender_account, StringCast<ANSICHAR>(*(Request.Name.GetValue())).Get());
+        
+                            err_code = vertices_s_account_new_from_mnemonic((char *) StringCast<ANSICHAR>(*(Request.Mnemonics)).Get(), &sender_account, StringCast<ANSICHAR>(*(Request.Name)).Get());
                             checkVTCSuccess(err_code);
                             
                             UE_LOG(LogTemp, Display, TEXT("💳 Vertices: new secure account was created, %hs"), sender_account.vtc_account->public_b32);

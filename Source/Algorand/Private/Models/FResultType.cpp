@@ -63,12 +63,12 @@ FResultAcfgTx FResultAcfgTx::ToResultAcfgTx(const FString& TxID, const FUInt64& 
 FResultApplTx::FResultApplTx()
 {
 	this->TxID = "INVALID";
-	this->Result = "INVALID";
+	this->Logs = "INVALID";
 }
 FResultApplTx::FResultApplTx(const FString& TxID, const FString& Result)
 {
 	this->TxID = TxID;
-	this->Result = Result;
+	this->Logs = Result;
 }
 FResultApplTx FResultApplTx::ToResultApplTx(const FString& TxID, const FString& Result)
 {
