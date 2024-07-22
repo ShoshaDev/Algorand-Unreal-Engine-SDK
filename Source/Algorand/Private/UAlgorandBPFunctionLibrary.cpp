@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "Windows/WindowsPlatformApplicationMisc.h"
+
 /**
  * @brief print value as string after convert long long int
  */
@@ -86,3 +88,9 @@ FString UAlgorandBPFunctionLibrary::RemoveTrailingZeros(float Value)
 
 	return StdStr.c_str();
 }
+
+void UAlgorandBPFunctionLibrary::CopyStrToClipboard(FString text)
+{
+	FPlatformApplicationMisc::ClipboardCopy(*text);
+}
+

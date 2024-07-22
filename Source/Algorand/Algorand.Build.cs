@@ -23,7 +23,8 @@ public class Algorand : ModuleRules
 				"Wallet",
                 "Vertices",
 				"Projects",
-                "OpenSSL"
+                "OpenSSL",
+                "ApplicationCore"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

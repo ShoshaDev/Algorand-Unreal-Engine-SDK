@@ -64,4 +64,13 @@ public:
 
     // Function to remove trailing zeros from a float value and return as string
     static FString RemoveTrailingZeros(float Value);
+
+    /**
+     * @brief copy string to OS clipboard
+     * @param text is one which is copied to clipboard
+     */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "Copy String to Clipboard", Keywords = "Clipboard"),
+			  Category = "CustomLibrary")
+	static void CopyStrToClipboard(FString text);
 };
