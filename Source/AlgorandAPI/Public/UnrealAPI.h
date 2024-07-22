@@ -47,6 +47,8 @@ public:
 	DECLARE_DELEGATE_OneParam(FAlgorandAPISaveWalletDelegate, const Vertices::VerticesSaveWalletResponse&);
 	
     DECLARE_DELEGATE_OneParam(FAlgorandAPIGetMnemonicsByAccountNameDelegate, const Vertices::VerticesGetMnemonicsByAccountNameResponse&);
+
+	DECLARE_DELEGATE_OneParam(FAlgorandAPIGetAllAccountsDelegate, const Vertices::VerticesGetAllAccountsResponse&);
 	
     DECLARE_DELEGATE_OneParam(FAlgorandAPIGenerateAccountFromMnemonicsDelegate, const Vertices::VerticesGenerateAccountFromMnemonicsResponse&);
 
@@ -65,6 +67,8 @@ public:
 	DECLARE_DELEGATE_OneParam(FAlgorandAPIArcAssetDetailsDelegate, const Vertices::VerticesArcAssetDetailsResponse&);
 	
 	DECLARE_DELEGATE_OneParam(FAlgorandAPIAccountInformationDelegate, const Vertices::VerticesAccountInformationResponse&);
+
+	DECLARE_DELEGATE_OneParam(FAlgorandAPIRemoveAccountByNameDelegate, const Vertices::VerticesRemoveAccountByNameResponse&);
 
 	/**
 		 * @brief set algod rpc url, port, token of algorand node 
@@ -113,6 +117,14 @@ public:
      */
     void AlgorandAPIGetMnemonicsByAccountName(const Vertices::VerticesGetMnemonicsByAccountNameRequest& Request,
 								   const FAlgorandAPIGetMnemonicsByAccountNameDelegate& Delegate = FAlgorandAPIGetMnemonicsByAccountNameDelegate()) const;
+
+	/**
+	 * @brief send api request for Getting All Accounts
+	 * @param Request value to send as params for calling api
+	 * @param Delegate is used to implement async task after get response as api result
+	 */
+	void AlgorandAPIGetAllAccounts(const Vertices::VerticesGetAllAccountsRequest& Request,
+								   const FAlgorandAPIGetAllAccountsDelegate& Delegate = FAlgorandAPIGetAllAccountsDelegate()) const;
 
 	/**
      * @brief send api request for Generating new account from Mnemonics
@@ -179,6 +191,14 @@ public:
 	 */
 	void AlgorandAPIAccountInformation(const Vertices::VerticesAccountInformationRequest& Request, const FAlgorandAPIAccountInformationDelegate& Delegate = FAlgorandAPIAccountInformationDelegate()) const;
 
+	/**
+	 * @brief send api request for Removing account by its name
+	 * @param Request value to send as params for calling api
+	 * @param Delegate is used to implement async task after get response as api result
+	 */
+	void AlgorandAPIRemoveAccountByName(const Vertices::VerticesRemoveAccountByNameRequest& Request,
+								   const FAlgorandAPIRemoveAccountByNameDelegate& Delegate = FAlgorandAPIRemoveAccountByNameDelegate()) const;
+
 private:
 
 	/**
@@ -208,6 +228,13 @@ private:
      * @param Delegate is used to execute binded callback from Algorand module
      */
     void OnAlgorandAPIGetMnemonicsByAccountNameResponse(const Vertices::VerticesGetMnemonicsByAccountNameResponse& response, const FAlgorandAPIGetMnemonicsByAccountNameDelegate& Delegate) const;
+
+	/**
+	 * @brief callback function to be run after api request of getting all accounts
+	 * @param response is used to send as Vertices Response type to Algorand module 
+	 * @param Delegate is used to execute binded callback from Algorand module
+	 */
+	void OnAlgorandAPIGetAllAccountsResponse(const Vertices::VerticesGetAllAccountsResponse& response, const FAlgorandAPIGetAllAccountsDelegate& Delegate) const;
 
 	/**
      * @brief callback function to be run after api request of generating account from mnemonics
@@ -271,6 +298,13 @@ private:
 	 * @param Delegate is used to execute binded callback from Algorand module
 	 */
 	void OnAlgorandAPIAccountInformationGetResponse(const Vertices::VerticesAccountInformationResponse& response, const FAlgorandAPIAccountInformationDelegate& Delegate) const;
+
+	/**
+	 * @brief callback function to be run after api request of removing account by its name
+	 * @param response is used to send as Vertices Response type to Algorand module 
+	 * @param Delegate is used to execute binded callback from Algorand module
+	 */
+	void OnAlgorandAPIRemoveAccountByNameResponse(const Vertices::VerticesRemoveAccountByNameResponse& response, const FAlgorandAPIRemoveAccountByNameDelegate& Delegate) const;
 
 	// Algorand modules
     TSharedPtr<algorand::vertices::VerticesSDK> vertices_;

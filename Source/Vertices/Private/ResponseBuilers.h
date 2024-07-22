@@ -13,9 +13,13 @@ namespace response_builders {
 	algorand::vertices::VerticesSDK::VerticesGenerateAccountFromMnemonicsResponse
 		buildGenerateAccountFromMnemonicsResponse(const FString& Address, const FString& Name);
 	algorand::vertices::VerticesSDK::VerticesGenerateRandomAccountResponse
-		buildGenerateRandomAccountResponse(const FString& Address, const FString& Name);
+		buildGenerateRandomAccountResponse(const FString& Address, const FString& Name, const FString& Mnemonics);
 	algorand::vertices::VerticesSDK::VerticesGetMnemonicsByAccountNameResponse
 		buildGetMnemonicsByAccountNameResponse(const FString& Mnemonics, const FString& Name);
+	algorand::vertices::VerticesSDK::VerticesGetAllAccountsResponse
+		buildGetAllAccountsResponse(const TArray<FString>& Names, const TArray<FString>& Addresses);
+	algorand::vertices::VerticesSDK::VerticesRemoveAccountByNameResponse
+		buildRemoveAccountByNameResponse();
 	algorand::vertices::VerticesSDK::VerticesGetAddrBalanceResponse
 		buildGetAddrBalanceResponse(const FString& Address, const uint64& Amount);
 	algorand::vertices::VerticesSDK::VerticesSendPayTxResponse

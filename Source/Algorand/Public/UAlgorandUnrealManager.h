@@ -59,6 +59,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSaveWalletDelegate, const EResultT
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGetMnemonicsByAccountNameDelegate, const EResultType&, ResultType, const FResultString&, MnemonicByName);
 
 /**
+ * get accounts from algorand wallet callback 
+ * @param Accounts , which was fetched from wallet
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGetALLAccountsDelegate, const EResultType&, ResultType, const FResultAccounts&, Accounts);
+
+/**
  * generate account from mnemonics callback 
  * @param GeneratedAccount generated account
 */
@@ -111,6 +117,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FArcAssetDetailsDelegate, const ERe
  * @param accountInfo Account Asset details
 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAccountInfoDelegate, const EResultType&, ResultType, const FResultAccAssets&, AccAssets);
+
+/**
+ * remove account by its name callback 
+ * @param Result boolean value which shows state of removing account
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FRemoveAccountByNameDelegate, const EResultType&, ResultType, const FResultBoolean&, Result);
 
 /**
  * error callback
@@ -318,9 +330,26 @@ public:
 
 	/**
 	 * Get mnemonics by account name
-	 * @param response mnemonics phrase of backup
+	 * @param response no results , and only boolean about success  
 	 */
     void OnGetMnemonicsByAccountNameCompleteCallback(const Vertices::VerticesGetMnemonicsByAccountNameResponse& response);
+
+	/**
+	 * Get All Accounts
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "Get All Accounts From a Wallet", Keywords = "wallet"),
+			  Category = "AlgorandUnrealManager")
+	void getAllAccounts();
+
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+	FGetALLAccountsDelegate GetAllAccountsCallback;
+
+	/**
+	 * Get all accounts
+	 * @param response all accounts which was fetched from a wallet
+	 */
+	void OnGetAllAccountsCompleteCallback(const Vertices::VerticesGetAllAccountsResponse& response);
     
 	/**
 	 * Generate Account From mnemonics
@@ -525,6 +554,23 @@ public:
 	 */ 
 	void OnFetchAccountInformationCompleteCallback(const Vertices::VerticesAccountInformationResponse& response);
 
+	/**
+	 * Remove Account By its Name
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "Remove Account by its Name", Keywords = "wallet"),
+			  Category = "AlgorandUnrealManager")
+	void removeAccountByName(const FString& Name);
+
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+	FRemoveAccountByNameDelegate RemoveAccountByNameCallback;
+
+	/**
+	 * Remove Account by its name
+	 * @param response no results and only boolean value about success
+	 */
+	void OnRemoveAccountByNameCompleteCallback(const Vertices::VerticesRemoveAccountByNameResponse& response);
+	
 	/**
 	 * broadcast @link ErrorDelegateCallback and leave logs
 	 * @par Description explains error msg

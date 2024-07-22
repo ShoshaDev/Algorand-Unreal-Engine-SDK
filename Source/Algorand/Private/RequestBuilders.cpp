@@ -33,6 +33,12 @@ namespace request_builders {
 		return Vertices::VerticesGetMnemonicsByAccountNameRequest(Name);
 	}
 
+	Vertices::VerticesGetAllAccountsRequest
+	buildGetAllAccountsRequest()
+	{
+		return Vertices::VerticesGetAllAccountsRequest();
+	}
+
 	Vertices::VerticesGenerateAccountFromMnemonicsRequest
 	buildGenerateAccountFromMnemonicsRequest(const FString& Mnemonics, const FString& Name)
 	{
@@ -40,9 +46,9 @@ namespace request_builders {
 	}
 	
 	Vertices::VerticesGenerateRandomAccountRequest
-	buildGenerateRandomAccountRequest(const FString& Name)
+	buildGenerateRandomAccountRequest()
 	{
-		return Vertices::VerticesGenerateRandomAccountRequest(Name);
+		return Vertices::VerticesGenerateRandomAccountRequest();
 	}
 
 	Vertices::VerticesGetAddrBalanceRequest
@@ -167,5 +173,11 @@ namespace request_builders {
 		Vertices::VerticesAccountInformationRequest request;
 		request.address = address;
 		return request;
+	}
+
+	Vertices::VerticesRemoveAccountByNameRequest
+	buildRemoveAccountByNameRequest(const FString& Name)
+	{
+		return Vertices::VerticesRemoveAccountByNameRequest(Name);
 	}
 }

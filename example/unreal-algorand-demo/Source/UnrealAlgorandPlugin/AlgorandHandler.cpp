@@ -2,165 +2,277 @@
 
 #include "..\..\Plugins\Algorand\Source\Algorand\Public\Models\FAppNoOpTX.h"
 
-UAlgorandHandler::UAlgorandHandler() { 
-	algorandManager = 
+UAlgorandHandler::UAlgorandHandler()
+{
+	algorandManager =
 		CreateDefaultSubobject<UAlgorandUnrealManager>(TEXT("AlgorandManager"));
+	
+	BooleanDelegate.BindUFunction(this, FName("OnResultBooleanCallback"));
+	StringDelegate.BindUFunction(this, FName("OnResultStringCallback"));
+	UInt64Delegate.BindUFunction(this, FName("OnResultUInt64Callback"));
+	AccountDelegate.BindUFunction(this, FName("OnResultAccountCallback"));
+	AccountsDelegate.BindUFunction(this, FName("OnResultAccountsCallback"));
+	AcfgTxDelegate.BindUFunction(this, FName("OnResultAcfgTxCallback"));
+	ApplTxDelegate.BindUFunction(this, FName("OnResultApplTxCallback"));
+	ArcAssetsDelegate.BindUFunction(this, FName("OnResultArcAssetDetailsCallback"));
+	AccAssetsDelegate.BindUFunction(this, FName("OnResultAccAssetsCallback"));
+	ErrorDelegate.BindUFunction(this, FName("OnErrorCallback"));
+
+	algorandManager->ErrorDelegateCallback.Add(ErrorDelegate);
+	algorandManager->InitWalletCallback.Add(BooleanDelegate);
+	algorandManager->LoadWalletCallback.Add(BooleanDelegate);
+	algorandManager->SaveWalletCallback.Add(BooleanDelegate);
+	algorandManager->GetMnemonicsByAccountNameCallback.Add(StringDelegate);
+	algorandManager->GetAllAccountsCallback.Add(AccountsDelegate);
+	algorandManager->GenerateRandomAccountCallback.Add(AccountDelegate);
+	algorandManager->GenerateAccountFromMnemonicsCallback.Add(AccountDelegate);
+	algorandManager->GetAddressBalanceCallback.Add(UInt64Delegate);
+	algorandManager->SendPaymentTxCallback.Add(StringDelegate);
+	algorandManager->SendAssetConfigTransactionCallback.Add(AcfgTxDelegate);
+	algorandManager->SendAssetTransferTransactionCallback.Add(StringDelegate);
+	algorandManager->SendApplicationCallTransactionCallback.Add(ApplTxDelegate);
+	algorandManager->FetchArcAssetDetailsCallback.Add(ArcAssetsDelegate);
+	algorandManager->FetchAccountInformationCallback.Add(AccAssetsDelegate);
+	algorandManager->RemoveAccountByNameCallback.Add(BooleanDelegate);
+}
+
+void UAlgorandHandler::OnResultBooleanCallback(const EResultType& ResultType, const FResultBoolean& Result)
+{
+	switch (ResultType)
+	{
+	case EResultType::InitWallet:
+		UE_LOG(LogTemp, Display, TEXT("🚀 Algo Wallet was initialized."));
+		break;
+	case EResultType::LoadWallet:
+		UE_LOG(LogTemp, Display, TEXT("🚀 Algo Wallet was loaded."));
+		break;
+	case EResultType::SaveWallet:
+		UE_LOG(LogTemp, Display, TEXT("🚀 Algo Wallet was saved."));
+		break;
+	case EResultType::RemAccount:
+		UE_LOG(LogTemp, Display, TEXT("🚀 Algo Account was removed."));
+		break;
+	default:
+		UE_LOG(LogTemp, Warning, TEXT("🙉 FResultBoolean: Unexpected Result Type"));
+	}
+}
+
+void UAlgorandHandler::OnResultStringCallback(const EResultType& ResultType, const FResultString& Result)
+{
+	switch (ResultType)
+	{
+	case EResultType::GetMnemonics:
+		UE_LOG(LogTemp, Display, TEXT("🚀 Fetched mnemonics are following: %s"), *Result.Result);
+		break;
+	case EResultType::PayTx:
+		UE_LOG(LogTemp, Display, TEXT("🚀 Payment TX Hash are following: %s"), *Result.Result);
+		break;
+	case EResultType::ApplTx:
+		UE_LOG(LogTemp, Display, TEXT("🚀 Application TX Hash are following: %s"), *Result.Result);
+		break;
+	default:
+		UE_LOG(LogTemp, Warning, TEXT("🙉 FResultBoolean: Unexpected Result Type"));
+	}
+}
+
+void UAlgorandHandler::OnResultAccountCallback(const EResultType& ResultType, const FResultAccount& Result)
+{
+	switch (ResultType)
+	{
+	case EResultType::GenAccount:
+		UE_LOG(LogTemp, Display, TEXT("🚀 Generated address and account name: %s -- %s\n"), *Result.Address,
+		       *Result.Name);
+		if(!Result.MnemonicPhrase.IsEmpty())
+		{
+			UE_LOG(LogTemp, Display, TEXT("🚀☀️ Mnemonic phrase of the account: %s"), *FString::Join(Result.MnemonicPhrase, TEXT(" ")));	
+		}
+		else
+		{
+			UE_LOG(LogTemp, Display, TEXT("🚀☀️ Mnemonic phrase of the account doesn't exist in this Callback"));
+		}
+			
+		break;
+	case EResultType::GenRandomAccount:
+		UE_LOG(LogTemp, Display, TEXT("🚀 Generated address and account name randomly: %s -- %s"), *Result.Address,
+		       *Result.Name);
+		break;
+	default:
+		UE_LOG(LogTemp, Warning, TEXT("🙉 FResultAccount: Unexpected Result Type"));
+	}
+}
+
+void UAlgorandHandler::OnResultAccountsCallback(const EResultType& ResultType, const FResultAccounts& Result)
+{
+	switch (ResultType)
+	{
+	case EResultType::GetAllAccounts:
+		UE_LOG(LogTemp, Display, TEXT("🚀 Accounts were fetched.\n"));
+		
+		for(size_t i = 0; i < Result.Names.Num(); i++)
+		{
+			UE_LOG(LogTemp, Display, TEXT("🚀☀️ Account: %s -- %s\n"), *Result.Names[i], *Result.Addresses[i]);
+		}
+		
+		break;
+	default:
+		UE_LOG(LogTemp, Warning, TEXT("🙉 FResultAccount: Unexpected Result Type"));
+	}
+}
+
+
+void UAlgorandHandler::OnResultUInt64Callback(const EResultType& ResultType, const FResultUInt64& Result)
+{
+	switch (ResultType)
+	{
+	case EResultType::AddrBalance:
+		UE_LOG(LogTemp, Display, TEXT("🚀 Got Balance: %llu"), Result.Result.Value);
+		break;
+	default:
+		UE_LOG(LogTemp, Warning, TEXT("🙉 FResultUInt64: Unexpected Result Type"));
+	}
+}
+
+void UAlgorandHandler::OnResultAcfgTxCallback(const EResultType& ResultType, const FResultAcfgTx& Result)
+{
+	switch (ResultType)
+	{
+	case EResultType::AcfgTx:
+		UE_LOG(LogTemp, Display, TEXT("🚀 Fetched Asset Config TX Hash and Asset ID: %s -- %llu"), *Result.TxID,
+		       Result.AssetID.Value);
+		break;
+	default:
+		UE_LOG(LogTemp, Warning, TEXT("🙉 FResultAcfgTx: Unexpected Result Type"));
+	}
+}
+
+void UAlgorandHandler::OnResultApplTxCallback(const EResultType& ResultType, const FResultApplTx& Result)
+{
+	switch (ResultType)
+	{
+	case EResultType::ApplTx:
+		{
+			FString App_Result = UAppNoOpTXFactory::FAppResultFromLogs(EAppLogType::LOG_INT, Result.Logs);
+			UE_LOG(LogTemp, Display, TEXT("🚀 Application Call TX ID & TX LOG: %s -- %s"), *Result.TxID, *App_Result);
+			break;
+		}
+	default:
+		UE_LOG(LogTemp, Warning, TEXT("🙉 FResultApplTx: Unexpected Result Type"));
+	}
+}
+
+void UAlgorandHandler::OnResultArcAssetDetailsCallback(const EResultType& ResultType, const FArcAssetDetails& Result)
+{
+	switch (ResultType)
+	{
+	case EResultType::ArcAsset:
+		UE_LOG(LogTemp, Display, TEXT("🚀 Fetched Arc Asset Details: %s"), *Result.Description);
+		break;
+	default:
+		UE_LOG(LogTemp, Warning, TEXT("🙉 FArcAssetDetails: Unexpected Result Type"));
+	}
+}
+
+void UAlgorandHandler::OnResultAccAssetsCallback(const EResultType& ResultType, const FResultAccAssets& Result)
+{
+	switch (ResultType)
+	{
+	case EResultType::AccAssets:
+		for (int i = 0; i < Result.AssetIDs.Num(); i++)
+			UE_LOG(LogTemp, Display, TEXT("🚀 Arc Account Info: %s -- %s \n"), *Result.AssetIDs[i], *Result.AssetNames[i]);
+		break;
+	default:
+		UE_LOG(LogTemp, Warning, TEXT("🙉 FResultAccAssets: Unexpected Result Type"));
+	}
+}
+
+void UAlgorandHandler::OnErrorCallback(const FError& Error)
+{
+	UE_LOG(LogTemp, Error, TEXT("☠️ FError: Error occured, %s"), *Error.message);
+}
+
+void UAlgorandHandler::RunSomeLogic()
+{
+	switch (Result_Type)
+	{
+	case EResultType::InitWallet:
+		algorandManager->initWallet();
+		break;
+	case EResultType::LoadWallet:
+		algorandManager->loadWallet(Password);
+		break;
+	case EResultType::SaveWallet:
+		algorandManager->saveWallet(Password);
+		break;
+	case EResultType::GetMnemonics:
+		algorandManager->getMnemonicsByAccountName(AccountName);
+		break;
+	case EResultType::GetAllAccounts:
+		algorandManager->getAllAccounts();
+		break;
+	case EResultType::GenAccount:
+		algorandManager->generateAccountFromMnemonics(Mnemonics, AccountName);
+		break;
+	case EResultType::GenRandomAccount:
+		algorandManager->generateRandomAccount(AccountName);
+		break;
+	case EResultType::AddrBalance:
+		algorandManager->getAddressBalance(Address);
+		break;
+	case EResultType::PayTx:
+		algorandManager->sendPaymentTransaction(AccountName,
+		                                        FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
+		                                        1000, FString(
+			                                        "Sent 100 algo to A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM."));
+		break;
+	case EResultType::AcfgTx:
+		algorandManager->sendAssetConfigTransaction(AccountName,
+			FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
+			FString(""),
+			FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
+			FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
+			0,
+			1000,
+			0,
+			"false",
+			FString("1234567890"),
+			FString("My Asset"),
+			FString("https://myurl.com"),
+			FString("fe"));
+		break;
+	case EResultType::AxferTx:
+		algorandManager->sendAssetTransferTransaction(AccountName,
+			FString("SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U"),
+			FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
+			234664633,
+			"0.1",
+			FString("Sent 100 ERC20 token to A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM."));
+
+		break;
+	case EResultType::ApplTx:
+		{
+			// Application Call - Math Calculation through Smart Contract on algorand testnet node
+			TArray<FAppArg> app_args;
+			EAppOnCompleteTX app_complete_tx = EAppOnCompleteTX::NOOP;
+
+			app_args.Add(UAppNoOpTXFactory::FAppArgFromString(EAppArgType::ARG_METHOD, "mul(uint64,uint64)uint64"));
+			app_args.Add(UAppNoOpTXFactory::FAppArgFromString(EAppArgType::ARG_INT, "1000"));
+			app_args.Add(UAppNoOpTXFactory::FAppArgFromString(EAppArgType::ARG_INT, "2"));
+
+			algorandManager->sendApplicationCallTransaction(AccountName, 301624623, app_args, app_complete_tx);
+			break;
+		}
+	case EResultType::ArcAsset:
+		algorandManager->fetchArcAssetDetails(AssetID);
+		break;
+	case EResultType::AccAssets:
+		algorandManager->fetchAccountInformation("6WII6ES4H6UW7G7T7RJX63CUNPKJEPEGQ3PTYVVU3JHJ652W34GCJV5OVY");
+		break;
+	case EResultType::RemAccount:
+		algorandManager->removeAccountByName(AccountName);
+		break;
+	case EResultType::NONE:
+		break;
+	}
 }
 
 UWorld* UAlgorandHandler::GetWorld() const { return GetOuter()->GetWorld(); }
-
-void UAlgorandHandler::OnRestoreWalletCallback(const FString& output) {
-    UE_LOG(LogTemp, Display, TEXT("Generated address: %s"),
-        *output);
-
-    TArray<FAppArg> app_args;
-    EAppOnCompleteTX app_complete_tx = EAppOnCompleteTX::NOOP;
-    
-    app_args.Add(UAppNoOpTXFactory::FAppArgFromString(EAppArgType::ARG_METHOD, "mul(uint64,uint64)uint64"));
-    app_args.Add(UAppNoOpTXFactory::FAppArgFromString(EAppArgType::ARG_INT, "1000"));
-    app_args.Add(UAppNoOpTXFactory::FAppArgFromString(EAppArgType::ARG_INT, "2"));
-    
-    FScriptDelegate _delegate3;
-    _delegate3.BindUFunction(this, FName("OnSendApplicationCallTransactionCallback"));
-    algorandManager->SendApplicationCallTransactionCallback.Add(_delegate3);
-    algorandManager->sendApplicationCallTransaction(301624623, app_args, app_complete_tx);
-    
-    // FScriptDelegate _delegate8;
-    // _delegate8.BindUFunction(this, FName("OnSendAssetConfigTransactionCallback"));
-    // algorandManager->SendAssetConfigTransactionCallback.Add(_delegate8);
-    // algorandManager->sendAssetConfigTransaction(FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
-    //                                             FString(""),
-    //                                             FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
-    //                                             FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
-    //                                             0,
-    //                                             1000,
-    //                                             0,
-    //                                             "false",
-    //                                             FString("1234567890"),
-    //                                             FString("My Asset"),
-    //                                             FString("https://myurl.com"),
-    //                                             FString("fe"));
-    
-    /*FScriptDelegate _delegate9;
-    _delegate9.BindUFunction(this, FName("OnGetAccountInformationCallback"));
-    algorandManager->FetchAccountInformationCallback.Add(_delegate9);
-    algorandManager->fetchAccountInformation("6WII6ES4H6UW7G7T7RJX63CUNPKJEPEGQ3PTYVVU3JHJ652W34GCJV5OVY");*/
-    
-    // FScriptDelegate _delegate1;
-    // _delegate1.BindUFunction(this, FName("OnGetBalanceCallback"));
-    // algorandManager->GetBalanceCallback.Add(_delegate1);
-    // algorandManager->getBalance("LCKVRVM2MJ7RAJZKPAXUCEC4GZMYNTFMLHJTV2KF6UGNXUFQFIIMSXRVM4");
-
-    // FScriptDelegate _delegate2;
-    // _delegate2.BindUFunction(this, FName("OnSendPaymentTransactionCallback"));
-    // algorandManager->SendPaymentTransactionCallback.Add(_delegate2);
-    // algorandManager->sendPaymentTransaction(FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"), 100000000, FString("Sent 100 algo to A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM."));
-
-    // FScriptDelegate _delegate8;
-    // _delegate8.BindUFunction(this, FName("OnSendAssetTransferTransactionCallback"));
-    // algorandManager->SendAssetTransferTransactionCallback.Add(_delegate8);
-    // algorandManager->sendAssetTransferTransaction(FString("SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U"), FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),234664633,"0.1",FString("Sent 100 ERC20 token to A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM."));   // A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM
-    
-}
-
-void UAlgorandHandler::OnInitializeNewWalletCallback(const FString& output) {
-    UE_LOG(LogTemp, Display, TEXT("Generated address: %s"),
-        *output);
-    FScriptDelegate _delegate2;
-    _delegate2.BindUFunction(this, FName("OnSendPaymentTransactionCallback"));
-    algorandManager->SendPaymentTransactionCallback.Add(_delegate2);
-    algorandManager->sendPaymentTransaction(FString("NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE"), 100, FString("Sent 100 algo to NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE."));
-}
-
-void UAlgorandHandler::OngetMnemonicsByAccountNameCallback(const FString& output) {
-    UE_LOG(LogTemp, Display, TEXT("Received mnemonics: %s"),
-        *output);
-}
-
-void UAlgorandHandler::OngenerateAccountFromMnemonicsCallback(const FString& output) {
-    UE_LOG(LogTemp, Display, TEXT("Generated mnemonics: %s"),
-        *output);
-}
-
-void UAlgorandHandler::OnGetBalanceCallback(const FUInt64& amount) {
-    UE_LOG(LogTemp, Display, TEXT("Balance: %llu"),
-        amount.Value);
-}
-
-void UAlgorandHandler::OnSendPaymentTransactionCallback(const FString& txID) {
-    UE_LOG(LogTemp, Display, TEXT("Payment TX ID: %s"),
-        *txID);
-}
-
-void UAlgorandHandler::OnSendAssetConfigTransactionCallback(const FString& txID, const FUInt64& assetID) {
-    UE_LOG(LogTemp, Display, TEXT("Asset Config TX ID: %s, %llu"),
-        *txID, assetID.Value);
-}
-
-void UAlgorandHandler::OnSendAssetTransferTransactionCallback(const FString& txID) {
-    UE_LOG(LogTemp, Display, TEXT("Asset Transfer TX ID: %s"),
-        *txID);
-}
-
-void UAlgorandHandler::OnSendApplicationCallTransactionCallback(const FString& txID, const FString& logs) {
-    UE_LOG(LogTemp, Display, TEXT("Application Call TX ID & TX LOG -- %s:%s"),
-        *txID, *logs);
-
-    FString app_result = UAppNoOpTXFactory::FAppResultFromLogs(EAppLogType::LOG_INT, logs);
-}
-
-void UAlgorandHandler::OnGetArcAssetDetailsCallback(const FArcAssetDetails& asset_Details)
-{
-    UE_LOG(LogTemp, Display, TEXT("Arc Asset Media Url: %s"),
-     *asset_Details.media_url);
-}
-
-void UAlgorandHandler::OnGetAccountInformationCallback(const TArray<FString>& IDs, const TArray<FString>& Names)
-{
-    for(int i = 0; i < IDs.Num(); i++) 
-        UE_LOG(LogTemp, Display, TEXT("Arc Account Info: %s, %s"),
-         *(IDs[i]), *(Names[i]));
-}
-
-void UAlgorandHandler::RunSomeLogic() {
-    FScriptDelegate _delegate4;
-    _delegate4.BindUFunction(this, FName("OnRestoreWalletCallback"));
-    algorandManager->RestoreWalletCallback.Add(_delegate4);
-    FString mnemonics = "rally relief lucky maple primary chair syrup economy tired hurdle slot upset clever chest curve bitter weekend prepare movie letter lamp alert then able taste";
-    algorandManager->restoreWallet(mnemonics);
-    
-    /*FScriptDelegate _delegate9;
-    _delegate9.BindUFunction(this, FName("OnGetArcAssetDetailsCallback"));
-    algorandManager->FetchArcAssetDetailsCallback.Add(_delegate9);
-    algorandManager->fetchArcAssetDetails(1092400027);// 779312090, 1019478822*/
-    
-    // FScriptDelegate _delegate5;
-    // _delegate5.BindUFunction(this, FName("OnInitializeNewWalletCallback"));
-    // algorandManager->InitializeNewWalletCallback.Add(_delegate5);
-    // algorandManager->initializeNewWallet();
-
-    // FScriptDelegate _delegate6;
-    // _delegate6.BindUFunction(this, FName("OngetMnemonicsByAccountNameCallback"));
-    // algorandManager->getMnemonicsByAccountNameCallback.Add(_delegate6);
-    // algorandManager->getMnemonicsByAccountName();
-    
-    /*FScriptDelegate _delegate7;
-    _delegate7.BindUFunction(this, FName("OngenerateAccountFromMnemonicsCallback"));
-    algorandManager->generateAccountFromMnemonicsCallback.Add(_delegate7);
-    algorandManager->generateAccountFromMnemonics();*/
-    
-    // FScriptDelegate _delegate1;
-    // _delegate1.BindUFunction(this, FName("OnGetBalanceCallback"));
-    // algorandManager->GetBalanceCallback.Add(_delegate1);
-    // algorandManager->getBalance();
-    
-    // FScriptDelegate _delegate2;
-    // _delegate2.BindUFunction(this, FName("OnSendPaymentTransactionCallback"));
-    // algorandManager->SendPaymentTransactionCallback.Add(_delegate2);
-    // algorandManager->sendPaymentTransaction(FString("NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE"), 100, FString("Sent 100 algo to NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE."));
-
-    // FScriptDelegate _delegate8;
-    // _delegate8.BindUFunction(this, FName("OnSendAssetTransferTransactionCallback"));
-    // algorandManager->SendAssetTransferTransactionCallback.Add(_delegate8);
-    // algorandManager->sendAssetTransferTransaction(FString("NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE"), FString("NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE"),100,100,FString("Sent 100 ERC20 token to NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE."));
-}

@@ -124,6 +124,10 @@ namespace vertices {
         class VerticesGenerateRandomAccountResponse;
         class VerticesGetMnemonicsByAccountNameRequest;
         class VerticesGetMnemonicsByAccountNameResponse;
+        class VerticesGetAllAccountsRequest;
+        class VerticesGetAllAccountsResponse;
+        class VerticesRemoveAccountByNameRequest;
+        class VerticesRemoveAccountByNameResponse;
         class VerticesGetAddrBalanceRequest;
         class VerticesGetAddrBalanceResponse;
         class VerticesSendPayTxRequest;
@@ -157,6 +161,12 @@ namespace vertices {
         /// callback, which backups mnemonic phrase by account name on a wallet
         DECLARE_DELEGATE_OneParam(FVerticesGetMnemonicsByAccountNameDelegate, const VerticesGetMnemonicsByAccountNameResponse&);
 
+        /// callback, which gets all accounts on a wallet
+        DECLARE_DELEGATE_OneParam(FVerticesGetAllAccountsDelegate, const VerticesGetAllAccountsResponse&);
+     
+        /// callback, which removes account by name on a wallet
+        DECLARE_DELEGATE_OneParam(FVerticesRemoveAccountByNameDelegate, const VerticesRemoveAccountByNameResponse&);
+
         /// callabck , which get balance by any algorand address
         DECLARE_DELEGATE_OneParam(FVerticesGetAddrBalanceDelegate, const VerticesGetAddrBalanceResponse&);
 
@@ -178,6 +188,8 @@ namespace vertices {
         void VerticesGenerateAccountFromMnemonics(const VerticesGenerateAccountFromMnemonicsRequest&, const FVerticesGenerateAccountFromMnemonicsDelegate&);
         void VerticesGenerateRandomAccount(const VerticesGenerateRandomAccountRequest&, const FVerticesGenerateRandomAccountDelegate&);
         void VerticesGetMnemonicsByAccountName(const VerticesGetMnemonicsByAccountNameRequest&, const FVerticesGetMnemonicsByAccountNameDelegate&);
+        void VerticesGetAllAccounts(const VerticesGetAllAccountsRequest&, const FVerticesGetAllAccountsDelegate&);
+        void VerticesRemoveAccountByName(const VerticesRemoveAccountByNameRequest&, const FVerticesRemoveAccountByNameDelegate&);
         void VerticesGetAddrBalance(const VerticesGetAddrBalanceRequest&, const FVerticesGetAddrBalanceDelegate&);
         void VerticesSendPayTx(const VerticesSendPayTxRequest&, const FVerticesSendPayTxDelegate&);
         void VerticesSendAcfgTx(const VerticesSendAcfgTxRequest&, const FVerticesSendAcfgTxDelegate&);

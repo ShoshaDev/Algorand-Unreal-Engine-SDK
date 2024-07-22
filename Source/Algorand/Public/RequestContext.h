@@ -23,6 +23,7 @@ using ApiDelegate = TVariant<
 	algorand::api::UnrealApi::FAlgorandAPILoadWalletDelegate,
 	algorand::api::UnrealApi::FAlgorandAPISaveWalletDelegate,
 	algorand::api::UnrealApi::FAlgorandAPIGetMnemonicsByAccountNameDelegate,
+	algorand::api::UnrealApi::FAlgorandAPIGetAllAccountsDelegate,
 	algorand::api::UnrealApi::FAlgorandAPIGenerateRandomAccountDelegate,
 	algorand::api::UnrealApi::FAlgorandAPIGenerateAccountFromMnemonicsDelegate,
 	algorand::api::UnrealApi::FAlgorandAPIGetAddrBalanceDelegate,
@@ -31,7 +32,8 @@ using ApiDelegate = TVariant<
 	algorand::api::UnrealApi::FAlgorandAPISendAxferTxDelegate,
 	algorand::api::UnrealApi::FAlgorandAPISendApplCallTxDelegate,
 	algorand::api::UnrealApi::FAlgorandAPIArcAssetDetailsDelegate,
-	algorand::api::UnrealApi::FAlgorandAPIAccountInformationDelegate
+	algorand::api::UnrealApi::FAlgorandAPIAccountInformationDelegate,
+	algorand::api::UnrealApi::FAlgorandAPIRemoveAccountByNameDelegate
 >;
 
 /// Request Contxet info

@@ -31,12 +31,15 @@ namespace request_builders {
 	
 	algorand::vertices::VerticesSDK::VerticesGetMnemonicsByAccountNameRequest
 	buildGetMnemonicsByAccountNameRequest(const FString& Name);
+
+	algorand::vertices::VerticesSDK::VerticesGetAllAccountsRequest
+	buildGetAllAccountsRequest();
 	
 	algorand::vertices::VerticesSDK::VerticesGenerateAccountFromMnemonicsRequest
 	buildGenerateAccountFromMnemonicsRequest(const FString& Mnemonics, const FString& Name);
 
 	algorand::vertices::VerticesSDK::VerticesGenerateRandomAccountRequest
-	buildGenerateRandomAccountRequest(const FString& Name);
+	buildGenerateRandomAccountRequest();
 	
 	algorand::vertices::VerticesSDK::VerticesGetAddrBalanceRequest
 	buildGetBalanceRequest(const FString& address);
@@ -81,4 +84,7 @@ namespace request_builders {
 
 	algorand::vertices::VerticesSDK::VerticesAccountInformationRequest
 		buildAccountInformationRequest(const FString& address);
+
+	algorand::vertices::VerticesSDK::VerticesRemoveAccountByNameRequest
+	buildRemoveAccountByNameRequest(const FString& Name);
 }

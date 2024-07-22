@@ -254,6 +254,34 @@ void UAlgorandUnrealManager::OnGetMnemonicsByAccountNameCompleteCallback(const V
 }
 
 /**
+ * @brief create its context to send the request to unreal api for get all accounts
+ */
+void UAlgorandUnrealManager::getAllAccounts()
+{
+    this->requestContextManager_
+        .createContext<API::FAlgorandAPIGetAllAccountsDelegate,
+        Vertices::VerticesGetAllAccountsRequest>(
+            request_builders::buildGetAllAccountsRequest(),
+            std::bind(&API::AlgorandAPIGetAllAccounts, unrealApi_.Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            std::bind(&UAlgorandUnrealManager::OnGetAllAccountsCompleteCallback, this , std::placeholders::_1)
+        );
+}
+
+/**
+ * @brief get response from unreal api after get all accounts and broadcast the result to binded functions
+ */
+void UAlgorandUnrealManager::OnGetAllAccountsCompleteCallback(const Vertices::VerticesGetAllAccountsResponse& response) {
+    if (response.IsSuccessful()) {
+        UE_LOG(LogTemp, Display, TEXT("🚩 Got All Accounts from a memory wallet."));
+        GetAllAccountsCallback.Broadcast(EResultType::GetAllAccounts, FResultAccounts::ToResultAccounts(response.Names, response.Addresses));
+    }
+    else {
+        processErrorCallback("Accounts wwern't fetched.", response.GetResponseString());
+    }
+}
+
+/**
  * @brief create its context to send the request to unreal api for generate mnemonics
  */
  void UAlgorandUnrealManager::generateAccountFromMnemonics(const FString& Mnemonics, const FString& Name)
@@ -274,7 +302,7 @@ void UAlgorandUnrealManager::OnGetMnemonicsByAccountNameCompleteCallback(const V
 void UAlgorandUnrealManager::OnGenerateAccountFromMnemonicsCompleteCallback(const Vertices::VerticesGenerateAccountFromMnemonicsResponse& response) {
     if (response.IsSuccessful()) {
         UE_LOG(LogTemp, Display, TEXT("🚩 Generated a new account!"));
-        GenerateAccountFromMnemonicsCallback.Broadcast(EResultType::GenAccount, FResultAccount::ToResultAccount(response.Address, response.Name));
+        GenerateAccountFromMnemonicsCallback.Broadcast(EResultType::GenAccount, FResultAccount::ToResultAccount(response.Address, response.Name, TArray<FString>()));
     }
     else {
         processErrorCallback("Account wasn't generated.", response.GetResponseString());
@@ -289,7 +317,7 @@ void UAlgorandUnrealManager::generateRandomAccount(const FString& Name)
     this->requestContextManager_
         .createContext<API::FAlgorandAPIGenerateRandomAccountDelegate,
         Vertices::VerticesGenerateRandomAccountRequest>(
-            request_builders::buildGenerateRandomAccountRequest(Name),
+            request_builders::buildGenerateRandomAccountRequest(),
             std::bind(&API::AlgorandAPIGenerateRandomAccount, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             std::bind(&UAlgorandUnrealManager::OnGenerateRandomAccountCompleteCallback, this , std::placeholders::_1)
@@ -302,7 +330,7 @@ void UAlgorandUnrealManager::generateRandomAccount(const FString& Name)
 void UAlgorandUnrealManager::OnGenerateRandomAccountCompleteCallback(const Vertices::VerticesGenerateRandomAccountResponse& response) {
     if (response.IsSuccessful()) {
         UE_LOG(LogTemp, Display, TEXT("🚩 Generated a new account randomly!"));
-        GenerateRandomAccountCallback.Broadcast(EResultType::GenAccount, FResultAccount::ToResultAccount(response.Address, response.Name));
+        GenerateRandomAccountCallback.Broadcast(EResultType::GenAccount, FResultAccount::ToResultAccount(response.Address,"UNKNOWN", response.MnemonicPhrase));
     }
     else {
         processErrorCallback("Account wasn't generated.", response.GetResponseString());
@@ -567,6 +595,34 @@ void UAlgorandUnrealManager::OnFetchAccountInformationCompleteCallback(const Ver
         FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("Error", "{MSG}"), Arguments));
         
         processErrorCallback("Account Information wasn't fetched.", response.GetResponseString());
+    }
+}
+
+/**
+ * @brief create its context to send the request to unreal api for removing account
+ */
+void UAlgorandUnrealManager::removeAccountByName(const FString& Name)
+{
+    this->requestContextManager_
+        .createContext<API::FAlgorandAPIRemoveAccountByNameDelegate,
+        Vertices::VerticesRemoveAccountByNameRequest>(
+            request_builders::buildRemoveAccountByNameRequest(Name),
+            std::bind(&API::AlgorandAPIRemoveAccountByName, unrealApi_.Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            std::bind(&UAlgorandUnrealManager::OnRemoveAccountByNameCompleteCallback, this , std::placeholders::_1)
+        );
+}
+
+/**
+ * @brief get response from unreal api after remove account and broadcast the result to binded functions
+ */
+void UAlgorandUnrealManager::OnRemoveAccountByNameCompleteCallback(const Vertices::VerticesRemoveAccountByNameResponse& response) {
+    if (response.IsSuccessful()) {
+        UE_LOG(LogTemp, Display, TEXT("🚩 Removed Account by its Name."));
+        RemoveAccountByNameCallback.Broadcast(EResultType::RemAccount, FResultBoolean::ToResultBoolean(true));
+    }
+    else {
+        processErrorCallback("Account wasn't removed.", response.GetResponseString());
     }
 }
 

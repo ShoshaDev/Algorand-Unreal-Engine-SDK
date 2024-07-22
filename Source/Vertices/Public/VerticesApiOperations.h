@@ -78,19 +78,22 @@ namespace algorand {
         class VerticesSDK::VerticesGenerateRandomAccountRequest : public Request
         {
         public:
-            VerticesGenerateRandomAccountRequest(const FString& Name) : Name(Name) {}
             virtual ~VerticesGenerateRandomAccountRequest() {}
-            FString Name;
         };
         
         class VerticesSDK::VerticesGenerateRandomAccountResponse : public Response
         {
         public:
             VerticesGenerateRandomAccountResponse() {}
-            VerticesGenerateRandomAccountResponse(const FString& Address, const FString& Name) : Address(Address), Name(Name) {}
+            VerticesGenerateRandomAccountResponse(const FString& Address, const FString& Name, const FString& Mnemonics) : Address(Address)
+            {
+                // Convert Mnemonics to Mnemonic Phrase as array
+                Mnemonics.ParseIntoArray(MnemonicPhrase, TEXT(" "), true);
+            }
             virtual ~VerticesGenerateRandomAccountResponse() {}
             FString Address;
-            FString Name;
+            TArray<FString> MnemonicPhrase;
+            
         };
 
         // for Getting Mnemonics by account name
@@ -110,6 +113,23 @@ namespace algorand {
             ~VerticesGetMnemonicsByAccountNameResponse() {}
             FString Mnemonics;
             FString Name;
+        };
+
+        // for Getting ALL Accounts from a memory wallet 
+        class VerticesSDK::VerticesGetAllAccountsRequest : public Request
+        {
+        public:
+            virtual ~VerticesGetAllAccountsRequest() {}
+        };
+        
+        class VerticesSDK::VerticesGetAllAccountsResponse : public Response
+        {
+        public:
+            VerticesGetAllAccountsResponse() {}
+            VerticesGetAllAccountsResponse(const TArray<FString>& Names, const TArray<FString> Addresses) : Names(Names), Addresses(Addresses) {}
+            ~VerticesGetAllAccountsResponse() {}
+            TArray<FString> Names;
+            TArray<FString> Addresses;
         };
 
         // for Getting balance by any address
@@ -277,6 +297,21 @@ namespace algorand {
             
             TArray<FString> AssetIDs;
             TArray<FString> AssetNames;
+        };
+
+        // for Removing an account by its name
+        class VerticesSDK::VerticesRemoveAccountByNameRequest : public Request
+        {
+        public:
+            VerticesRemoveAccountByNameRequest(const FString& Name) : Name(Name) {}
+            virtual ~VerticesRemoveAccountByNameRequest() {}
+            TOptional<FString> Name;
+        };
+        
+        class VerticesSDK::VerticesRemoveAccountByNameResponse : public Response
+        {
+        public:
+            ~VerticesRemoveAccountByNameResponse() {}
         };
     }
 }

@@ -34,15 +34,32 @@ FResultAccount::FResultAccount()
 {
 	this->Address = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
 	this->Name = "UNKNOWN";
+	this->MnemonicPhrase.Empty();
 }
-FResultAccount::FResultAccount(const FString& Address, const FString& Name)
+FResultAccount::FResultAccount(const FString& Address, const FString& Name, const TArray<FString>& MnemonicPhrase)
 {
 	this->Address = Address;
 	this->Name = Name;
+	this->MnemonicPhrase = MnemonicPhrase;
 }
-FResultAccount FResultAccount::ToResultAccount(const FString& Address, const FString& Name)
+FResultAccount FResultAccount::ToResultAccount(const FString& Address, const FString& Name, const TArray<FString>& MnemonicPhrase)
 {
-	return FResultAccount(Address, Name);
+	return FResultAccount(Address, Name, MnemonicPhrase);
+}
+
+FResultAccounts::FResultAccounts()
+{
+	this->Names.Empty();
+	this->Addresses.Empty();
+}
+FResultAccounts::FResultAccounts(const TArray<FString>& Names, const TArray<FString>& Addresses)
+{
+	this->Names = Names;
+	this->Addresses = Addresses;
+}
+FResultAccounts FResultAccounts::ToResultAccounts(const TArray<FString>& Names, const TArray<FString>& Addresses)
+{
+	return FResultAccounts(Names, Addresses);
 }
 
 FResultAcfgTx::FResultAcfgTx()

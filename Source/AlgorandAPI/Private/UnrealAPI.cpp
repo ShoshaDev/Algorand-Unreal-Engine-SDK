@@ -102,9 +102,27 @@ void UnrealApi::AlgorandAPIGetMnemonicsByAccountName(const Vertices::VerticesGet
 }
 
 /**
- * @brief callback after get backup mnemonic phrase
+ * @brief callback after get all accounts
  */
 void UnrealApi::OnAlgorandAPIGetMnemonicsByAccountNameResponse(const Vertices::VerticesGetMnemonicsByAccountNameResponse& response, const FAlgorandAPIGetMnemonicsByAccountNameDelegate& Delegate) const
+{
+    Delegate.ExecuteIfBound(response);
+}
+
+void UnrealApi::AlgorandAPIGetAllAccounts(const Vertices::VerticesGetAllAccountsRequest& Request, const FAlgorandAPIGetAllAccountsDelegate& Delegate) const
+{
+    TSharedRef<Vertices::FVerticesGetAllAccountsDelegate> delegatePtr(MakeShared<Vertices::FVerticesGetAllAccountsDelegate>());
+    
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesGetAllAccountsResponse& response) {
+        OnAlgorandAPIGetAllAccountsResponse(response, Delegate);
+    });
+    vertices_->VerticesGetAllAccounts( Request, delegatePtr.Get());
+}
+
+/**
+ * @brief callback after get all accounts
+ */
+void UnrealApi::OnAlgorandAPIGetAllAccountsResponse(const Vertices::VerticesGetAllAccountsResponse& response, const FAlgorandAPIGetAllAccountsDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
 }
@@ -344,6 +362,24 @@ void UnrealApi::AlgorandAPIAccountInformation(const Vertices::VerticesAccountInf
  * @brief callback after arc asset details
  */
 void UnrealApi::OnAlgorandAPIAccountInformationGetResponse(const Vertices::VerticesAccountInformationResponse& response, const FAlgorandAPIAccountInformationDelegate& Delegate) const
+{
+    Delegate.ExecuteIfBound(response);
+}
+
+void UnrealApi::AlgorandAPIRemoveAccountByName(const Vertices::VerticesRemoveAccountByNameRequest& Request, const FAlgorandAPIRemoveAccountByNameDelegate& Delegate) const
+{
+    TSharedRef<Vertices::FVerticesRemoveAccountByNameDelegate> delegatePtr(MakeShared<Vertices::FVerticesRemoveAccountByNameDelegate>());
+    
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesRemoveAccountByNameResponse& response) {
+        OnAlgorandAPIRemoveAccountByNameResponse(response, Delegate);
+    });
+    vertices_->VerticesRemoveAccountByName( Request, delegatePtr.Get());
+}
+
+    /**
+     * @brief callback after get backup mnemonic phrase
+     */
+void UnrealApi::OnAlgorandAPIRemoveAccountByNameResponse(const Vertices::VerticesRemoveAccountByNameResponse& response, const FAlgorandAPIRemoveAccountByNameDelegate& Delegate) const
 {
     Delegate.ExecuteIfBound(response);
 }

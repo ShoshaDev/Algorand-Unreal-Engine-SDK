@@ -33,15 +33,27 @@ namespace response_builders {
 	}
 
 	Vertices::VerticesGenerateRandomAccountResponse
-		buildGenerateRandomAccountResponse(const FString& Address, const FString& Name)
+		buildGenerateRandomAccountResponse(const FString& Address, const FString& Name, const FString& Mnemonics)
 	{
-		return Vertices::VerticesGenerateRandomAccountResponse(Address, Name);
+		return Vertices::VerticesGenerateRandomAccountResponse(Address, Name, Mnemonics);
 	}
 	
 	Vertices::VerticesGetMnemonicsByAccountNameResponse
 		buildGetMnemonicsByAccountNameResponse(const FString& Mnemonics, const FString& Name)
 	{
 		return Vertices::VerticesGetMnemonicsByAccountNameResponse(Mnemonics, Name);
+	}
+
+	Vertices::VerticesGetAllAccountsResponse
+		buildGetAllAccountsResponse(const TArray<FString>& Names, const TArray<FString>& Addresses)
+	{
+		return Vertices::VerticesGetAllAccountsResponse(Names, Addresses);
+	}
+
+	Vertices::VerticesRemoveAccountByNameResponse
+		buildRemoveAccountByNameResponse()
+	{
+		return Vertices::VerticesRemoveAccountByNameResponse();
 	}
 
 	Vertices::VerticesGetAddrBalanceResponse

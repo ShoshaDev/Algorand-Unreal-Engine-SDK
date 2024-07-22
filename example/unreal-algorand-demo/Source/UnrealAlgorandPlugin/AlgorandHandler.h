@@ -16,42 +16,58 @@ public:
 
 	UPROPERTY()
 		UAlgorandUnrealManager* algorandManager;
-
+	
 	UWorld* GetWorld() const override;
 	
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
 	void RunSomeLogic();
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OnGetBalanceCallback(const FUInt64& amount);
+		void OnResultBooleanCallback(const EResultType& ResultType, const FResultBoolean& Result);
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OnSendPaymentTransactionCallback(const FString& txID);
+		void OnResultStringCallback(const EResultType& ResultType, const FResultString& Result);
 
 	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OnSendAssetConfigTransactionCallback(const FString& txID, const FUInt64& assetID);
+		void OnResultAccountCallback(const EResultType& ResultType, const FResultAccount& Result);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnResultAccountsCallback(const EResultType& ResultType, const FResultAccounts& Result);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnResultUInt64Callback(const EResultType& ResultType, const FResultUInt64& Result);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnResultAcfgTxCallback(const EResultType& ResultType, const FResultAcfgTx& Result);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnResultApplTxCallback(const EResultType& ResultType, const FResultApplTx& Result);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnResultArcAssetDetailsCallback(const EResultType& ResultType, const FArcAssetDetails& Result);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnResultAccAssetsCallback(const EResultType& ResultType, const FResultAccAssets& Result);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnErrorCallback(const FError& Error);
+
 	
-	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OnSendAssetTransferTransactionCallback(const FString& txID);
+	EResultType Result_Type;
+	FString Password;
+	FString AccountName;
+	FString Mnemonics;
+	FString Address;
+	FUInt64 AssetID;
 
-	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OnSendApplicationCallTransactionCallback(const FString& txID, const FString& logs);
-
-	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OnGetArcAssetDetailsCallback(const FArcAssetDetails& asset_Details);
-
-	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OnGetAccountInformationCallback(const TArray<FString>& IDs, const TArray<FString>& Names);
-
-	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OnRestoreWalletCallback(const FString& output);
-
-	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OnInitializeNewWalletCallback(const FString& output);
-
-	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OngetMnemonicsByAccountNameCallback(const FString& output);
-
-	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-		void OngenerateAccountFromMnemonicsCallback(const FString& output);
+	FScriptDelegate BooleanDelegate; // Init, Load, Save Wallet
+	FScriptDelegate StringDelegate; // Get Mnemonics, PayTx, AxferTx
+	FScriptDelegate UInt64Delegate; // Get Balance
+	FScriptDelegate AccountDelegate; // GeneratedAccount
+	FScriptDelegate AccountsDelegate; // Accounts
+	FScriptDelegate AcfgTxDelegate; // AcfgTx
+	FScriptDelegate ApplTxDelegate; // ApplTx
+	FScriptDelegate ArcAssetsDelegate; // ArcAssets
+	FScriptDelegate AccAssetsDelegate; // AccAssets
+	FScriptDelegate ErrorDelegate;
 };

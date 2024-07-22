@@ -482,6 +482,118 @@ namespace algorand {
                 }
             });
         }
+
+        void VerticesSDK::VerticesGetAllAccounts(const VerticesGetAllAccountsRequest& Request, const FVerticesGetAllAccountsDelegate& delegate)
+        {           
+            AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
+            {
+                ret_code_t err_code = VTC_SUCCESS;
+                while (1) {
+                    FScopeLock lock(&m_Mutex);
+
+                    if (vertices_usable) {
+                        VerticesSDK::VerticesGetAllAccountsResponse response;
+                        vertices_usable = false;
+                        
+                        try
+                        {
+                            CHECK_DLL_LOAD(loaded_);
+                            INIT_VERTICES(m_vertex, err_code);
+
+                            size_t ACCOUNT_COUNT = 5;
+                            s_account_t *all_accounts;
+                            all_accounts = (s_account_t *) malloc(sizeof (s_account_t) * ACCOUNT_COUNT);
+                            err_code = vertices_s_accounts_all_get(&all_accounts);
+                            checkVTCSuccess(err_code);
+                            
+                            UE_LOG(LogTemp, Display, TEXT("✔️ Vertices: all accounts were fetched"));
+
+                            TArray<FString> Names, Addresses;
+                            size_t i = 0;
+                            for (i = 0; i < ACCOUNT_COUNT; ++i)
+                            {
+                                if (all_accounts[i].status == ACCOUNT_ADDED)
+                                {
+                                    Names.Add(all_accounts[i].name);
+                                    Addresses.Add(all_accounts[i].vtc_account->public_b32);
+                                }
+                            }
+                            
+                            response = response_builders::buildGetAllAccountsResponse(Names, Addresses);
+                            response.SetSuccessful(true);
+                            response.SetResponseString("All accounts were fetched.");
+                        }
+                        catch(SDKException& e)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(e.what()));   
+                        }
+                        catch(std::exception& ex)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(ex.what()));
+                        }
+
+                        AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+                        {
+                            delegate.ExecuteIfBound(response);
+                        });
+
+                        vertices_usable = true;
+                        break;
+                    }
+                }
+            });
+        }
+
+        void VerticesSDK::VerticesRemoveAccountByName(const VerticesRemoveAccountByNameRequest& Request, const FVerticesRemoveAccountByNameDelegate& delegate)
+        {           
+            AsyncTask(ENamedThreads::AnyHiPriThreadNormalTask, [this, Request, delegate]()
+            {
+                ret_code_t err_code = VTC_SUCCESS;
+                while (1) {
+                    FScopeLock lock(&m_Mutex);
+
+                    if (vertices_usable) {
+                        VerticesSDK::VerticesRemoveAccountByNameResponse response;
+                        vertices_usable = false;
+                        
+                        try
+                        {
+                            CHECK_DLL_LOAD(loaded_);
+                            INIT_VERTICES(m_vertex, err_code);
+                            
+                            err_code = vertices_s_account_free(StringCast<ANSICHAR>(*(Request.Name.GetValue())).Get());
+                            checkVTCSuccess(err_code);
+                            
+                            UE_LOG(LogTemp, Display, TEXT("✔️ Vertices: Account was removed on wallet, %hs"), StringCast<ANSICHAR>(*(Request.Name.GetValue())).Get());
+                            
+                            response = response_builders::buildRemoveAccountByNameResponse();
+                            response.SetSuccessful(true);
+                            response.SetResponseString("Account was removed.");
+                        }
+                        catch(SDKException& e)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(e.what()));   
+                        }
+                        catch(std::exception& ex)
+                        {
+                            response.SetSuccessful(false);
+                            response.SetResponseString(FString(ex.what()));
+                        }
+
+                        AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+                        {
+                            delegate.ExecuteIfBound(response);
+                        });
+
+                        vertices_usable = true;
+                        break;
+                    }
+                }
+            });
+        }
         
         void VerticesSDK::VerticesGenerateAccountFromMnemonics(const VerticesGenerateAccountFromMnemonicsRequest& Request, const FVerticesGenerateAccountFromMnemonicsDelegate& delegate)
         {           
@@ -549,12 +661,18 @@ namespace algorand {
                             CHECK_DLL_LOAD(loaded_);
                             INIT_VERTICES(m_vertex, err_code);
         
-                            err_code = vertices_s_account_new_random(&sender_account, StringCast<ANSICHAR>(*(Request.Name)).Get());
+                            err_code = vertices_s_account_new_random(&sender_account);
                             checkVTCSuccess(err_code);
                             
                             UE_LOG(LogTemp, Display, TEXT("✔️ Vertices: new secure account was created randomly, %hs"), sender_account.vtc_account->public_b32);
+
+                            char *mnemonic;
+                            err_code = vertices_mnemonic_from_sk(sender_account.private_key, &mnemonic);
+                            checkVTCSuccess(err_code);
                             
-                            response = response_builders::buildGenerateRandomAccountResponse(sender_account.vtc_account->public_b32,sender_account.name);
+                            UE_LOG(LogTemp, Display, TEXT("✔️ Vertices: mnemonic phrase was fetched, %hs"), mnemonic);
+                            
+                            response = response_builders::buildGenerateRandomAccountResponse(sender_account.vtc_account->public_b32, sender_account.name, mnemonic);
                             response.SetResponseString("New account was created randomly in Algo Wallet.");
                             response.SetSuccessful(true);
                         }
@@ -670,13 +788,16 @@ namespace algorand {
                             checkVTCSuccess((char *)"Main account can't be fetched.", err_code);
                             
                             // validation Request
-                            auto auto_notes = StringCast<ANSICHAR>(*(Request.Notes.GetValue()));
-                            char* notes = const_cast<char*>(auto_notes.Get());
+                            char* notes;
 
-                            if(strlen(notes) == 0)
+                            if(Request.Notes->Len() == 0)
                             {
-                                notes = (char *) malloc(strlen("Payment Transaction"));
-                                strcpy_s(notes,  strlen("Payment Transaction"),"Payment Transaction");   
+                                notes = (char *) malloc(strlen("Payment Transaction") + 1);
+                                strcpy_s(notes,  strlen("Payment Transaction") + 1,"Payment Transaction");
+                            } else
+                            {
+                                auto auto_notes = StringCast<ANSICHAR>(*(Request.Notes.GetValue()));
+                                notes = const_cast<char*>(auto_notes.Get());
                             }
                             
                             if ( Request.ReceiverAddress.GetValue().Len() != PUBLIC_ADDRESS_LENGTH )
@@ -684,9 +805,6 @@ namespace algorand {
                                 err_code = VTC_ERROR_INVALID_ADDR;
                                 checkVTCSuccess((char *)"Please input address with correct length.", err_code);
                             }
-                            
-                            // err_code = convert_Account_Vertices();
-                            // checkVTCSuccess(const_cast<char*>("Can't convert Main Account to Vertices one"), err_code);
                             
                             if (sender_account.vtc_account->amount < Request.Amount.GetValue())
                             {
@@ -721,6 +839,8 @@ namespace algorand {
                             err_code = vertices_account_free(receiver_account);
                             checkVTCSuccess((char *)"receiver account can't be deleted.", err_code);
 
+                            free(notes);
+                            
                             response = response_builders::buildSendPayTxResponse(FString(UTF8_TO_TCHAR(txID)));
                             response.SetSuccessful(true);
                             response.SetResponseString((char *)txID);
