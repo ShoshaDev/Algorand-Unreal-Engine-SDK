@@ -482,10 +482,9 @@ public:
 			  meta = (DisplayName = "Send Asset Transfer TX", Keywords = "axfer"),
 			  Category = "AlgorandUnrealManager")
 	void sendAssetTransferTransaction(const FString& mainAccountName,
-								const FString& senderAddress,
 								const FString& receiverAddress,
 								const FUInt64& asset_ID,
-								const FString& amount,
+								const FUInt64& amount,
 								const FString& notes);   
 	
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")

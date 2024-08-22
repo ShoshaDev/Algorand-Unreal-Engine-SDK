@@ -59,6 +59,7 @@ public:
 	FString Mnemonics;
 	FString Address;
 	FUInt64 AssetID;
+	FUInt64 Amount;
 
 	FScriptDelegate BooleanDelegate; // Init, Load, Save Wallet
 	FScriptDelegate StringDelegate; // Get Mnemonics, PayTx, AxferTx

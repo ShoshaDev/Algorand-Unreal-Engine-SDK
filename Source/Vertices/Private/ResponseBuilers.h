@@ -25,9 +25,9 @@ namespace response_builders {
 	algorand::vertices::VerticesSDK::VerticesSendPayTxResponse
 		buildSendPayTxResponse(const FString& TxID);
 	algorand::vertices::VerticesSDK::VerticesSendAcfgTxResponse
-		buildAcfgTxResponse(const FString& TxID, const uint64& AssetID);
+		buildSendAcfgTxResponse(const FString& TxID, const uint64& AssetID);
 	algorand::vertices::VerticesSDK::VerticesSendAxferTxResponse
-		buildAxferTxResponse(const FString& TxID);
+		buildSendAxferTxResponse(const FString& TxID);
 	algorand::vertices::VerticesSDK::VerticesSendApplCallTxResponse
 		buildSendApplCallTxResponse(const FString& TxID, const FString& Logs);
 }

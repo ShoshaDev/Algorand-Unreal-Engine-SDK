@@ -110,18 +110,16 @@ namespace request_builders {
 
 	Vertices::VerticesSendAxferTxRequest
 		buildAssetTransferTransactionRequest(const FString& mainAccountName,
-		                                     const FString& sender,
 		                                     const FString& receiver,
 		                                     const FUInt64& asset_id,
-		                                     const FString& amount,
+		                                     const FUInt64& amount,
 		                                     const FString& notes)
 	{
 		Vertices::VerticesSendAxferTxRequest request;
 		request.MainAccountName = mainAccountName;
-		request.SenderAddress = sender;
 		request.ReceiverAddress = receiver;
 		request.Asset_ID = asset_id;
-		request.Amount = atof(TCHAR_TO_ANSI(*amount)); 
+		request.Amount = amount; 
 		request.Notes = notes;
 		return request;
 	}

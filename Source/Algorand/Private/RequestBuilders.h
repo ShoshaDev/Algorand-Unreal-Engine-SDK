@@ -67,10 +67,9 @@ namespace request_builders {
 	
 	algorand::vertices::VerticesSDK::VerticesSendAxferTxRequest
 		buildAssetTransferTransactionRequest(const FString& mainAccountName,
-		                                     const FString& sender,
 		                                     const FString& receiver,
 		                                     const FUInt64& asset_id,
-		                                     const FString& amount,
+		                                     const FUInt64& amount,
 		                                     const FString& notes);
 	
 	algorand::vertices::VerticesSDK::VerticesSendApplCallTxRequest

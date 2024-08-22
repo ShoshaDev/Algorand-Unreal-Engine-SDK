@@ -67,8 +67,8 @@ void UAlgorandHandler::OnResultStringCallback(const EResultType& ResultType, con
 	case EResultType::PayTx:
 		UE_LOG(LogTemp, Display, TEXT("🚀 Payment TX Hash are following: %s"), *Result.Result);
 		break;
-	case EResultType::ApplTx:
-		UE_LOG(LogTemp, Display, TEXT("🚀 Application TX Hash are following: %s"), *Result.Result);
+	case EResultType::AxferTx:
+		UE_LOG(LogTemp, Display, TEXT("🚀 Asset Transfer TX Hash are following: %s"), *Result.Result);
 		break;
 	default:
 		UE_LOG(LogTemp, Warning, TEXT("🙉 FResultBoolean: Unexpected Result Type"));
@@ -220,32 +220,31 @@ void UAlgorandHandler::RunSomeLogic()
 		break;
 	case EResultType::PayTx:
 		algorandManager->sendPaymentTransaction(AccountName,
-		                                        FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
-		                                        1000, FString(
-			                                        "Sent 100 algo to A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM."));
+		                                        Address,
+		                                        Amount, FString(
+			                                        "Sent 100 algo to " + Address));
 		break;
 	case EResultType::AcfgTx:
 		algorandManager->sendAssetConfigTransaction(AccountName,
-			FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
-			FString(""),
-			FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
-			FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
+			FString("Z5C3T63QHLEAAXV2A2L3Y2LY6TURAPEESMQZC7777PGGPPAAGC4F4GWHHA"),
+			FString("Z5C3T63QHLEAAXV2A2L3Y2LY6TURAPEESMQZC7777PGGPPAAGC4F4GWHHA"),
+			FString("Z5C3T63QHLEAAXV2A2L3Y2LY6TURAPEESMQZC7777PGGPPAAGC4F4GWHHA"),
+			FString("Z5C3T63QHLEAAXV2A2L3Y2LY6TURAPEESMQZC7777PGGPPAAGC4F4GWHHA"),
 			0,
 			1000,
-			0,
+			8,
 			"false",
-			FString("1234567890"),
-			FString("My Asset"),
+			FString("USD"),
+			FString("Shosha"),
 			FString("https://myurl.com"),
 			FString("fe"));
 		break;
 	case EResultType::AxferTx:
 		algorandManager->sendAssetTransferTransaction(AccountName,
-			FString("SSTIXFVQDJOVYDSFDOPPGL6V2ZE66SWXB7EDJHRI5B4IRHLQTHIEZTP35U"),
-			FString("A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM"),
-			234664633,
-			"0.1",
-			FString("Sent 100 ERC20 token to A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM."));
+			Address,
+			AssetID,
+			Amount,
+			FString("Sent tokens to " + Address));
 
 		break;
 	case EResultType::ApplTx:

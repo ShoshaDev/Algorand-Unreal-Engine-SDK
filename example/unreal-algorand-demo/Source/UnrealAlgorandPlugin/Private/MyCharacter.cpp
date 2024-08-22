@@ -14,8 +14,9 @@ AMyCharacter::AMyCharacter()
 	Password = "algorand-sdk";
 	AccountName = "dragon";
 	Mnemonics = "rally relief lucky maple primary chair syrup economy tired hurdle slot upset clever chest curve bitter weekend prepare movie letter lamp alert then able taste";
-	Address = "A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM";
-	AssetID = "779312090";
+	Address = "LCKVRVM2MJ7RAJZKPAXUCEC4GZMYNTFMLHJTV2KF6UGNXUFQFIIMSXRVM4";		// receiver adddress  LCKVRVM2MJ7RAJZKPAXUCEC4GZMYNTFMLHJTV2KF6UGNXUFQFIIMSXRVM4, A6KIDEH35E56GWUDYZCDFVTLKDIC7P5HQRHGCIM4PVALCRTE2HZBFE7CKM
+	AssetID = "715553268"; // 779312090
+	Amount = "1000";
 }
 
 // Called when the game starts or when spawned
@@ -38,6 +39,7 @@ void AMyCharacter::Tick(float DeltaTime)
 		algorandHandler->Mnemonics = Mnemonics;
 		algorandHandler->Address = Address;
 		algorandHandler->AssetID = UUInt64Factory::UInt64FromString(AssetID);
+		algorandHandler->Amount = UUInt64Factory::UInt64FromString(Amount);
 		
 		algorandHandler->RunSomeLogic();
 		RunState = ERunState::READY;

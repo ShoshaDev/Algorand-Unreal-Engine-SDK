@@ -73,6 +73,12 @@ public:
 		Category = "AlgorandSDK")
 	FString AssetID;
 
+	/** Be used to transfer. for ex: 0.1, 1 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,
+		meta = (DisplayName = "Amount", Keywords = "CLI Asset"),
+		Category = "AlgorandSDK")
+	FString Amount;
+
 	/** Select Start to run current callback. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,
 		meta = (DisplayName = "RunState", Keywords = "RunState"),

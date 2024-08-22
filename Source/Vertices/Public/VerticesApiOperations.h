@@ -186,7 +186,7 @@ namespace algorand {
             TOptional<uint64_t> AssetId;
             TOptional<uint64_t> Total;
             TOptional<uint64_t> Decimals;
-            TOptional<uint8_t> IsFrozen;
+            TOptional<bool> IsFrozen;
             TOptional<FString> UnitName;
             TOptional<FString> AssetName;
             TOptional<FString> Url;
@@ -211,10 +211,9 @@ namespace algorand {
             virtual ~VerticesSendAxferTxRequest() {}
 
             TOptional<FString> MainAccountName;
-            TOptional<FString> SenderAddress;
             TOptional<FString> ReceiverAddress;
             TOptional<uint64_t> Asset_ID;
-            TOptional<double> Amount;
+            TOptional<uint64_t> Amount;
             TOptional<FString> Notes;
         };
         
