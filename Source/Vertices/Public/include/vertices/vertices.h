@@ -31,6 +31,16 @@ VERTICES_IMPORT ret_code_t
 vertices_ping(void);
 
 VERTICES_IMPORT ret_code_t
+vertices_provider_buf_get(char **buf);
+
+/// Init common accounts on Vertices SDK
+/// \return
+/// * VTC_SUCCESS on success
+/// * VTC_ERROR_INTERNAL if accounts cannot be inited
+VERTICES_IMPORT ret_code_t
+vertices_account_init();
+
+VERTICES_IMPORT ret_code_t
 vertices_account_new_from_b32(char *public_b32, account_info_t **account);
 
 VERTICES_IMPORT ret_code_t
@@ -66,37 +76,34 @@ vertices_account_free(account_info_t *account);
 VERTICES_IMPORT ret_code_t
 vertices_transaction_pay_new(account_info_t *account, char *receiver, uint64_t amount, void *params);
 
-// TODO Asset transactions
-//  /// Send \c amount of tokens from \c account_id to \c receiver
-//  /// \param account Handle to the Sender account
-//  /// \param manager Manager account address
-//  /// \param reserve Reserve account address
-//  /// \param freeze Freeze account address
-//  /// \param clawback Clawback account address
-//  /// \param asset_id Asset ID of token to be configured
-//  /// \param total Total amount of token to be configured
-//  /// \param decimals Decimals of token to be configured
-//  /// \param isFrozen Default Frozen of token to be configured
-//  /// \param unit_name Unit Name of token to be configured
-//  /// \param asset_name Asset Name of token to be configured
-//  /// \param url Url of token to be configured
-//  /// \param params Pointer to type, where type is known by blockchain implementation. Can be NULL.
-//  /// \return \c VTC_ERROR_INVALID_PARAM if one parameter is incorrect
-//  VERTICES_IMPORT ret_code_t
-//  vertices_transaction_asset_cfg(account_info_t *account, char *manager , char *reserve, char *freeze, char *clawback, uint64_t asset_id, uint64_t total, uint64_t decimals, uint8_t isFrozen, void *unit_name, void *asset_name, void *url, void *params);
-//
-// /// Send \c amount of tokens from \c account_id to \c receiver
-// /// \param account Handle to the Sender account
-// /// \param sender Sender account address
-// /// \param receiver Receiver account address
-// /// \param closeRemainderTo Close Remainder account address
-// /// \param revocationTarget Revocation Target account address
-// /// \param asset_id Asset ID of token to be sent
-// /// \param amount Amount of token to be sent
-// /// \param params Pointer to type, where type is known by blockchain implementation. Can be NULL.
-// /// \return \c VTC_ERROR_INVALID_PARAM if one parameter is incorrect
-// VERTICES_IMPORT ret_code_t
-// vertices_transaction_asset_xfer(account_info_t *account, char *sender , char *receiver, char *closeRemainderTo, char *revocationTarget, uint64_t asset_id, double amount, void *params);
+/// Send \c amount of tokens from \c account_id to \c receiver
+/// \param account Handle to the Sender account
+/// \param manager Manager account address
+/// \param reserve Reserve account address
+/// \param freeze Freeze account address
+/// \param clawback Clawback account address
+/// \param asset_id Asset ID of token to be configured
+/// \param total Total amount of token to be configured
+/// \param decimals Decimals of token to be configured
+/// \param isFrozen Default Frozen of token to be configured
+/// \param unit_name Unit Name of token to be configured
+/// \param asset_name Asset Name of token to be configured
+/// \param url Url of token to be configured
+/// \param params Pointer to type, where type is known by blockchain implementation. Can be NULL.
+/// \return \c VTC_ERROR_INVALID_PARAM if one parameter is incorrect
+VERTICES_IMPORT ret_code_t
+vertices_transaction_asset_cfg(account_info_t *account, char *manager , char *reserve, char *freeze, char *clawback, uint64_t asset_id, uint64_t total, uint64_t decimals, bool isFrozen, void *unit_name, void *asset_name, void *url, void *params);
+
+/// Send \c amount of tokens from \c account_id to \c receiver
+/// \param account Handle to the Sender account
+/// \param sender Sender account address
+/// \param receiver Receiver account address
+/// \param asset_id Asset ID of token to be sent
+/// \param amount Amount of token to be sent
+/// \param params Pointer to type, where type is known by blockchain implementation. Can be NULL.
+/// \return \c VTC_ERROR_INVALID_PARAM if one parameter is incorrect
+VERTICES_IMPORT ret_code_t
+vertices_transaction_asset_xfer(account_info_t *account, char *sender , char *receiver, uint64_t asset_id, double amount, void *params);
 
 /// Call Smart Contract DApp
 /// \param account Account handle, see \c vertices_account_new_from_b32
@@ -116,26 +123,26 @@ vertices_transaction_app_call(account_info_t *account, uint64_t app_id, void *pa
 VERTICES_IMPORT ret_code_t
 vertices_application_get(uint64_t app_id, app_values_t * global_states);
 
-// TODO Asset Transaction
-// /// Get logs after noop tx.
-// /// \param tx_id Transaction ID
-// /// \param res_logs Response Logs After NoOp TX
-// /// \return codes
-// ///     * VTC_SUCCESS on success: key-values have been parsed correctly and put into global_states
-// ///     * VTC_ERROR_INTERNAL if unable to instantiate parser
-// ///     * VTC_ERROR_NOT_FOUND if key not found
-// VERTICES_IMPORT ret_code_t
-// vertices_noop_logs_get(unsigned char * tx_id, unsigned char* res_logs);
-//
-// /// Get asset id after asset creation.
-// /// \param tx_id Transaction ID
-// /// \param asset_id Asset ID which has been created
-// /// \return codes
-// ///     * VTC_SUCCESS on success: key-values have been parsed correctly and put into global_states
-// ///     * VTC_ERROR_INTERNAL if unable to instantiate parser
-// ///     * VTC_ERROR_NOT_FOUND if key not found
-// VERTICES_IMPORT ret_code_t
-// vertices_asset_id_get(unsigned char * tx_id, uint64_t *asset_id);
+
+///// Get logs after noop tx.
+///// \param tx_id Transaction ID
+///// \param res_logs Response Logs After NoOp TX
+///// \return codes
+/////     * VTC_SUCCESS on success: key-values have been parsed correctly and put into global_states
+/////     * VTC_ERROR_INTERNAL if unable to instantiate parser
+/////     * VTC_ERROR_NOT_FOUND if key not found
+//VERTICES_IMPORT ret_code_t
+//vertices_noop_logs_get(unsigned char * tx_id, unsigned char* res_logs);
+
+///// Get asset id after asset creation.
+///// \param tx_id Transaction ID
+///// \param asset_id Asset ID which has been created
+///// \return codes
+/////     * VTC_SUCCESS on success: key-values have been parsed correctly and put into global_states
+/////     * VTC_ERROR_INTERNAL if unable to instantiate parser
+/////     * VTC_ERROR_NOT_FOUND if key not found
+//VERTICES_IMPORT ret_code_t
+//vertices_asset_id_get(unsigned char * tx_id, uint64_t *asset_id);
 
 /// Get transaction based on event (identified by \c vtc_evt_t::bufid)
 /// \param bufid Event bufid
@@ -164,11 +171,18 @@ vertices_event_process(size_t *queue_size, unsigned char * txID);
 
 /// Initialize Vertices SDK
 /// \param config Pass the configuration such as providers and user-defined event handler
+/// \param withNewWallet define if new wallet should be initialized or not
 /// \return
 /// * VTC_SUCCESS on success
 /// * VTC_ERROR_INTERNAL if HTTP client cannot be initialized
 VERTICES_IMPORT ret_code_t
-vertices_new(vertex_t *config);
+vertices_new(vertex_t *config, bool withNewWallet);
+
+/// Clear Cache of Vertices SDK
+/// \return
+/// * VTC_SUCCESS on success
+VERTICES_IMPORT ret_code_t
+vertices_cache_clear();
 
 /// Init Wallet on Vertices SDK
 /// Init accounts
@@ -191,7 +205,7 @@ VERTICES_IMPORT ret_code_t
 vertices_s_account_update(s_account_t **account);
 
 VERTICES_IMPORT ret_code_t
-vertices_s_account_free(const char *account_name);
+vertices_s_account_init(const char *account_name);
 
 VERTICES_IMPORT ret_code_t
 vertices_wallet_free();

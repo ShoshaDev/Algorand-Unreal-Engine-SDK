@@ -73,12 +73,12 @@ namespace vertices {
          * @brief validate rpc info and set them to Vertices lib
          * and create new vertices instance and validate how the lib works
          */
-        void InitVertices(ret_code_t&);
+        void InitVertices(bool withNewWallet, ret_code_t&);
 
         /**
          * @brief create new Vertices with rpc info
          */
-        void createNewVertices(char* , char*,  short, char* , ret_code_t&);
+        void createNewVertices(char* , char*,  short, char* , bool withNewWallet, ret_code_t&);
 
         /**
          * @brief convert mnemonic account to vertices account
