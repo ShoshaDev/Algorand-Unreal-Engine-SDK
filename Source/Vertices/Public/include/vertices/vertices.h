@@ -202,7 +202,7 @@ VERTICES_IMPORT ret_code_t
 vertices_s_accounts_all_get(s_account_t **accounts);
 
 VERTICES_IMPORT ret_code_t
-vertices_s_account_update(s_account_t **account);
+vertices_s_account_update(s_account_t *account);
 
 VERTICES_IMPORT ret_code_t
 vertices_s_account_init(const char *account_name);

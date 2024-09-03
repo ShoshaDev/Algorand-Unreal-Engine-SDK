@@ -9,7 +9,7 @@
 #define VERTICES_SDK_LIB_BASE32_H
 
 #include <stdint.h>
-#include "../vertices/vertices_errors.h"
+#include "vertices_errors.h"
 #include <stdio.h>
 
 #if defined APP_TYPE

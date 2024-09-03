@@ -317,9 +317,6 @@ namespace algorand {
                             CHECK_DLL_LOAD(loaded_);
                             INIT_VERTICES(true, err_code);
                             
-                            err_code = vertices_wallet_free();
-                            checkVTCSuccess(err_code);
-                            
                             UE_LOG(LogTemp, Display, TEXT("✔️ Vertices: Wallet was initialized."));
                             
                             response = response_builders::buildInitWalletResponse();
@@ -514,20 +511,22 @@ namespace algorand {
 
                             size_t ACCOUNT_COUNT = 5;
                             s_account_t *all_accounts;
-                            all_accounts = (s_account_t *) malloc(sizeof (s_account_t) * ACCOUNT_COUNT);
+                            
                             err_code = vertices_s_accounts_all_get(&all_accounts);
                             checkVTCSuccess(err_code);
                             
                             UE_LOG(LogTemp, Display, TEXT("✔️ Vertices: all accounts were fetched"));
 
                             TArray<FString> Names, Addresses;
-                            size_t i = 0;
-                            for (i = 0; i < ACCOUNT_COUNT; ++i)
+                            if(all_accounts != nullptr)
                             {
-                                if (all_accounts[i].status == ACCOUNT_ADDED)
+                                for (size_t i = 0; i < ACCOUNT_COUNT; ++i)
                                 {
-                                    Names.Add(all_accounts[i].name);
-                                    Addresses.Add(all_accounts[i].vtc_account->public_b32);
+                                    if (all_accounts[i].status == ACCOUNT_ADDED)
+                                    {
+                                        Names.Add(all_accounts[i].name);
+                                        Addresses.Add(all_accounts[i].vtc_account->public_b32);
+                                    }
                                 }
                             }
                             
@@ -623,8 +622,8 @@ namespace algorand {
                         {
                             CHECK_DLL_LOAD(loaded_);
                             INIT_VERTICES(false, err_code);
-        
-                            err_code = vertices_s_account_new_from_mnemonic((char *) StringCast<ANSICHAR>(*(Request.Mnemonics)).Get(), &sender_account, StringCast<ANSICHAR>(*(Request.Name)).Get());
+                            
+                            err_code = vertices_s_account_new_from_mnemonic((char *) StringCast<ANSICHAR>(*(Request.Mnemonics)).Get(), &sender_account, (char *)StringCast<ANSICHAR>(*(Request.Name)).Get());
                             checkVTCSuccess(err_code);
                             
                             UE_LOG(LogTemp, Display, TEXT("✔️ Vertices: new secure account was created, %hs"), sender_account.vtc_account->public_b32);
@@ -908,6 +907,9 @@ namespace algorand {
 
                             err_code = vertices_s_account_get_by_name(&sender_account, StringCast<ANSICHAR>((*Request.MainAccountName.GetValue())).Get());
                             checkVTCSuccess((char *)"Main account can't be fetched.", err_code);
+
+                            err_code = vertices_s_account_update(&sender_account);
+                            checkVTCSuccess((char *)"Main account can't be updated.", err_code);
                             
                             // validation Request
                             auto auto_notes = StringCast<ANSICHAR>(*(Request.Notes.GetValue())).Get();        // notes
@@ -1112,6 +1114,9 @@ namespace algorand {
 
                             err_code = vertices_s_account_get_by_name(&sender_account, StringCast<ANSICHAR>((*Request.MainAccountName.GetValue())).Get());
                             checkVTCSuccess((char *)"Main account can't be fetched.", err_code);
+
+                            err_code = vertices_s_account_update(&sender_account);
+                            checkVTCSuccess((char *)"Main account can't be updated.", err_code);
                             
                             // validation Request
                             auto auto_notes = StringCast<ANSICHAR>(*(Request.Notes.GetValue())).Get();
