@@ -2,11 +2,41 @@
 Official Unreal Engine Plugin for Algorand Blockchain Platform.
 
 ## 📙 1. Overview:
+Algorand Unreal Engine Plugin
 
-This plugin provides the functionallity for building different types of transactions, wallet management and NFT Viewer on the Algorand blockchain.
+For indepth documentation on the overview, setup and usage of this plugin check here: [Doc](https://github.com/ShoshaDev/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.pdf)
 
+For indepth video demo on using the plugin watch here: [Video](https://youtu.be/xXlqLxUo3Uo)
+ 
+This UE plugin includes:
+- Root Folder: Unreal-Plugin - Put this plugin in your new or existing project to utilize.
+- Example Folder: Unreal Plugin Example Project - Use this project to start your new game or demo/test Algorand System
 
-- If you are looking for a repo for this c++ sdk, [check this repository](https://github.com/Wisdom-Labs/Algorand-CPlusPlus-SDK.git).
+This sdk contains a setting option to set RPC Info.
+* RPC URL : You should set the Algorand node you want to work on with this url.
+  ` setAlgoRpc("https://testnet-algorand.api.purestake.io/ps2"); `
+* RPC Port : Set port which can connect into server supporting algorand node with.
+  ` setAlgoPort(0); `
+* RPC TokenHeader : You should set Header to request apis according to algorand node type.
+  ` setAlgoTokenHeader("x-api-key:bLcs4F2SyGY0InF9M6Vl9piFTIZ8Ww281OjKXyE1"); `
+  This param has a pair made of key and value.
+
+RPC types you can select are like following:
+* Rest API
+  + mainnet: https://mainnet-api.algonode.cloud
+  + testnet: https://testnet-api.algonode.cloud
+  + betanet: https://betanet-api.algonode.cloud
+* Purestake
+  + mainnet: https://mainnet-algorand.api.purestake.io/ps2
+  + testnet: https://testnet-algorand.api.purestake.io/ps2
+  + betanet: https://betanet-algorand.api.purestake.io/ps2
+* Sandbox Algorand Node
+  + algod: http://localhost:4001 
+  + kmd: http://localhost:4002
+  + indexer: http://localhost:8980
+* Local Algorand Node, (You should install new algorand node on your local)
+
+ 👔 You should add token for above some urls and can reference this [link](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/tree/master/example/unreal-algorand-demo#how-to-set-rpc-info).
 
 ## 📑 2. Prerequisites:
 
