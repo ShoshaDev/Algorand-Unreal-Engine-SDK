@@ -4,7 +4,7 @@ Official Unreal Engine Plugin for Algorand Blockchain Platform.
 ## 📙 1. Overview:
 
 This plugin provides the functionallity for building different types of transactions, wallet management and NFT Viewer on the Algorand blockchain.
-- For indepth video demo on using the plugin watch here: [Video](https://youtu.be/xXlqLxUo3Uo)
+
 
 - If you are looking for a repo for this c++ sdk, [check this repository](https://github.com/Wisdom-Labs/Algorand-CPlusPlus-SDK.git).
 
