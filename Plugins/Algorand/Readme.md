@@ -48,13 +48,8 @@ To use this UE plugin : ✅
 > In order to build project using Unreal Engine 5.0+, use a branch `master`.
 
 ## ⚙️ 3. Installation:
-1. In this Github repository, clone this repo with `git` command or download as a zip file type and rename cloned folder name `AlgorandUnrealEngineSDK`.
-2. You can find a folder called example, which is our test project.
-3. Then you should create a folder called `Plugins/Algorand` on `example/unreal-algorand-demo` folder.
-4. You should copy all except for example folder on `AlgorandUnrealEngineSDK` folder to the `Plugins/Algorand` folder of our test project.
-> After you complete above action, this plugin path is `example\unreal-algorand-demo\Plugins\Algorand`.
-5. You should register the plugin name (Algorand) into Build.cs on the Source 
-directory of out test project (`example\unreal-algorand-demo`) and rebuild your project.
+1. In this Github repository, clone this repo with `git` command or download as a zip file type.
+2. You should check the plugin name (Algorand) into Build.cs on the `Source/UnrealAlgorandPlugin` folder
     ```csharp  
     public UnrealAlgorandPlugin(ReadOnlyTargetRules Target) : base(Target)
     {
@@ -65,8 +60,8 @@ directory of out test project (`example\unreal-algorand-demo`) and rebuild your 
         PrivateDependencyModuleNames.AddRange(new string[] {  });
     }
     ```
->Right click on UnrealAlgorandPlugin.uproject on `example/unreal-algorand-demo` folder, and "Generate Visual Studio project files" - This process may take some time.
-6. Once finished, open your *.sln project or *.uproject file with Visual Studio or JetBrains Rider.
+3. Right click on UnrealAlgorandPlugin.uproject on root folder, and "Generate Visual Studio project files" - This process may take some time.
+4. Once finished, open your *.sln project or *.uproject file with Visual Studio or JetBrains Rider.
 
 ## 🧭 4. Modules Reference:
 * **Algorand** - entrypoint module, provides `C++`- & `Blueprints`- friendly interfaces for plugin's users. This module should be considered as the only module you need to depend on.
