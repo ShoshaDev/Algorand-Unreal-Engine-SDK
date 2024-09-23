@@ -23,6 +23,23 @@ namespace algorand {
         public:
             ~VerticesInitWalletResponse() {}
         };
+
+        // for checking if algorand wallet exists
+        class VerticesSDK::VerticesWalletExistenceRequest : public Request
+        {
+        public:
+            VerticesWalletExistenceRequest() {}
+            virtual ~VerticesWalletExistenceRequest() {}
+        };
+        
+        class VerticesSDK::VerticesWalletExistenceResponse : public Response
+        {
+        public:
+            VerticesWalletExistenceResponse() : Exists(false) {}
+            VerticesWalletExistenceResponse(bool Exists) : Exists(Exists){}
+            ~VerticesWalletExistenceResponse() {}
+            bool Exists;
+        };
         
         // for Loading algorand wallet
         class VerticesSDK::VerticesLoadWalletRequest : public Request

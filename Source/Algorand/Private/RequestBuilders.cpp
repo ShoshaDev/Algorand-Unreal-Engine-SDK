@@ -14,6 +14,13 @@ namespace request_builders {
 		Vertices::VerticesInitWalletRequest request;
 		return request;
 	}
+
+	algorand::vertices::VerticesSDK::VerticesWalletExistenceRequest
+	buildWalletExistenceRequest()
+	{
+		Vertices::VerticesWalletExistenceRequest request;
+		return request;
+	}
 	
 	Vertices::VerticesLoadWalletRequest
 	buildLoadWalletRequest(const FString& Password)

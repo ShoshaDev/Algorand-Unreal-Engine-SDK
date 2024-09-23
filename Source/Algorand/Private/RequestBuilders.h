@@ -22,6 +22,9 @@ namespace request_builders {
 	
 	algorand::vertices::VerticesSDK::VerticesInitWalletRequest
 	buildInitWalletRequest();
+
+	algorand::vertices::VerticesSDK::VerticesWalletExistenceRequest
+	buildWalletExistenceRequest();
 	
 	algorand::vertices::VerticesSDK::VerticesLoadWalletRequest
 	buildLoadWalletRequest(const FString& mnemonics);

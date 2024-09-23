@@ -41,6 +41,8 @@ public:
     ~UnrealApi();
 	
 	DECLARE_DELEGATE_OneParam(FAlgorandAPIInitWalletDelegate, const Vertices::VerticesInitWalletResponse&);
+
+	DECLARE_DELEGATE_OneParam(FAlgorandAPIWalletExistenceDelegate, const Vertices::VerticesWalletExistenceResponse&);
 	
     DECLARE_DELEGATE_OneParam(FAlgorandAPILoadWalletDelegate, const Vertices::VerticesLoadWalletResponse&);
 	
@@ -93,6 +95,14 @@ public:
 	 */
 	void AlgorandAPIInitWallet(const Vertices::VerticesInitWalletRequest& Request,
 								   const FAlgorandAPIInitWalletDelegate& Delegate = FAlgorandAPIInitWalletDelegate()) const;
+
+	/**
+	 * @brief send api request for checking wallet existence
+	 * @param Request value to send as params for calling api
+	 * @param Delegate is used to implement async task after get response as api result
+	 */
+	void AlgorandAPIWalletExistence(const Vertices::VerticesWalletExistenceRequest& Request,
+								   const FAlgorandAPIWalletExistenceDelegate& Delegate = FAlgorandAPIWalletExistenceDelegate()) const;
 	
     /**
      * @brief send api request for loading wallet
@@ -207,6 +217,13 @@ private:
 	 * @param Delegate is used to execute binded callback from Algorand module
 	 */
 	void OnAlgorandAPIInitWalletResponse(const Vertices::VerticesInitWalletResponse& response, const FAlgorandAPIInitWalletDelegate& Delegate) const;
+
+	/**
+	 * @brief callback function to be run after api request of checking existence of algorand wallet
+	 * @param response is used to send as Vertices Response type to Algorand module 
+	 * @param Delegate is used to execute binded callback from Algorand module
+	 */
+	void OnAlgorandAPIWalletExistenceResponse(const Vertices::VerticesWalletExistenceResponse& response, const FAlgorandAPIWalletExistenceDelegate& Delegate) const;
 	
     /**
      * @brief callback function to be run after api request of loading algorand wallet

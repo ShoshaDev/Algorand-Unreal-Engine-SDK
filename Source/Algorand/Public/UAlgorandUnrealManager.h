@@ -41,6 +41,12 @@ namespace {
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FInitWalletDelegate, const EResultType&, ResultType, const FResultBoolean&, Result);
 
 /**
+ * get wallet existence callback 
+ * @param Result boolean value which displays state of wallet existence
+*/
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWalletExistenceDelegate, const EResultType&, ResultType, const FResultBoolean&, Result);
+
+/**
  * load wallet callback 
  * @param Result boolean value which displays state of loading wallet
 */
@@ -283,6 +289,23 @@ public:
 	 */
     void OnInitWalletCompleteCallback(const Vertices::VerticesInitWalletResponse& response);
 
+	/**
+	 * Check if a wallet exists
+	 */
+	UFUNCTION(BlueprintCallable,
+			  meta = (DisplayName = "Wallet exists?", Keywords = "Wallet"),
+			  Category = "AlgorandUnrealManager")
+	void isWalletExisted();
+	
+	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
+	FWalletExistenceDelegate WalletExistenceCallback;
+	
+	/**
+	 * get response after checking wallet existence
+	 * @param response boolean got by checking if a wallet exists
+	 */
+	void OnWalletExistenceCompleteCallback(const Vertices::VerticesWalletExistenceResponse& response);
+	
 	/**
 	 * Load Wallet
 	 */

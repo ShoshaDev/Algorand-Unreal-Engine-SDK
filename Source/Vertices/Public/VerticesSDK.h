@@ -114,6 +114,8 @@ namespace vertices {
          */
         class VerticesInitWalletRequest;
         class VerticesInitWalletResponse;
+        class VerticesWalletExistenceRequest;
+        class VerticesWalletExistenceResponse;
         class VerticesLoadWalletRequest;
         class VerticesLoadWalletResponse;
         class VerticesSaveWalletRequest;
@@ -145,6 +147,9 @@ namespace vertices {
 
         /// callback, which initialize the algorand wallet
         DECLARE_DELEGATE_OneParam(FVerticesInitWalletDelegate, const VerticesInitWalletResponse&);
+
+        /// callback ,which checks wallet existence
+        DECLARE_DELEGATE_OneParam(FVerticesWalletExistenceDelegate, const VerticesWalletExistenceResponse&);
      
         /// callback ,which loads a stored wallet
         DECLARE_DELEGATE_OneParam(FVerticesLoadWalletDelegate, const VerticesLoadWalletResponse&);
@@ -183,6 +188,7 @@ namespace vertices {
         DECLARE_DELEGATE_OneParam(FVerticesSendApplCallTxDelegate, const VerticesSendApplCallTxResponse&);
 
         void VerticesInitWallet(const VerticesInitWalletRequest&, const FVerticesInitWalletDelegate&);
+        void VerticesWallletExists(const VerticesWalletExistenceRequest&, const FVerticesWalletExistenceDelegate&);
         void VerticesLoadWallet(const VerticesLoadWalletRequest&, const FVerticesLoadWalletDelegate&);
         void VerticesSaveWallet(const VerticesSaveWalletRequest&, const FVerticesSaveWalletDelegate&);
         void VerticesGenerateAccountFromMnemonics(const VerticesGenerateAccountFromMnemonicsRequest&, const FVerticesGenerateAccountFromMnemonicsDelegate&);

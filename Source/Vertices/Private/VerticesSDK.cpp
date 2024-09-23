@@ -345,6 +345,53 @@ namespace algorand {
                 }
             });
         }
+
+        void VerticesSDK::VerticesWallletExists(const VerticesWalletExistenceRequest& Request, const FVerticesWalletExistenceDelegate& delegate)
+        {           
+            ret_code_t err_code = VTC_SUCCESS;
+            while (1)
+            {
+                FScopeLock lock(&m_Mutex);
+
+                if (vertices_usable)
+                {
+                    VerticesSDK::VerticesWalletExistenceResponse response;
+                    vertices_usable = false;
+            
+                    try
+                    {
+                        CHECK_DLL_LOAD(loaded_);
+                        INIT_VERTICES(false, err_code);
+                        
+                        bool exists = vertices_wallet_exists();
+
+                        UE_LOG(LogTemp, Display, TEXT("✔️ Vertices: Wallet %hs"), exists ? "exists." : "does not exist.");
+                        
+                        response = response_builders::buildWalletExistsResponse(exists);
+                        response.SetSuccessful(true);
+                        response.SetResponseString("Algo Wallet Existence was checked.");
+                    }
+                    catch(SDKException& e)
+                    {
+                        response.SetSuccessful(false);
+                        response.SetResponseString(FString(e.what()));   
+                    }
+                    catch(std::exception& ex)
+                    {
+                        response.SetSuccessful(false);
+                        response.SetResponseString(FString(ex.what()));
+                    }
+
+                    AsyncTask(ENamedThreads::GameThread, [delegate, response]()
+                        {
+                            delegate.ExecuteIfBound(response);
+                        });
+
+                    vertices_usable = true;
+                    break;
+                }
+            };
+        }
         
         void VerticesSDK::VerticesLoadWallet(const VerticesLoadWalletRequest& Request, const FVerticesLoadWalletDelegate& delegate)
         {           

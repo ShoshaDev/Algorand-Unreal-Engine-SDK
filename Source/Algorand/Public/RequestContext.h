@@ -20,6 +20,7 @@
 /// declaring templates of Api Delegate as TVariant
 using ApiDelegate = TVariant<
 	algorand::api::UnrealApi::FAlgorandAPIInitWalletDelegate,
+	algorand::api::UnrealApi::FAlgorandAPIWalletExistenceDelegate,
 	algorand::api::UnrealApi::FAlgorandAPILoadWalletDelegate,
 	algorand::api::UnrealApi::FAlgorandAPISaveWalletDelegate,
 	algorand::api::UnrealApi::FAlgorandAPIGetMnemonicsByAccountNameDelegate,

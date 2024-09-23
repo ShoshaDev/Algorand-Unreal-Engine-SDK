@@ -54,6 +54,24 @@ void UnrealApi::AlgorandAPIInitWallet(const Vertices::VerticesInitWalletRequest&
 {
     Delegate.ExecuteIfBound(response);
 }
+
+void UnrealApi::AlgorandAPIWalletExistence(const Vertices::VerticesWalletExistenceRequest& Request, const FAlgorandAPIWalletExistenceDelegate& Delegate) const
+{
+    TSharedRef<Vertices::FVerticesWalletExistenceDelegate> delegatePtr(MakeShared<Vertices::FVerticesWalletExistenceDelegate>());
+    
+    delegatePtr->BindLambda([this, Delegate](const Vertices::VerticesWalletExistenceResponse& response) {
+        OnAlgorandAPIWalletExistenceResponse(response, Delegate);
+    });
+    vertices_->VerticesWallletExists( Request, delegatePtr.Get());
+}
+    
+/**
+ * @brief callback after checking wallet existence
+ */
+    void UnrealApi::OnAlgorandAPIWalletExistenceResponse(const Vertices::VerticesWalletExistenceResponse& response, const FAlgorandAPIWalletExistenceDelegate& Delegate) const
+{
+    Delegate.ExecuteIfBound(response);
+}
     
 void UnrealApi::AlgorandAPILoadWallet(const Vertices::VerticesLoadWalletRequest& Request, const FAlgorandAPILoadWalletDelegate& Delegate) const
 {
@@ -64,7 +82,7 @@ void UnrealApi::AlgorandAPILoadWallet(const Vertices::VerticesLoadWalletRequest&
     });
     vertices_->VerticesLoadWallet( Request, delegatePtr.Get());
 }
- 
+    
 /**
  * @brief callback after restore wallet
  */

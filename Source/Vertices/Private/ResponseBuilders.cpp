@@ -13,6 +13,12 @@ namespace response_builders {
 	{
 		return Vertices::VerticesInitWalletResponse();
 	}
+
+	Vertices::VerticesWalletExistenceResponse
+		buildWalletExistsResponse(bool Exists)
+	{
+		return Vertices::VerticesWalletExistenceResponse(Exists);
+	}
 	
 	Vertices::VerticesLoadWalletResponse
 		buildLoadWalletResponse()

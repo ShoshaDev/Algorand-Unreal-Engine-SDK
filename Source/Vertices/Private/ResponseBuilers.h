@@ -6,6 +6,8 @@
 namespace response_builders {
 	algorand::vertices::VerticesSDK::VerticesInitWalletResponse
 		buildInitWalletResponse();
+	algorand::vertices::VerticesSDK::VerticesWalletExistenceResponse
+		buildWalletExistsResponse(bool Exists);
 	algorand::vertices::VerticesSDK::VerticesLoadWalletResponse
 		buildLoadWalletResponse();
 	algorand::vertices::VerticesSDK::VerticesSaveWalletResponse

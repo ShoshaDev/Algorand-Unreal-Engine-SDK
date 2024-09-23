@@ -170,6 +170,34 @@ void UAlgorandUnrealManager::OnInitWalletCompleteCallback(const Vertices::Vertic
 }
 
 /**
+ * @brief create its context to send the request to unreal api for checking wallet existence
+ */
+void UAlgorandUnrealManager::isWalletExisted()
+{
+    this->requestContextManager_
+        .createContext<API::FAlgorandAPIWalletExistenceDelegate,
+        Vertices::VerticesWalletExistenceRequest>(
+            request_builders::buildWalletExistenceRequest(),
+            std::bind(&API::AlgorandAPIWalletExistence, unrealApi_.Get(),
+                std::placeholders::_1, std::placeholders::_2),
+            std::bind(&UAlgorandUnrealManager::OnWalletExistenceCompleteCallback, this , std::placeholders::_1)
+        );
+}
+
+/**
+ * @brief get response from unreal api after restore wallet and broadcast the result to binded functions
+ */
+void UAlgorandUnrealManager::OnWalletExistenceCompleteCallback(const Vertices::VerticesWalletExistenceResponse& response) {
+    if (response.IsSuccessful()) {
+        UE_LOG(LogTemp, Display, TEXT("🚩 Checked Wallet Existence Success!"));
+        WalletExistenceCallback.Broadcast(EResultType::IsWalletExisted, FResultBoolean::ToResultBoolean(response.Exists));
+    }
+    else {
+        processErrorCallback("Algorand Wallet Existence wasn't checked.", response.GetResponseString());
+    }
+}
+
+/**
  * @brief create its context to send the request to unreal api for loading wallet
  */
 void UAlgorandUnrealManager::loadWallet(const FString& Password)

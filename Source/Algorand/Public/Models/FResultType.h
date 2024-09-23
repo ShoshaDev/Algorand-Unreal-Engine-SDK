@@ -13,20 +13,21 @@ UENUM(BlueprintType)
 enum class EResultType : uint8 {
 	NONE = 0 UMETA(Hidden),
 	InitWallet = 1 UMETA(DisplayName = "InitWallet"),
-	LoadWallet = 2 UMETA(DisplayName = "LoadWallet"),
-	SaveWallet = 3 UMETA(DisplayName = "SaveWallet"),
-	GetMnemonics = 4 UMETA(DisplayName = "GetMneominicsByAccountName"),
-	GetAllAccounts = 5 UMETA(DisplayName = "GetAllAccounts"),
-	GenRandomAccount = 6 UMETA(DisplayName = "GenerateRandomAccount"),
-	GenAccount = 7 UMETA(DisplayName = "GenerateAccountFromMnemonics"),
-	AddrBalance = 8 UMETA(DisplayName = "GetAddressBalance"),
-	PayTx = 9 UMETA(DisplayName = "SendPaymentTx"),
-	AcfgTx = 10 UMETA(DisplayName = "SendAssetConfigTx"),
-	AxferTx = 11 UMETA(DisplayName = "SendAssetTransferTx"),
-	ApplTx = 12 UMETA(DisplayName = "SendApplicationTx"),
-	ArcAsset = 13 UMETA(DisplayName = "ArcAsset"),
-	AccAssets = 14 UMETA(DisplayName = "AccountAssets"),
-	RemAccount = 15 UMETA(DisplayName = "RemoveAccountByName")
+	IsWalletExisted = 2 UMETA(DisplayName = "CheckWalletExistence"),
+	LoadWallet = 3 UMETA(DisplayName = "LoadWallet"),
+	SaveWallet = 4 UMETA(DisplayName = "SaveWallet"),
+	GetMnemonics = 5 UMETA(DisplayName = "GetMneominicsByAccountName"),
+	GetAllAccounts = 6 UMETA(DisplayName = "GetAllAccounts"),
+	GenRandomAccount = 7 UMETA(DisplayName = "GenerateRandomAccount"),
+	GenAccount = 8 UMETA(DisplayName = "GenerateAccountFromMnemonics"),
+	AddrBalance = 9 UMETA(DisplayName = "GetAddressBalance"),
+	PayTx = 10 UMETA(DisplayName = "SendPaymentTx"),
+	AcfgTx = 11 UMETA(DisplayName = "SendAssetConfigTx"),
+	AxferTx = 12 UMETA(DisplayName = "SendAssetTransferTx"),
+	ApplTx = 13 UMETA(DisplayName = "SendApplicationTx"),
+	ArcAsset = 14 UMETA(DisplayName = "ArcAsset"),
+	AccAssets = 15 UMETA(DisplayName = "AccountAssets"),
+	RemAccount = 16 UMETA(DisplayName = "RemoveAccountByName")
 };
 
 USTRUCT(BlueprintType)
