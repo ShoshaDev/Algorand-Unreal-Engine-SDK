@@ -1,6 +1,10 @@
 Binaries/
 Intermediate/
-Source/ThirdParty/AlgorandLibrary/Mac/
-example/unreal-algorand-demo/Content/Collections
-example/unreal-algorand-demo/Content/Developers
-example/unreal-algorand-demo/Content/StarterContent
+Saved/
+DerivedDataCache/
+.vsconfig
+UnrealAlgorandPlugin.sln
+.idea/
+.vs/
+Plugins/Algorand/Binaries/
+Plugins/Algorand/Intermediate/

@@ -19,6 +19,7 @@ UAlgorandHandler::UAlgorandHandler()
 	ErrorDelegate.BindUFunction(this, FName("OnErrorCallback"));
 
 	algorandManager->ErrorDelegateCallback.Add(ErrorDelegate);
+	algorandManager->WalletExistenceCallback.Add(BooleanDelegate);
 	algorandManager->InitWalletCallback.Add(BooleanDelegate);
 	algorandManager->LoadWalletCallback.Add(BooleanDelegate);
 	algorandManager->SaveWalletCallback.Add(BooleanDelegate);
@@ -42,6 +43,9 @@ void UAlgorandHandler::OnResultBooleanCallback(const EResultType& ResultType, co
 	{
 	case EResultType::InitWallet:
 		UE_LOG(LogTemp, Display, TEXT("🚀 Algo Wallet was initialized."));
+		break;
+	case EResultType::IsWalletExisted:
+		UE_LOG(LogTemp, Display, TEXT("🚀 Algo Wallet Existence was checked."));
 		break;
 	case EResultType::LoadWallet:
 		UE_LOG(LogTemp, Display, TEXT("🚀 Algo Wallet was loaded."));
@@ -196,6 +200,9 @@ void UAlgorandHandler::RunSomeLogic()
 	{
 	case EResultType::InitWallet:
 		algorandManager->initWallet();
+		break;
+	case EResultType::IsWalletExisted:
+		algorandManager->isWalletExisted();
 		break;
 	case EResultType::LoadWallet:
 		algorandManager->loadWallet(Password);
