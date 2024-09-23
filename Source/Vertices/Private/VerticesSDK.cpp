@@ -912,11 +912,16 @@ namespace algorand {
                             checkVTCSuccess((char *)"Main account can't be updated.", err_code);
                             
                             // validation Request
-                            auto auto_notes = StringCast<ANSICHAR>(*(Request.Notes.GetValue())).Get();        // notes
-                            
-                            if(FCStringAnsi::Strlen(auto_notes) == 0)
+                            if((uint64_t)Request.Total.GetValue() == 0)
                             {
-                                auto_notes = "Asset Config Transaction";
+                                err_code = VTC_ERROR_INVALID_ADDR;
+                                checkVTCSuccess((char *)"Please input total count of token.", err_code);
+                            }
+
+                            if((uint64_t)Request.Decimals.GetValue() == 0)
+                            {
+                                err_code = VTC_ERROR_INVALID_ADDR;
+                                checkVTCSuccess((char *)"Please input token decimal.", err_code);
                             }
 
                             if(Request.UnitName.GetValue().Len() > 8)
@@ -925,11 +930,30 @@ namespace algorand {
                                 checkVTCSuccess((char *)"Transaction Asset Unit Name is too big.", err_code);
                             }
                             
-                            auto auto_unit_name = StringCast<ANSICHAR>(*(Request.UnitName.GetValue())).Get();        // unit name        
+                            auto auto_unit_name = StringCast<ANSICHAR>(*(Request.UnitName.GetValue())).Get();        // unit name
 
-                            auto auto_asset_name = StringCast<ANSICHAR>(*(Request.AssetName.GetValue())).Get();        // asset name        
+                            if(FCStringAnsi::Strlen(auto_unit_name) == 0)
+                            {
+                                err_code = VTC_ERROR_INVALID_ADDR;
+                                checkVTCSuccess((char *)"Please input Unit Name.", err_code);
+                            }
 
-                            auto auto_url = StringCast<ANSICHAR>(*(Request.Url.GetValue())).Get();        // url        
+                            auto auto_asset_name = StringCast<ANSICHAR>(*(Request.AssetName.GetValue())).Get();        // asset name
+
+                            if(FCStringAnsi::Strlen(auto_asset_name) == 0)
+                            {
+                                err_code = VTC_ERROR_INVALID_ADDR;
+                                checkVTCSuccess((char *)"Please input Asset Name.", err_code);
+                            }
+
+                            auto auto_url = StringCast<ANSICHAR>(*(Request.Url.GetValue())).Get();        // url
+
+                            auto auto_notes = StringCast<ANSICHAR>(*(Request.Notes.GetValue())).Get();        // notes
+                            
+                            if(FCStringAnsi::Strlen(auto_notes) == 0)
+                            {
+                                auto_notes = "Asset Config Transaction";
+                            }
 
                             // todo Let's set Creator address to sender_account pub_b32
 
@@ -1011,7 +1035,7 @@ namespace algorand {
                             
                             err_code = vertices_account_new_from_b32((char *)auto_clawback, &C_Account);
                             checkVTCSuccess((char *)"account info can't be fetched.", err_code);
-                            UE_LOG(LogTemp, Display, TEXT("🔥 Vertices: Fetched Balance of Clawback, %d"), C_Account->amount);   
+                            UE_LOG(LogTemp, Display, TEXT("🔥 Vertices: Fetched Balance of Clawback, %d"), C_Account->amount);
                             
                             err_code =
                                 vertices_transaction_asset_cfg(sender_account.vtc_account,
