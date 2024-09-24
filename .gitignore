@@ -8,3 +8,7 @@ UnrealAlgorandPlugin.sln
 .vs/
 Plugins/Algorand/Binaries/
 Plugins/Algorand/Intermediate/
+Content/__ExternalActors__/
+Content/__ExternalObjects__/
+Content/Collections/
+Content/Developers/
