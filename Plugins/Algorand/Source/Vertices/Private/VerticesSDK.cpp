@@ -5,7 +5,6 @@
 #include "Misc/MessageDialog.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
-#include "Containers/StringConv.h"
 #include "Internationalization/Text.h"
 #include "Interfaces/IPluginManager.h"
 #include "VerticesApiOperations.h"

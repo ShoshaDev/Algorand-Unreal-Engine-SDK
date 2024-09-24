@@ -9,7 +9,7 @@ public class AlgorandAPI : ModuleRules
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
-		AddEngineThirdPartyPrivateStaticDependencies(Target, new string[] { "libcurl", "nghttp2" , "OpenSSL", "zlib" });   // add 3rd party lib for libcurl
+		AddEngineThirdPartyPrivateStaticDependencies(Target, new string[] { "libcurl", "OpenSSL", "zlib" });   // add 3rd party lib for libcurl
 		
 		PublicDependencyModuleNames.AddRange(
 			new string[]

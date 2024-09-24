@@ -7,6 +7,8 @@ public class UnrealAlgorandPlugin : ModuleRules
 	public UnrealAlgorandPlugin(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+		
+		bLegacyPublicIncludePaths = true;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Algorand" });
 
