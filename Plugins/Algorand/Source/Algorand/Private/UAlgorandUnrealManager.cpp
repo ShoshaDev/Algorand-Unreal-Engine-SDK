@@ -228,12 +228,12 @@ void UAlgorandUnrealManager::OnLoadWalletCompleteCallback(const Vertices::Vertic
 /**
  * @brief create its context to send the request to unreal api for saving wallet
  */
-void UAlgorandUnrealManager::saveWallet(const FString& mnemonics)
+void UAlgorandUnrealManager::saveWallet(const FString& Password)
 {
     this->requestContextManager_
         .createContext<API::FAlgorandAPISaveWalletDelegate,
         Vertices::VerticesSaveWalletRequest>(
-            request_builders::buildSaveWalletRequest(mnemonics),
+            request_builders::buildSaveWalletRequest(Password),
             std::bind(&API::AlgorandAPISaveWallet, unrealApi_.Get(),
                 std::placeholders::_1, std::placeholders::_2),
             std::bind(&UAlgorandUnrealManager::OnSaveWalletCompleteCallback, this , std::placeholders::_1)
