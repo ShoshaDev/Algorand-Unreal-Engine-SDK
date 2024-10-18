@@ -329,7 +329,7 @@ public:
 	UFUNCTION(BlueprintCallable,
 			  meta = (DisplayName = "Save Wallet", Keywords = "wallet"),
 			  Category = "AlgorandUnrealManager")
-	void saveWallet(const FString& mnemonics);
+	void saveWallet(const FString& Password);
 	
 	UPROPERTY(BlueprintAssignable, Category = "MultiCastDelegate")
 	FLoadWalletDelegate SaveWalletCallback;
