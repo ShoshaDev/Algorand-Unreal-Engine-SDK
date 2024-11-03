@@ -844,16 +844,11 @@ namespace algorand {
                             checkVTCSuccess((char *)"Main account can't be fetched.", err_code);
                             
                             // validation Request
-                            char* notes;
-
-                            if(Request.Notes->Len() == 0)
+                            auto auto_notes = StringCast<ANSICHAR>(*(Request.Notes.GetValue())).Get();        // notes
+                            
+                            if(FCStringAnsi::Strlen(auto_notes) == 0)
                             {
-                                notes = (char *) malloc(strlen("Payment Transaction") + 1);
-                                strcpy_s(notes,  strlen("Payment Transaction") + 1,"Payment Transaction");
-                            } else
-                            {
-                                auto auto_notes = StringCast<ANSICHAR>(*(Request.Notes.GetValue()));
-                                notes = const_cast<char*>(auto_notes.Get());
+                                auto_notes = "Payment Transaction";
                             }
                             
                             if ( Request.ReceiverAddress.GetValue().Len() != PUBLIC_ADDRESS_LENGTH )
@@ -881,7 +876,7 @@ namespace algorand {
                                 vertices_transaction_pay_new(sender_account.vtc_account,
                                     (char *)receiver_account->public_key /* or ACCOUNT_RECEIVER */,
                                     (uint64_t)Request.Amount.GetValue(),
-                                    notes);
+                                    (char *)auto_notes);
                             checkVTCSuccess((char *)"Payment Tx was failed", err_code);
                             
                             unsigned char* txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
@@ -903,8 +898,6 @@ namespace algorand {
                             
                             err_code = vertices_account_free(receiver_account);
                             checkVTCSuccess((char *)"receiver account can't be deleted.", err_code);
-
-                            free(notes);
                             
                             response = response_builders::buildSendPayTxResponse(FString(UTF8_TO_TCHAR(txID)));
                             response.SetSuccessful(true);
