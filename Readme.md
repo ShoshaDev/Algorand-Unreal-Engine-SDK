@@ -10,8 +10,6 @@ Algorand Unreal Engine Plugin
 
 For indepth documentation on the overview, setup and usage of this plugin check here: [Doc](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.md)
 
-For indepth video demo on using the plugin watch here: [Video](https://youtu.be/xXlqLxUo3Uo)
- 
 This UE plugin includes:
 - Root Folder: Unreal-Plugin - Put this plugin in your new or existing project to utilize.
 - Example Folder: Unreal Plugin Example Project - Use this project to start your new game or demo/test Algorand System
@@ -42,7 +40,7 @@ RPC types you can select are like following:
 ## 📑 2. Prerequisites:
 
 To use this UE plugin : ✅
-- Unreal Engine 5.x is supported.
+- Unreal Engine 5.0, 5.2,5.4  are supported.
   https://docs.unrealengine.com/5.1/en-US/installing-unreal-engine/
 - Windows: Visual Studio 2019 or newer, JetBrains Rider 2020.x
 - macOS: Xcode 13.2.1
