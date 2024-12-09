@@ -17,7 +17,7 @@
 
 ### [Algorand Unreal Plugin Documentation](#algorand-unreal-plugin-documentation-1)
 1. [Pre-requisites](#1-pre-requisites-1)
-2. [Installation & Enabling](#2-installation--enabling-1)
+2. [Installation & Enabling](#2-installation)
 3. [Creating a Demo project](#3-creating-a-demo-project-1)
 
 <br>
@@ -26,14 +26,14 @@
 
 ## Algorand C++ SDK Documentation
 ---
-    The Unreal Algorand SDK provides developers with an easy way for devices to interact with he Algorand chain.
+    The Unreal Algorand SDK provides developers with an easy way for devices to interact with the Algorand chain.
     We are doing our best to achieve those goals:
 
 #### C library can be included in C++ projects.
 - It can be easily imported as a third-party library.
 - Examples provided:
+    - Windows
     - Unix-based OS
-    - Windows (not completed)
     - Mac OS (not completed)
 
 - Connect to any Algorand API (local or remote provider)
@@ -43,8 +43,8 @@
     - Unit-Testing
 
 #### At this SDK, there are some to-do lists to add new features:
-- Some bugs exist when compiling on some toolchains. (Windows and Mac OS)
-- Add another transaction type and wallet connect provider with QR Link and Mnemonic.
+- Some bugs exist when compiling on some toolchains. (Mac OS)
+- Add another transaction type (Application Call) and wallet connect provider with QR Link.
 
 --- 
 ## 1. Pre-requisites
@@ -109,31 +109,51 @@ A config file provides an easy way to configure the SDK: include/vertices_config
 Now we are creating a new file called unix_config.h on examples/unix/config folder to let it set rpc info of algorand chain.
 
 ```c
+#define TESTNET_ALGONODE_API                "https://testnet-api.algonode.cloud"
 #define TESTNET_ALGOEXPLORER_API            "https://node.testnet.algoexplorerapi.io"
 #define TESTNET_PURESTAKE_API               "https://testnet-algorand.api.purestake.io/ps2"
 #define TESTNET_LOCAL_API                   "localhost"
 
+#define TESTNET_ALGONODE_INDEXER_API                "https://testnet-idx.algonode.network"
+#define TESTNET_ALGOEXPLORER_INDEXER_API            "https://node.testnet.algoexplorerapi.io"
+#define TESTNET_PURESTAKE_INDEXER_API               "https://testnet-algorand.api.purestake.io/idx2"
+#define TESTNET_LOCAL_INDEXER_API                   "localhost"
+
+#define TESTNET_ALGONODE_PORT           443
 #define TESTNET_ALGOEXPLORER_PORT       0
 #define TESTNET_PURESTAKE_PORT          0
 #define TESTNET_LOCAL_PORT              8080
 
+#define TESTNET_ALGONODE_AUTH_HEADER        ""
 #define TESTNET_ALGOEXPLORER_AUTH_HEADER    ""
 #define TESTNET_PURESTAKE_AUTH_HEADER       "x-api-key:"
 #define TESTNET_LOCAL_AUTH_HEADER           "X-Algo-API-Token:"
 ```
-We are setting config info of algorand rpc. (rpc API, PORT, and AUTH 
+We are setting config information of algorand rpc. (rpc API, PORT, and AUTH 
 HEADER).
 
-In this file, you can find essential info to run a project as params.
+In this file, you can find essential information to run a project as params.
 
 ```c
-#define ACCOUNT_RECEIVER "NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE"
+#define SERVER_NODE_URL              TESTNET_ALGONODE_API
+#define SERVER_INDEXER_URL           TESTNET_ALGONODE_INDEXER_API
+#define SERVER_PORT             TESTNET_ALGONODE_PORT
+#define SERVER_TOKEN_HEADER     (TESTNET_ALGONODE_AUTH_HEADER TESTNET_ALGONODE_API_TOKEN)
+
+#define ACCOUNT_RECEIVER "LCKVRVM2MJ7RAJZKPAXUCEC4GZMYNTFMLHJTV2KF6UGNXUFQFIIMSXRVM4"
+#define ACCOUNT_MANAGER "NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE"
+#define ACCOUNT_RESERVE "NBRUQXLMEJDQLHE5BBEFBQ3FF4F3BZYWCUBBQM67X6EOEW2WHGS764OQXE"
+#define ACCOUNT_FREEZE "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ"
+#define ACCOUNT_CLAWBACK "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ"
 #define APP_ID      (16037129)
+#define WALLET_PASSWORD "dragon"
+#define ALICE_NAME "dragon_1"
+#define BOB_NAME "dragon_2"
 ```
 
-**ACCOUNT_RECEIVER** is an account of the receiver and is represented as public 
-32 bytes and **APP_ID** is a unique identifier when a smart contract is deployed 
+- **ACCOUNT_RECEIVER**, **ACCOUNT_MANAGER**, **ACCOUNT_RESERVE**, **ACCOUNT_FREEZE**, **ACCOUNT_CLAWBACK** is 32 bytes address and is used to build basic algorand transactions, and **APP_ID** is a unique identifier when a smart contract is deployed 
 to the algorand chain.
+- Also, **WALLET_PASSWORD** is used to to secure an algorand wallet.
 
 ### Running a Demo project
 
@@ -205,88 +225,153 @@ Next, Main.cpp has 4 big functions. (vertices_evt_handler, create_new_account, l
 
     - Initialize variables.
         ```c
-        m_vertex.provider = &providers,
-        m_vertex.vertices_evt_handler = vertices_evt_handler;
+        action_t run_tx;
+        run_tx.kind = ACC_TYPE;
+        run_tx.action.acc_type = CREATE_MNEMONIC_ACC;
+
+        // init provider
+        init_provider();
+
+        // init accounts for processing transaction
+        init_accounts(run_tx);
         ```
             
-    - Getting input values to let users define the tx types they want according to opt.
+    - We can test to create new accounts and save into the wallet or build one of algorand transactions with given accounts.
+        > For creating algorand accounts
         ```c
-        case 'n': {
-            create_new = true;
-        }
-            break;
-        case 'p': {
-            run_tx = PAY_TX;
-        }
-            break;
-        case 'a': {
-            run_tx = APP_CALL_TX;
-        }
+        run_tx.kind = ACC_TYPE;
+        run_tx.action.acc_type = CREATE_MNEMONIC_ACC;
+        ```
+        > For building algorand transactions
+        ```c
+        run_tx.kind = TX_TYPE;
+        run_tx.action.tx_type = PAY_TX;
         ```
     - **Steps for building algo transactions** with vertices lib
 
         1. You should create new vertice lib and check the status and version of algorand provider defined on vertices lib.
+        Also, it loads accounts from a saved wallet.
             ```c
+            int ret = sodium_init();
+            VTC_ASSERT_BOOL(ret == 0);
+
             // create new vertex
-            err_code = vertices_new(&m_vertex);
+            err_code = vertices_new(&m_vertex, true);
             VTC_ASSERT(err_code);
 
-            // making sure the provider is accessible
-            err_code = vertices_ping();
+            // load vertices wallet
+            err_code = load_wallet(run_tx);
             VTC_ASSERT(err_code);
 
-            // ask for provider version
-            provider_version_t version = {0};
-            err_code = vertices_version(&version);
-            if (err_code == VTC_ERROR_OFFLINE) {
-            LOG_WARNING("Version might not be accurate: old value is being used");
-            } else {
+            // check health of vertex net
+            err_code = vertex_health();
             VTC_ASSERT(err_code);
-
             ```
-        2. Create a new algo account or load an existing one called Alice if it exists.
+        2. Initialized accounts randomly or with specific mnemonics
             ```c
-            // Several ways to create/load accounts:
-            if (create_new) {
-                // 1) create new one
-                err_code = create_new_account();
+            case CREATE_RANDOM_ACC: {
+                err_code = vertices_s_account_new_random(&alice_account);
                 VTC_ASSERT(err_code);
-            } else {
-                // 2) from files
-                err_code = load_existing_account();
+                err_code = vertices_s_account_new_random(&bob_account);
                 VTC_ASSERT(err_code);
+                // Test mnemonic from account
+                char *mnemonic;
+                err_code = vertices_mnemonic_from_sk(alice_account.private_key, &mnemonic);
+                VTC_ASSERT(err_code);
+                printf("mnemonics of a random account: %s\n", mnemonic);
+                err_code = vertices_mnemonic_from_sk(bob_account.private_key, &mnemonic);
+                VTC_ASSERT(err_code);
+                printf("mnemonics of a random account: %s\n", mnemonic);
+                break;
+            }
+
+            case CREATE_MNEMONIC_ACC: {
+                char *mnemonic_str = "rally relief lucky maple primary chair syrup economy tired hurdle slot upset clever chest curve bitter weekend prepare movie letter lamp alert then able taste";
+                err_code = vertices_s_account_new_from_mnemonic(mnemonic_str, &alice_account, (const char*) ALICE_NAME);
+                VTC_ASSERT(err_code);
+                mnemonic_str = "base giraffe believe make tone transfer wrap attend typical dirt grocery distance outside horn also abstract slim ecology island alter daring equal boil absent carpet";
+                err_code = vertices_s_account_new_from_mnemonic(mnemonic_str, &bob_account, (const char*) BOB_NAME);
+                VTC_ASSERT(err_code);
+                // Test mnemonic from account
+                char *mnemonic;
+                err_code = vertices_mnemonic_from_account((const char *) ALICE_NAME, &mnemonic);
+                VTC_ASSERT(err_code);
+                printf("mnemonic of %s account : ->%s\n", (const char *) ALICE_NAME, mnemonic);
+                err_code = vertices_mnemonic_from_account((const char *) BOB_NAME, &mnemonic);
+                VTC_ASSERT(err_code);
+                printf("mnemonic of %s account : ->%s\n", (const char *) BOB_NAME, mnemonic);
+                break;
             }
             ```
-        3. Create a new account called Bob with its public address to let the user test payment tx action.
-            ```c
-            //  3) from b32 address
-            //      Note: creating a receiver account is not mandatory to send money to the account
-            //      but we can use it to load the public key from the account address
-            err_code = vertices_account_new_from_b32((char *) ACCOUNT_RECEIVER, &bob_account.vtc_account);
-            VTC_ASSERT(err_code);
-            ```
-        4. Do the verification process with Alice account before building transactions.
-            ```c
-            if (alice_account.vtc_account->amount < 1001000) {
-                LOG_ERROR("🙄 Amount available on account is too low to pass a transaction, consider adding Algos");
-                LOG_INFO("👉 Go to https://bank.testnet.algorand.network/, dispense Algos to: %s",
-                            alice_account.vtc_account->public_b32);
-                LOG_INFO("😎 Then wait for a few seconds for transaction to pass...");
-                return 0;
-            }
-            ```
-        5. Build transactions with tx info and type.
+        3. Build transactions with tx info and type.
             - **Payment TX**
 
-                This action is one to let users send assets from one account to another Account.
+                This action is one to let users send algos from one account to another Account.
                 ```c
+                case PAY_TX: {
                 // send assets from account 0 to account 1
                 char *notes = (char *) "Alice sent 1 Algo to Bob";
                 err_code =
-                    vertices_transaction_pay_new(alice_account.vtc_account,(char *) bob_account.vtc_account->public_b32 /* or ACCOUNT_RECEIVER */, AMOUNT_SENT, notes);
+                        vertices_transaction_pay_new(alice_account.vtc_account,
+                                                     (char *) bob_account.vtc_account->public_key /* or ACCOUNT_RECEIVER Public Key */,
+                                                     AMOUNT_SENT,
+                                                     notes);
+                VTC_ASSERT(err_code);
+                }
                 ```
 
-            - **Application TX**
+            - **Asset Config TX**
+                This action lets us to create new algorand assets.  ex: arc3, arc19, arc69
+                ```c
+                char *notes = (char *) "Create a new asset";
+                err_code =
+                        vertices_transaction_asset_cfg(alice_account.vtc_account,
+                                                       (char *) alice_account.vtc_account->public_key, // (char *) manager_account.vtc_account->public_key,
+                                                       (char *) reserve_account.vtc_account->public_key,
+                                                       (char *) freeze_account.vtc_account->public_key,
+                                                       (char *) clawback_account.vtc_account->public_key,
+                                                       0,
+                                                       10000,
+                                                       8,
+                                                       true,
+                                                       (void *) "USD",
+                                                       (void *) "SHOSHA",
+                                                       (void *)"",  // (void *) "http://this.test.com"
+                                                       notes
+                                                       );
+                VTC_ASSERT(err_code);
+                ```
+
+            - **Asset Transfer TX**
+                This action lets us build opt-in or transfer assets
+                > **opt-in**
+                ```c
+                char *notes = (char *) "Create an Opt-In transaction";
+                err_code =
+                        vertices_transaction_asset_xfer(bob_account.vtc_account,
+                                                        (char *) bob_account.vtc_account->public_key,
+                                                        (char *) bob_account.vtc_account->public_key,
+                                                        715553268,
+                                                        0,
+                                                        notes
+                        );
+                VTC_ASSERT(err_code);
+                ```
+                > **asset transfer**
+                ```c
+                char *notes = (char *) "Transfer an algorand asset";
+                err_code =
+                        vertices_transaction_asset_xfer(alice_account.vtc_account,
+                                                        (char *) alice_account.vtc_account->public_key,
+                                                        (char *) bob_account.vtc_account->public_key,
+                                                        715553268,
+                                                        200,
+                                                        notes
+                                                        );
+                VTC_ASSERT(err_code);
+                ```
+
+            - **Application TX**  (Not Completed)
 
                 This action is one to let a user send an application call.
 		        You can get info on the application call tx using the following function.
@@ -314,22 +399,25 @@ Next, Main.cpp has 4 big functions. (vertices_evt_handler, create_new_account, l
                 err_code = vertices_transaction_app_call(alice_account.vtc_account, APP_ID, &kv);
                 VTC_ASSERT(err_code);
                 ```
-        6. Send registered txs to algorand chain. This action is one to let vertices lib process events to get signed or pending ones for the transaction process.
+        4. Send registered txs to algorand chain. This action is one to let vertices lib process events to get signed or pending ones for the transaction process.
             ```c
+            unsigned char *txID = nullptr;
+            txID = new unsigned char[TRANSACTION_HASH_STR_MAX_LENGTH];
+
+            // processing
             size_t queue_size = 1;
             while (queue_size && err_code == VTC_SUCCESS) {
-                err_code = vertices_event_process(&queue_size);
+                err_code = vertices_event_process(&queue_size, txID);
                 VTC_ASSERT(err_code);
             }
             ```
             You can get tx id using this function.
-        7. Free memory of created new accounts.
+        5. Free memory of created new accounts.
             ```c
-            // delete the created accounts from the Vertices wallet
-            err_code = vertices_account_free(alice_account.vtc_account);
-            VTC_ASSERT(err_code);
+            vertices_wallet_save((const char*) WALLET_PASSWORD);
 
-            err_code = vertices_account_free(bob_account.vtc_account);
+            // delete the created secret accounts from the Vertices wallet
+            err_code = vertices_wallet_free();
             VTC_ASSERT(err_code);
             ```
 
@@ -404,16 +492,10 @@ https://docs.unrealengine.com/5.1/en-US/installing-unreal-engine/
 - Windows: Visual Studio 2019 or newer, JetBrains Rider 2020.x
 - macOS: Xcode 13.2.1
 
-## 2. Installation & Enabling
+## 2. Installation
 - 🧰 Installation
 
-    - Step 1
-
-        Download the release zip file or Clone this repo from github (plugin path i.e https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK.git)
-
-    - Step 2
-
-        Copy algorand plugin to the Plugins folder on the root directory. If the Plugins folder doesn’t exist, create an empty folder called Plugins. Then rename copied plugin Algorand.
+    You can use this guide for installing a SDK. [docs.unreal-sdk.installation](https://github.com/ShoshaDev/Algorand-Unreal-Engine-SDK/tree/5.0/Plugins/Algorand#%EF%B8%8F-3-installation)
 - Enabling
 
     You should register the plugin name into Build.cs on the Source directory of your project and rebuild a demo project.
@@ -481,26 +563,45 @@ Now we are going to create our new project. Run Unreal Engine Editor, find a pro
         GENERATED_BODY()
 
     public:
-        UAlgorandHandler();
+	UAlgorandHandler();
 
-        UPROPERTY()
-            UAlgorandUnrealManager* algorandManager;
+	UPROPERTY()
+		UAlgorandUnrealManager* algorandManager;
+	
+	UWorld* GetWorld() const override;
+	
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+	void RunSomeLogic();
 
-        UWorld* GetWorld() const override;	
-        UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-        void RunSomeLogic();
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnResultBooleanCallback(const EResultType& ResultType, const FResultBoolean& Result);
 
-        UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-            void OnGetBalanceCallback(const FUInt64& amount);
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnResultStringCallback(const EResultType& ResultType, const FResultString& Result);
 
-        UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-            void OnSendPaymentTransactionCallback(const FString& txID);
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnResultAccountCallback(const EResultType& ResultType, const FResultAccount& Result);
 
-        UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-            void OnSendApplicationCallTransactionCallback(const FString& txID);
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnResultAccountsCallback(const EResultType& ResultType, const FResultAccounts& Result);
 
-        UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
-            void OnGenerateWalletCallback(const FString& address);
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnResultUInt64Callback(const EResultType& ResultType, const FResultUInt64& Result);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnResultAcfgTxCallback(const EResultType& ResultType, const FResultAcfgTx& Result);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnResultApplTxCallback(const EResultType& ResultType, const FResultApplTx& Result);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnResultArcAssetDetailsCallback(const EResultType& ResultType, const FArcAssetDetails& Result);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnResultAccAssetsCallback(const EResultType& ResultType, const FResultAccAssets& Result);
+
+	UFUNCTION(BlueprintCallable, Category = "AlgorandHandler")
+		void OnErrorCallback(const FError& Error);
     };   // UAlgorandHandler  class end
     ……….
     ```
@@ -514,6 +615,7 @@ Now we are going to create our new project. Run Unreal Engine Editor, find a pro
 
     UAlgorandHandler::UAlgorandHandler() { 
         algorandManager = CreateDefaultSubobject<UAlgorandUnrealManager>(TEXT(“AlgorandManager”));
+        ...
     }
 
     UWorld* UAlgorandHandler::GetWorld() const { return GetOuter()->GetWorld(); }
@@ -522,37 +624,94 @@ Now we are going to create our new project. Run Unreal Engine Editor, find a pro
     //TODO: getbalance, payment tx , and so on…
     }
 
-    Let’s write callback function and then add them to AlgorandHandler.cpp.
-
-    void UAlgorandHandler::OnGenerateWalletCallback(const FString& address) {
-        UE_LOG(LogTemp, Display, TEXT("Generated address in satoshis: %s"),
-            *address);
-    }
-
-    void UAlgorandHandler::OnGetBalanceCallback(const FUInt64& amount) {
-        UE_LOG(LogTemp, Display, TEXT("Balance in satoshis: %llu"),
-            amount.Value);
-    }
-
-    void UAlgorandHandler::OnSendPaymentTransactionCallback(const FString& txID) {
-        UE_LOG(LogTemp, Display, TEXT("Payment TX ID in satoshis: %s"), *txID);
-    }
-
-    void UAlgorandHandler::OnSendApplicationCallTransactionCallback(const FString& 
-    txID) 
-    {
-        UE_LOG(LogTemp, Display, TEXT("Application Call TX ID in satoshis: %s"),*txID);
-    }
-    …………..
     ```
     Now, let’s rewrite something interesting inside the RunSomeLogic method.
     ```c
     …….
     void UAlgorandHandler::RunSomeLogic() {
-        FScriptDelegate _delegate1;
-        _delegate1.BindUFunction(this, FName("OnGetBalanceCallback"));
-        algorandManager->GetBalanceCallback.Add(_delegate1);
-        algorandManager->getBalance();
+        switch (Result_Type)
+    	{
+        case EResultType::InitWallet:
+            algorandManager->initWallet();
+            break;
+        case EResultType::IsWalletExisted:
+            algorandManager->isWalletExisted();
+            break;
+        case EResultType::LoadWallet:
+            algorandManager->loadWallet(Password);
+            break;
+        case EResultType::SaveWallet:
+            algorandManager->saveWallet(Password);
+            break;
+        case EResultType::GetMnemonics:
+            algorandManager->getMnemonicsByAccountName(AccountName);
+            break;
+        case EResultType::GetAllAccounts:
+            algorandManager->getAllAccounts();
+            break;
+        case EResultType::GenAccount:
+            algorandManager->generateAccountFromMnemonics(Mnemonics, AccountName);
+            break;
+        case EResultType::GenRandomAccount:
+            algorandManager->generateRandomAccount(AccountName);
+            break;
+        case EResultType::AddrBalance:
+            algorandManager->getAddressBalance(Address);
+            break;
+        case EResultType::PayTx:
+            algorandManager->sendPaymentTransaction(AccountName,
+                                                    Address,
+                                                    Amount, FString(
+                                                        "Sent 100 algo to " + Address));
+            break;
+        case EResultType::AcfgTx:
+            algorandManager->sendAssetConfigTransaction(AccountName,
+                FString("Z5C3T63QHLEAAXV2A2L3Y2LY6TURAPEESMQZC7777PGGPPAAGC4F4GWHHA"),
+                FString("Z5C3T63QHLEAAXV2A2L3Y2LY6TURAPEESMQZC7777PGGPPAAGC4F4GWHHA"),
+                FString("Z5C3T63QHLEAAXV2A2L3Y2LY6TURAPEESMQZC7777PGGPPAAGC4F4GWHHA"),
+                FString("Z5C3T63QHLEAAXV2A2L3Y2LY6TURAPEESMQZC7777PGGPPAAGC4F4GWHHA"),
+                0,
+                1000,
+                8,
+                "false",
+                FString("USD"),
+                FString("Shosha"),
+                FString("https://myurl.com"),
+                FString("fe"));
+            break;
+        case EResultType::AxferTx:
+            algorandManager->sendAssetTransferTransaction(AccountName,
+                Address,
+                AssetID,
+                Amount,
+                FString("Sent tokens to " + Address));
+
+            break;
+        case EResultType::ApplTx:
+            {
+                // Application Call - Math Calculation through Smart Contract on algorand testnet node
+                TArray<FAppArg> app_args;
+                EAppOnCompleteTX app_complete_tx = EAppOnCompleteTX::NOOP;
+
+                app_args.Add(UAppNoOpTXFactory::FAppArgFromString(EAppArgType::ARG_METHOD, "mul(uint64,uint64)uint64"));
+                app_args.Add(UAppNoOpTXFactory::FAppArgFromString(EAppArgType::ARG_INT, "1000"));
+                app_args.Add(UAppNoOpTXFactory::FAppArgFromString(EAppArgType::ARG_INT, "2"));
+
+                algorandManager->sendApplicationCallTransaction(AccountName, 301624623, app_args, app_complete_tx);
+                break;
+            }
+        case EResultType::ArcAsset:
+            algorandManager->fetchArcAssetDetails(AssetID);
+            break;
+        case EResultType::AccAssets:
+            algorandManager->fetchAccountInformation("6WII6ES4H6UW7G7T7RJX63CUNPKJEPEGQ3PTYVVU3JHJ652W34GCJV5OVY");
+            break;
+        case EResultType::RemAccount:
+            algorandManager->removeAccountByName(AccountName);
+            break;
+        case EResultType::NONE:
+            break;
+        }
     }
     ……
     ```
