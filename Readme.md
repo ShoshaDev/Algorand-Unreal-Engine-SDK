@@ -1,15 +1,13 @@
-# Algorand Unreal Engine Plugin
-Official Unreal Engine plugin for Algorand Blockchain Platform.
-
-> If you are looking for a repo for this c++ sdk, [check this repository](https://github.com/Wisdom-Labs/Algorand-CPlusPlus-SDK.git).
-
-This plugin provides the functionallity for building different types of transactions and managing wallets on the Algorand blockchain.
+# Algorand SDK for Unreal Engine
+Official Unreal Engine Plugin for Algorand Blockchain Platform.
 
 ## 📙 1. Overview:
 Algorand Unreal Engine Plugin
 
-For indepth documentation on the overview, setup and usage of this plugin check here: [Doc](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.md)
+For indepth documentation on the overview, setup and usage of this plugin check here: [Doc](https://github.com/ShoshaDev/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.pdf)
 
+For indepth video demo on using the plugin watch here: [Video](https://youtu.be/xXlqLxUo3Uo)
+ 
 This UE plugin includes:
 - Root Folder: Unreal-Plugin - Put this plugin in your new or existing project to utilize.
 - Example Folder: Unreal Plugin Example Project - Use this project to start your new game or demo/test Algorand System
@@ -28,7 +26,10 @@ RPC types you can select are like following:
   + mainnet: https://mainnet-api.algonode.cloud
   + testnet: https://testnet-api.algonode.cloud
   + betanet: https://betanet-api.algonode.cloud
-
+* Purestake
+  + mainnet: https://mainnet-algorand.api.purestake.io/ps2
+  + testnet: https://testnet-algorand.api.purestake.io/ps2
+  + betanet: https://betanet-algorand.api.purestake.io/ps2
 * Sandbox Algorand Node
   + algod: http://localhost:4001 
   + kmd: http://localhost:4002
@@ -40,20 +41,15 @@ RPC types you can select are like following:
 ## 📑 2. Prerequisites:
 
 To use this UE plugin : ✅
-- Unreal Engine 5.0, 5.2,5.4  are supported.
+- Unreal Engine 5.x is supported.
   https://docs.unrealengine.com/5.1/en-US/installing-unreal-engine/
 - Windows: Visual Studio 2019 or newer, JetBrains Rider 2020.x
 - macOS: Xcode 13.2.1
 > In order to build project using Unreal Engine 5.0+, use a branch `master`.
 
 ## ⚙️ 3. Installation:
-1. In this Github repository, clone this repo with `git` command or download as a zip file type and rename cloned folder name `AlgorandUnrealEngineSDK`.
-2. You can find a folder called example, which is our test project.
-3. Then you should create a folder called `Plugins/Algorand` on `example/unreal-algorand-demo` folder.
-4. You should copy all except for example folder on `AlgorandUnrealEngineSDK` folder to the `Plugins/Algorand` folder of our test project.
-> After you complete above action, this plugin path is `example\unreal-algorand-demo\Plugins\Algorand`.
-5. You should register the plugin name (Algorand) into Build.cs on the Source 
-directory of out test project (`example\unreal-algorand-demo`) and rebuild your project.
+1. In this Github repository, clone this repo with `git` command or download as a zip file type.
+2. You should check the plugin name (Algorand) into Build.cs on the `Source/UnrealAlgorandPlugin` folder
     ```csharp  
     public UnrealAlgorandPlugin(ReadOnlyTargetRules Target) : base(Target)
     {
@@ -64,17 +60,19 @@ directory of out test project (`example\unreal-algorand-demo`) and rebuild your 
         PrivateDependencyModuleNames.AddRange(new string[] {  });
     }
     ```
->Right click on UnrealAlgorandPlugin.uproject on `example/unreal-algorand-demo` folder, and "Generate Visual Studio project files" - This process may take some time.
-6. Once finished, open your *.sln project or *.uproject file with Visual Studio or JetBrains Rider.
+3. Right click on UnrealAlgorandPlugin.uproject on root folder, and "Generate Visual Studio project files" - This process may take some time.
+4. Once finished, open your *.sln project or *.uproject file with Visual Studio or JetBrains Rider.
 
-## 🧭 4. Modules reference
+## 🧭 4. Modules Reference:
 * **Algorand** - entrypoint module, provides `C++`- & `Blueprints`- friendly interfaces for plugin's users. This module should be considered as the only module you need to depend on.
 * **AlgorandAPI** - This module is one to make api request and process its result and send it to entrypoint module.
 * **Blockchain** - This module contains core logic for building and signing txs from tx types and params.
 * **Wallet** - This module is one related to manage wallet and wallet connect provider.
 * **Vertices** - This module play an important role as an interface and router in connecting to our algorand c++ sdk (Vertices shared library).
 
-## 🚀 5. Common Usage
-`UAlgorandUnrealManager` stored on `Algorand` module should be used as the main entry-point for all Algorand-related actions.
+## 🚀 5. Get Started
 
-Check our [demo project](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/tree/master/example/unreal-algorand-demo) made with this UE plugin.
+Read [Getting Started](docs/getting_started.md) to learn the basic workflows for developing on Algorand.
+
+### Demo Project
+ Check an [Example Folder](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/tree/master/example/unreal-algorand-demo) made with this UE plugin.
