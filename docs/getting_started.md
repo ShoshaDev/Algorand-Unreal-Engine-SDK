@@ -29,18 +29,12 @@ See [Your First Transaction](getting_started/your_first_transaction.md) for an i
         + mainnet: https://mainnet-api.algonode.cloud
         + testnet: https://testnet-api.algonode.cloud
         + betanet: https://betanet-api.algonode.cloud
- - Purestake
-    * rpc url
-        + mainnet: https://mainnet-algorand.api.purestake.io/ps2
-        + testnet: https://testnet-algorand.api.purestake.io/ps2
-        + betanet: https://betanet-algorand.api.purestake.io/ps2
     * rpc Port
         should be set port supporting in algorand node.
         should set ```port = 0```
     * rpc TokenHeader
         > Thing that you should know
         + When you set tokenHeader of algorand rpc using purestake, key value of tokenHeader should be started with `x-api-key:`
-        + You can get purestake api key using [Purestake Doc](https://developer.algorand.org/tutorials/getting-started-purestake-api-service/)
   - Sandbox Algorand Node
 
     You can access any algorand network using sandbox. (`mainnet`, `testnet`, `betanet`, or ... )
