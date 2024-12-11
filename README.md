@@ -1,1 +1,1 @@
-This is the 5.0 Unreal Engine version of the Algorand Unreal SDK. For more information on how to use the SDK, see the following link: [Link](https://github.com/ShoshaDev/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.md)
+This is the 5.0 Unreal Engine version of the Algorand Unreal SDK. For more information on how to use the SDK, see the following [Link](https://github.com/ShoshaDev/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.md)
