@@ -6,15 +6,13 @@ Algorand Unreal Engine Plugin
 
 For indepth documentation on the overview, setup and usage of this plugin check here: [Doc](https://github.com/ShoshaDev/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.pdf)
 
-For indepth video demo on using the plugin watch here: [Video](https://youtu.be/xXlqLxUo3Uo)
- 
 This UE plugin includes:
 - Root Folder: Unreal-Plugin - Put this plugin in your new or existing project to utilize.
 - Example Folder: Unreal Plugin Example Project - Use this project to start your new game or demo/test Algorand System
 
 This sdk contains a setting option to set RPC Info.
 * RPC URL : You should set the Algorand node you want to work on with this url.
-  ` setAlgoRpc("https://testnet-algorand.api.purestake.io/ps2"); `
+  ` setAlgoRpc("https://testnet-api.algonode.cloud"); `
 * RPC Port : Set port which can connect into server supporting algorand node with.
   ` setAlgoPort(0); `
 * RPC TokenHeader : You should set Header to request apis according to algorand node type.
@@ -26,10 +24,7 @@ RPC types you can select are like following:
   + mainnet: https://mainnet-api.algonode.cloud
   + testnet: https://testnet-api.algonode.cloud
   + betanet: https://betanet-api.algonode.cloud
-* Purestake
-  + mainnet: https://mainnet-algorand.api.purestake.io/ps2
-  + testnet: https://testnet-algorand.api.purestake.io/ps2
-  + betanet: https://betanet-algorand.api.purestake.io/ps2
+
 * Sandbox Algorand Node
   + algod: http://localhost:4001 
   + kmd: http://localhost:4002
@@ -73,6 +68,11 @@ To use this UE plugin : ✅
 ## 🚀 5. Get Started
 
 Read [Getting Started](docs/getting_started.md) to learn the basic workflows for developing on Algorand.
+For understanding the SKD see [Algorand Unreal SDK Documentation](https://github.com/ShoshaDev/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.md)
 
 ### Demo Project
- Check an [Example Folder](https://github.com/Wisdom-Labs/Algorand-Unreal-Engine-SDK/tree/master/example/unreal-algorand-demo) made with this UE plugin.
+
+Among the builds are some demos ready to be used. Currently, the following builds are available for Unreal:
+[5.0](https://github.com/ShoshaDev/Algorand-Unreal-Engine-SDK/tree/5.0)
+[5.2](https://github.com/ShoshaDev/Algorand-Unreal-Engine-SDK/tree/5.2)
+[5.4](https://github.com/ShoshaDev/Algorand-Unreal-Engine-SDK/tree/5.4)
