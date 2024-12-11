@@ -1,5 +1,6 @@
 # Algorand SDK for Unreal Engine
 Official Unreal Engine Plugin for Algorand Blockchain Platform.
+This build is still under construction. Use is at your own risk.
 
 ## 📙 1. Overview:
 Algorand Unreal Engine Plugin
