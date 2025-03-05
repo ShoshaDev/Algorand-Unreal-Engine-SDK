@@ -6,7 +6,6 @@ Algorand Unreal Engine Plugin
 
 For indepth documentation on the overview, setup and usage of this plugin check here: [Doc](https://github.com/ShoshaDev/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.pdf)
 
-For indepth video demo on using the plugin watch here: [Video](https://youtu.be/xXlqLxUo3Uo)
  
 This UE plugin includes:
 - Root Folder: Unreal-Plugin - Put this plugin in your new or existing project to utilize.
@@ -26,10 +25,7 @@ RPC types you can select are like following:
   + mainnet: https://mainnet-api.algonode.cloud
   + testnet: https://testnet-api.algonode.cloud
   + betanet: https://betanet-api.algonode.cloud
-* Purestake
-  + mainnet: https://mainnet-algorand.api.purestake.io/ps2
-  + testnet: https://testnet-algorand.api.purestake.io/ps2
-  + betanet: https://betanet-algorand.api.purestake.io/ps2
+
 * Sandbox Algorand Node
   + algod: http://localhost:4001 
   + kmd: http://localhost:4002
