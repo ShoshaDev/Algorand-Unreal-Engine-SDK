@@ -1,5 +1,10 @@
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/0d58cd29-d5ca-4771-a3e4-25b577bbb01a">
+</div>
+
+
 # Algorand SDK for Unreal Engine
-Official Unreal Engine Plugin for Algorand Blockchain Platform.
+Official Unreal Engine Plugin for Algorand Blockchain Platform in cooperation with the [Algorand Foundation](https://algorand.co/).
 
 ## 📙 1. Overview:
 Algorand Unreal Engine Plugin
@@ -70,7 +75,7 @@ To use this UE plugin : ✅
 Read [Getting Started](docs/getting_started.md) to learn the basic workflows for developing on Algorand.
 For understanding the SKD see [Algorand Unreal SDK Documentation](https://github.com/ShoshaDev/Algorand-Unreal-Engine-SDK/blob/master/Algorand%20Unreal%20SDK%20Documentation.md)
 
-### Demo Project
+### Demo Projects
 
 Among the builds are some demos ready to be used. Currently, the following builds are available for Unreal:
 [5.0](https://github.com/ShoshaDev/Algorand-Unreal-Engine-SDK/tree/5.0)
